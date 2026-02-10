@@ -1,0 +1,3 @@
+[submodule "spartan-hub"]
+	path = spartan-hub
+	url = https://github.com/121378-cell/spartan-hub.git
