@@ -1,0 +1,13 @@
+---
+sourceLocationPrefix: C:\Users\sergi\Spartan hub 2.0
+baselineLinesOfCode: 127545
+unicodeNewlines: true
+columnKind: utf16
+primaryLanguage: javascript
+creationMetadata:
+  sha: 9ca0d114e9532c0a25dc10acb63fdc65074fff68
+  cliVersion: 2.24.1
+  creationTime: 2026-02-10T19:16:22.049628100Z
+overlayBaseDatabase: false
+overlayDatabase: false
+finalised: true
