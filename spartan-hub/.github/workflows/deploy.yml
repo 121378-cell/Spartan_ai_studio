@@ -1,0 +1,89 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build all packages
+      run: npm run build
+    
+    - name: Run comprehensive tests
+      run: npm run ci
+    
+    - name: Deploy to staging
+      run: |
+        # Deployment logic here
+        echo "Deploying to staging environment..."
+        # Add your deployment commands
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build all packages
+      run: npm run build
+    
+    - name: Run final validation
+      run: |
+        npm run test
+        npm run lint
+        npm run type-check
+    
+    - name: Deploy to production
+      run: |
+        # Production deployment logic here
+        echo "Deploying to production environment..."
+        # Add your production deployment commands
+    
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
+        body: |
+          ## Spartan Hub Release v${{ github.run_number }}
+          
+          ### Changes in this release:
+          - Automated deployment from CI/CD pipeline
+          - Built and tested with Node.js 18.x
+          - Includes latest security patches
+          
+          ### Deployment Information:
+          - Timestamp: ${{ github.event.head_commit.timestamp }}
+          - Commit: ${{ github.sha }}
+        draft: false
+        prerelease: false

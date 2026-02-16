@@ -1,0 +1,1621 @@
+
+> backend@1.0.0 test
+> jest coachVitalis.test.ts
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (7) from .env -- tip: ­ƒöæ add access controls to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.error
+    2026-01-25T18:43:35.288Z [ERROR] [spartan-hub-backend] Failed to initialize CoachVitalisService {"error":"near \"INDEX\": syntax error"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:165:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  suppress all logs with { quiet: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+FAIL src/services/__tests__/coachVitalis.test.ts (13.727 s)
+  CoachVitalisService
+    Service Initialization
+      ├ù should create singleton instance (38 ms)
+      ├ù should have all required methods (1 ms)
+      ├ù should initialize without errors (1 ms)
+    Bio-State Evaluation
+      ├ù should evaluate bio state for user (1 ms)
+      ├ù should calculate composite metrics (1 ms)
+      ├ù should generate recommended action
+      ├ù should calculate confidence score (1 ms)
+      ├ù should have valid priority levels (2 ms)
+      ├ù should provide explanation for decision (2 ms)
+      ├ù should handle optional date parameter (1 ms)
+      ├ù should track triggered rules (1 ms)
+      ├ù should have valid hrv status values (1 ms)
+      ├ù should have valid rhr trend values (1 ms)
+      ├ù should have valid training readiness values (2 ms)
+      ├ù should evaluate multiple users independently (1 ms)
+    Decision Rules & Rule Triggering
+      ├ù should trigger nervous system protection rule (1 ms)
+      ├ù should evaluate rule confidence scores (1 ms)
+      ├ù should prioritize urgent rules over lower priority
+      ├ù should handle multiple triggered rules (1 ms)
+      ├ù should provide specific action for each rule (1 ms)
+      ├ù should not trigger rules without sufficient evidence (1 ms)
+      ├ù should explain rule triggering (1 ms)
+      ├ù should match action priority to rule severity (1 ms)
+      ├ù should calculate nervous system load accurately
+      ├ù should assess injury risk based on multiple factors
+      ├ù should correlate injury risk with training readiness
+      ├ù should adjust recommendations based on sleep quality (1 ms)
+      ├ù should track all triggered rules (1 ms)
+      ├ù should provide expected benefits for action (1 ms)
+      ├ù should suggest action duration when applicable
+    Proactive Alert Generation
+      ├ù should generate proactive alerts (1 ms)
+      ├ù should structure alerts correctly
+      ├ù should have valid alert types
+      ├ù should have valid severity levels
+      ├ù should include context in alerts (1 ms)
+      ├ù should provide recommended action for each alert (1 ms)
+      ├ù should specify delivery channels
+      ├ù should set expiration time for alerts
+      ├ù should have meaningful titles and messages (1 ms)
+      ├ù should match alert severity to content (1 ms)
+      ├ù should generate unique alert IDs
+      ├ù should timestamp alerts correctly
+    Training Plan Adjustments
+      ├ù should generate training adjustments
+      ├ù should structure adjustments correctly (1 ms)
+      ├ù should include adjustment rationale (1 ms)
+      ├ù should adjust intensity appropriately
+      ├ù should provide confidence for adjustments
+      ├ù should have adjustment acceptance tracking (1 ms)
+      ├ù should track adjustment history
+      ├ù should maintain adjustment date validity
+    Nervous System Monitoring
+      ├ù should generate nervous system report (1 ms)
+      ├ù should calculate valid average load
+      ├ù should determine trend direction
+      ├ù should count critical days (1 ms)
+      ├ù should assess recovery need
+      ├ù should provide personalized recommendations
+      ├ù should handle different time periods (1 ms)
+      ├ù should match recommendations to status
+    Decision History & Tracking
+      ├ù should retrieve decision history
+      ├ù should structure history entries correctly (1 ms)
+      ├ù should support limit parameter (1 ms)
+      ├ù should support days parameter
+      ├ù should track decision feedback (1 ms)
+    Action Recommendations
+      ├ù should generate action recommendation
+      ├ù should have valid action types
+      ├ù should have valid intensity levels
+      ├ù should provide clear action description
+      ├ù should explain expected benefits (1 ms)
+      ├ù should have confidence score
+    Error Handling & Edge Cases
+      ├ù should handle invalid user ID gracefully (1 ms)
+      ├ù should handle invalid date format (1 ms)
+      ├ù should handle extreme biometric values
+      ├ù should handle concurrent requests (1 ms)
+      ├ù should maintain data integrity across operations
+      ├ù should handle empty decision history
+      ├ù should handle zero critical days
+      ├ù should close service without errors (1 ms)
+    Integration & End-to-End
+      ├ù should complete full bio-feedback loop
+      ├ù should correlate bio state with alerts
+      ├ù should correlate bio state with adjustments (1 ms)
+      ├ù should track decisions in history
+      ├ù should provide consistent recommendations across calls (1 ms)
+      ├ù should maintain data consistency in database
+      ├ù should handle complete user journey
+    Database Persistence
+      ├ù should create required tables on initialization (1 ms)
+      ├ù should persist decisions
+      ├ù should persist alerts
+
+  ÔùÅ CoachVitalisService ÔÇ║ Service Initialization ÔÇ║ should create singleton instance
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Service Initialization ÔÇ║ should have all required methods
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Service Initialization ÔÇ║ should initialize without errors
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should evaluate bio state for user
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should calculate composite metrics
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should generate recommended action
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should calculate confidence score
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should have valid priority levels
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should provide explanation for decision
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should handle optional date parameter
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should track triggered rules
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should have valid hrv status values
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should have valid rhr trend values
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should have valid training readiness values
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Bio-State Evaluation ÔÇ║ should evaluate multiple users independently
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should trigger nervous system protection rule
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should evaluate rule confidence scores
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should prioritize urgent rules over lower priority
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should handle multiple triggered rules
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should provide specific action for each rule
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should not trigger rules without sufficient evidence
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should explain rule triggering
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should match action priority to rule severity
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should calculate nervous system load accurately
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should assess injury risk based on multiple factors
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should correlate injury risk with training readiness
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should adjust recommendations based on sleep quality
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should track all triggered rules
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should provide expected benefits for action
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should suggest action duration when applicable
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should generate proactive alerts
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should structure alerts correctly
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should have valid alert types
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should have valid severity levels
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should include context in alerts
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should provide recommended action for each alert
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should specify delivery channels
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should set expiration time for alerts
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should have meaningful titles and messages
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should match alert severity to content
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should generate unique alert IDs
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Proactive Alert Generation ÔÇ║ should timestamp alerts correctly
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Training Plan Adjustments ÔÇ║ should generate training adjustments
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Training Plan Adjustments ÔÇ║ should structure adjustments correctly
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Training Plan Adjustments ÔÇ║ should include adjustment rationale
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Training Plan Adjustments ÔÇ║ should adjust intensity appropriately
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Training Plan Adjustments ÔÇ║ should provide confidence for adjustments
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Training Plan Adjustments ÔÇ║ should have adjustment acceptance tracking
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Training Plan Adjustments ÔÇ║ should track adjustment history
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Training Plan Adjustments ÔÇ║ should maintain adjustment date validity
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Nervous System Monitoring ÔÇ║ should generate nervous system report
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Nervous System Monitoring ÔÇ║ should calculate valid average load
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Nervous System Monitoring ÔÇ║ should determine trend direction
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Nervous System Monitoring ÔÇ║ should count critical days
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Nervous System Monitoring ÔÇ║ should assess recovery need
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Nervous System Monitoring ÔÇ║ should provide personalized recommendations
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Nervous System Monitoring ÔÇ║ should handle different time periods
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Nervous System Monitoring ÔÇ║ should match recommendations to status
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision History & Tracking ÔÇ║ should retrieve decision history
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision History & Tracking ÔÇ║ should structure history entries correctly
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision History & Tracking ÔÇ║ should support limit parameter
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision History & Tracking ÔÇ║ should support days parameter
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision History & Tracking ÔÇ║ should track decision feedback
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Action Recommendations ÔÇ║ should generate action recommendation
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Action Recommendations ÔÇ║ should have valid action types
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Action Recommendations ÔÇ║ should have valid intensity levels
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Action Recommendations ÔÇ║ should provide clear action description
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Action Recommendations ÔÇ║ should explain expected benefits
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Action Recommendations ÔÇ║ should have confidence score
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Error Handling & Edge Cases ÔÇ║ should handle invalid user ID gracefully
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Error Handling & Edge Cases ÔÇ║ should handle invalid date format
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Error Handling & Edge Cases ÔÇ║ should handle extreme biometric values
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Error Handling & Edge Cases ÔÇ║ should handle concurrent requests
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Error Handling & Edge Cases ÔÇ║ should maintain data integrity across operations
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Error Handling & Edge Cases ÔÇ║ should handle empty decision history
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Error Handling & Edge Cases ÔÇ║ should handle zero critical days
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Error Handling & Edge Cases ÔÇ║ should close service without errors
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should complete full bio-feedback loop
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should correlate bio state with alerts
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should correlate bio state with adjustments
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should track decisions in history
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should provide consistent recommendations across calls
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should maintain data consistency in database
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should handle complete user journey
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Database Persistence ÔÇ║ should create required tables on initialization
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Database Persistence ÔÇ║ should persist decisions
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Database Persistence ÔÇ║ should persist alerts
+
+    SqliteError: near "INDEX": syntax error
+
+       999 |
+      1000 |     // vital_coach_decisions table
+    > 1001 |     this.db.exec(`
+           |             ^
+      1002 |       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
+      1003 |         id TEXT PRIMARY KEY,
+      1004 |         user_id TEXT NOT NULL,
+
+      at Database.exec (node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)
+      at CoachVitalisService.createTablesIfNeeded (src/services/coachVitalisService.ts:1001:13)
+      at CoachVitalisService.initialize (src/services/coachVitalisService.ts:158:12)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:32:19)
+
+Test Suites: 1 failed, 1 total
+Tests:       87 failed, 87 total
+Snapshots:   0 total
+Time:        14.001 s, estimated 15 s
+Ran all test suites matching coachVitalis.test.ts.

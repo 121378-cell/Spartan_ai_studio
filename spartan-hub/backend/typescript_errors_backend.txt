@@ -1,0 +1,31 @@
+src/__tests__/auth.middleware.comprehensive.test.ts(55,58): error TS2769: No overload matches this call.
+  Overload 1 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: null, options?: (SignOptions & { algorithm: "none"; }) | undefined): string', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'null'.
+      Type 'string' is not assignable to type 'null'.
+  Overload 2 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput, options?: SignOptions | undefined): string', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+      Type 'number' is not assignable to type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+  Overload 3 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput, callback: SignCallback): void', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+      Type 'number' is not assignable to type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+src/__tests__/auth.middleware.comprehensive.test.ts(103,9): error TS2769: No overload matches this call.
+  Overload 1 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: null, options?: (SignOptions & { algorithm: "none"; }) | undefined): string', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'null'.
+      Type 'string' is not assignable to type 'null'.
+  Overload 2 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput, options?: SignOptions | undefined): string', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+      Type 'number' is not assignable to type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+  Overload 3 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput, callback: SignCallback): void', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+      Type 'number' is not assignable to type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+src/__tests__/auth.middleware.comprehensive.test.ts(118,9): error TS2769: No overload matches this call.
+  Overload 1 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: null, options?: (SignOptions & { algorithm: "none"; }) | undefined): string', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'null'.
+      Type 'string' is not assignable to type 'null'.
+  Overload 2 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput, options?: SignOptions | undefined): string', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+      Type 'number' is not assignable to type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+  Overload 3 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput, callback: SignCallback): void', gave the following error.
+    Argument of type 'string | number | true' is not assignable to parameter of type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+      Type 'number' is not assignable to type 'Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput'.
+src/__tests__/setup.improved.ts(187,8): error TS2339: Property 'clearAllIntervals' does not exist on type 'typeof jest'.

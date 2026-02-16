@@ -1,0 +1,264 @@
+# Alert Rules for Spartan Hub - Advanced Monitoring
+
+groups:
+  - name: spartan-hub-basic.alerts
+    rules:
+      # Basic System Health Alerts
+      - alert: BackendDown
+        expr: up{job="spartan-hub-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+        annotations:
+          summary: "Backend service down"
+          description: "Spartan Hub backend service is unreachable"
+          runbook_url: "https://internal.wiki/backend-down"
+
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes{job="spartan-hub-backend"} / 1024 / 1024 / 1024 > 1.5
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High memory usage"
+          description: "Backend memory usage is {{ $value | printf "%.2f" }} GB"
+          runbook_url: "https://internal.wiki/memory-alerts"
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total{job="spartan-hub-backend"}[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High CPU usage"
+          description: "Backend CPU usage is {{ $value | printf "%.1f" }}%"
+          runbook_url: "https://internal.wiki/cpu-alerts"
+
+  - name: spartan-hub-performance.alerts
+    rules:
+      # Performance Degradation Alerts
+      - alert: HighAPILatencyP95
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 2m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High API latency (P95)"
+          description: "95th percentile API response time is {{ $value | printf "%.2f" }} seconds"
+          runbook_url: "https://internal.wiki/performance-alerts"
+
+      - alert: HighAPILatencyP99
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+        annotations:
+          summary: "High API latency (P99)"
+          description: "99th percentile API response time is {{ $value | printf "%.2f" }} seconds"
+          runbook_url: "https://internal.wiki/performance-alerts"
+
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          team: sre
+        annotations:
+          summary: "High error rate"
+          description: "Error rate is {{ $value | printf "%.2f%%" }}"
+          runbook_url: "https://internal.wiki/error-rate-alerts"
+
+      - alert: SlowDatabaseQueries
+        expr: histogram_quantile(0.95, rate(database_query_duration_seconds_bucket[5m])) > 1
+        for: 2m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Slow database queries"
+          description: "95th percentile database query time is {{ $value | printf "%.2f" }} seconds"
+          runbook_url: "https://internal.wiki/database-alerts"
+
+      - alert: DatabaseConnectionPoolExhaustion
+        expr: database_connections_active / database_connections_max > 0.9
+        for: 2m
+        labels:
+          severity: critical
+          team: sre
+        annotations:
+          summary: "Database connection pool exhaustion"
+          description: "Database connection pool utilization is {{ $value | printf "%.1f%%" }}"
+          runbook_url: "https://internal.wiki/connection-pool-alerts"
+
+  - name: spartan-hub-sla.alerts
+    rules:
+      # SLA Breach Alerts
+      - alert: SLAUptimeBreach
+        expr: avg(avg_over_time(up{job="spartan-hub-backend"}[7d])) < 0.99
+        for: 5m
+        labels:
+          severity: critical
+          team: ops
+        annotations:
+          summary: "SLA uptime breach (99% requirement)"
+          description: "7-day uptime is {{ $value | printf "%.2f%%" }}"
+          runbook_url: "https://internal.wiki/sla-uptime-alerts"
+
+      - alert: SLAResponseTimeBreach
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[1h])) > 1.5
+        for: 10m
+        labels:
+          severity: warning
+          team: perf
+        annotations:
+          summary: "SLA response time breach (P95 > 1.5s)"
+          description: "Hourly P95 response time is {{ $value | printf "%.2f" }} seconds"
+          runbook_url: "https://internal.wiki/sla-response-alerts"
+
+      - alert: SLAErrorRateBreach
+        expr: avg_over_time(sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))[1h:]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          team: sre
+        annotations:
+          summary: "SLA error rate breach (1% requirement)"
+          description: "Hourly average error rate is {{ $value | printf "%.2f%%" }}"
+          runbook_url: "https://internal.wiki/sla-error-alerts"
+
+  - name: spartan-hub-business.alerts
+    rules:
+      # Business Metric Alerts
+      - alert: UserActivityDecline
+        expr: rate(user_activities_total[1h]) < 0.1 * scalar(avg_over_time(rate(user_activities_total[1h])[7d]))
+        for: 30m
+        labels:
+          severity: warning
+          team: engagement
+        annotations:
+          summary: "Significant user activity decline"
+          description: "User activity has declined by {{ $value | printf "%.1f%%" }} compared to weekly average"
+          runbook_url: "https://internal.wiki/user-activity-alerts"
+
+      - alert: HighChurnRisk
+        expr: churn_prediction_high_risk_gauge > 10
+        for: 5m
+        labels:
+          severity: critical
+          team: retention
+        annotations:
+          summary: "High churn risk spike"
+          description: "{{ $value }} users currently at high churn risk"
+          runbook_url: "https://internal.wiki/churn-alerts"
+
+      - alert: AchievementSystemErrors
+        expr: rate(achievements_errors_total[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: critical
+          team: engagement
+        annotations:
+          summary: "Achievement system errors"
+          description: "Achievement system error rate is {{ $value | printf "%.2f" }}/minute"
+          runbook_url: "https://internal.wiki/achievement-alerts"
+
+      # Challenge System Alerts
+      - alert: ChallengeCompletionDrop
+        expr: rate(challenges_completed_total[1h]) < rate(challenges_created_total[1h]) * 0.3
+        for: 30m
+        labels:
+          severity: warning
+          team: engagement
+        annotations:
+          summary: "Low challenge completion rate"
+          description: "Only {{ $value | printf "%.1f" }}% of challenges are being completed"
+          runbook_url: "https://internal.wiki/challenge-alerts"
+
+      # Community System Alerts
+      - alert: LowCommunityActivity
+        expr: rate(community_posts_total[1h]) < 2
+        for: 1h
+        labels:
+          severity: warning
+          team: community
+        annotations:
+          summary: "Low community activity"
+          description: "Only {{ $value | printf "%.1f" }} posts per hour in community"
+          runbook_url: "https://internal.wiki/community-alerts"
+
+      - alert: HighReportedContent
+        expr: rate(content_reports_total[30m]) > 5
+        for: 5m
+        labels:
+          severity: critical
+          team: moderation
+        annotations:
+          summary: "High content report rate"
+          description: "{{ $value | printf "%.1f" }} content reports in the last 30 minutes"
+          runbook_url: "https://internal.wiki/moderation-alerts"
+
+  - name: spartan-hub-ai.alerts
+    rules:
+      # AI Service Alerts
+      - alert: AIServiceHighLatency
+        expr: histogram_quantile(0.95, rate(ai_request_duration_seconds_bucket[5m])) > 10
+        for: 2m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI service high latency"
+          description: "95th percentile AI request duration is {{ $value | printf "%.2f" }} seconds"
+          runbook_url: "https://internal.wiki/ai-latency-alerts"
+
+      - alert: AIServiceHighErrorRate
+        expr: sum(rate(ai_errors_total[5m])) / sum(rate(ai_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          team: ai
+        annotations:
+          summary: "AI service high error rate"
+          description: "AI service error rate is {{ $value | printf "%.2f%%" }}"
+          runbook_url: "https://internal.wiki/ai-error-alerts"
+
+      - alert: AIServiceRateLimiting
+        expr: rate(ai_rate_limit_rejections_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI service rate limiting active"
+          description: "AI service is rejecting {{ $value | printf "%.1f" }} requests per minute due to rate limiting"
+          runbook_url: "https://internal.wiki/ai-rate-limit-alerts"
+
+  - name: spartan-hub-cache.alerts
+    rules:
+      # Cache Performance Alerts
+      - alert: LowCacheHitRatio
+        expr: avg_over_time(sum(rate(cache_hits_total[5m])) / (sum(rate(cache_hits_total[5m])) + sum(rate(cache_misses_total[5m]))) [10m:]) < 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Low cache hit ratio"
+          description: "Cache hit ratio is {{ $value | printf "%.2f%%" }}"
+          runbook_url: "https://internal.wiki/cache-hit-ratio-alerts"
+
+      - alert: HighCacheMissRate
+        expr: sum(rate(cache_misses_total[5m])) > 100
+        for: 2m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High cache miss rate"
+          description: "Cache is missing {{ $value | printf "%.1f" }} requests per minute"
+          runbook_url: "https://internal.wiki/cache-miss-rate-alerts"

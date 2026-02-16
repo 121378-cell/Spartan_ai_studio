@@ -1,0 +1,38 @@
+# Baseline Performance Test
+# Establishes performance baseline for Spartan Hub
+
+config:
+  target: "http://localhost:8000"
+  phases:
+    - duration: 30
+      arrivalRate: 10
+      name: "Baseline Test"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+
+scenarios:
+  - name: "API Health Check"
+    flow:
+      - get:
+          url: "/health"
+      
+      - get:
+          url: "/api/health"
+
+  - name: "Authentication Requests"
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "TestPass123!"
+
+  - name: "Simple Data Retrieval"
+    flow:
+      - get:
+          url: "/api/workouts?page=1&limit=10"
+      
+      - get:
+          url: "/api/users/profile"

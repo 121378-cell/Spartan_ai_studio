@@ -1,0 +1,292 @@
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ÔÜÖ´©Å  suppress all logs with { quiet: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (7) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒôí add observability to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    Added column stressLevel to daily_biometric_summaries
+
+      at addStressLevelColumn (src/database/migrations/005-add-stress-level.ts:16:21)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöæ add access controls to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.error
+    2026-02-04T18:23:57.636Z [ERROR] [spartan-hub-backend] TypeError: The database connection is not open
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at NotificationService.createNotificationTables (src/services/notificationService.ts:180:14)
+      at new NotificationService (src/services/notificationService.ts:97:10)
+      at Function.getInstance (src/services/notificationService.ts:102:38)
+      at getNotificationService (src/services/notificationService.ts:912:30)
+      at Object.<anonymous> (src/controllers/notificationController.ts:7:51)
+      at Object.<anonymous> (src/routes/notificationRoutes.ts:2:1)
+      at Object.<anonymous> (src/server.ts:28:1)
+      at src/__tests__/e2e/mlForecasting.e2e.test.ts:32:30
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:32:30)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [DEBUG] server.ts initializing database with DB_PATH: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_e2e.db
+
+      at Object.<anonymous> (src/server.ts:83:9)
+
+  console.log
+    [DEBUG] auth.ts using secret: a8311...
+
+      at verifyJWT (src/middleware/auth.ts:76:13)
+
+  console.log
+    [DEBUG] auth.ts payload: {
+      userId: 'e2e-ml-user-1',
+      role: 'user',
+      sessionId: 'e2e-ml-session-1',
+      tokenType: 'access',
+      iat: 1770229438,
+      exp: 1770230338,
+      jti: '65001a87-6004-4aa5-b752-7b48cd359486'
+    }
+
+      at verifyJWT (src/middleware/auth.ts:84:13)
+
+  console.log
+    [DEBUG] auth.ts using secret: a8311...
+
+      at verifyJWT (src/middleware/auth.ts:76:13)
+
+  console.log
+    [DEBUG] auth.ts payload: {
+      userId: 'e2e-ml-user-1',
+      role: 'user',
+      sessionId: 'e2e-ml-session-1',
+      tokenType: 'access',
+      iat: 1770229438,
+      exp: 1770230338,
+      jti: '65001a87-6004-4aa5-b752-7b48cd359486'
+    }
+
+      at verifyJWT (src/middleware/auth.ts:84:13)
+
+  console.log
+    [DEBUG] auth.ts using secret: a8311...
+
+      at verifyJWT (src/middleware/auth.ts:76:13)
+
+  console.log
+    [DEBUG] auth.ts payload: {
+      userId: 'e2e-ml-user-1',
+      role: 'user',
+      sessionId: 'e2e-ml-session-1',
+      tokenType: 'access',
+      iat: 1770229438,
+      exp: 1770230338,
+      jti: '65001a87-6004-4aa5-b752-7b48cd359486'
+    }
+
+      at verifyJWT (src/middleware/auth.ts:84:13)
+
+  console.log
+    [DEBUG] auth.ts using secret: a8311...
+
+      at verifyJWT (src/middleware/auth.ts:76:13)
+
+  console.log
+    [DEBUG] auth.ts payload: {
+      userId: 'e2e-ml-user-1',
+      role: 'user',
+      sessionId: 'e2e-ml-session-1',
+      tokenType: 'access',
+      iat: 1770229438,
+      exp: 1770230338,
+      jti: '65001a87-6004-4aa5-b752-7b48cd359486'
+    }
+
+      at verifyJWT (src/middleware/auth.ts:84:13)
+
+  console.log
+    [DEBUG] auth.ts using secret: a8311...
+
+      at verifyJWT (src/middleware/auth.ts:76:13)
+
+  console.log
+    [DEBUG] auth.ts payload: {
+      userId: 'e2e-ml-user-1',
+      role: 'user',
+      sessionId: 'e2e-ml-session-1',
+      tokenType: 'access',
+      iat: 1770229438,
+      exp: 1770230338,
+      jti: '65001a87-6004-4aa5-b752-7b48cd359486'
+    }
+
+      at verifyJWT (src/middleware/auth.ts:84:13)
+
+  console.log
+    [DEBUG] auth.ts using secret: a8311...
+
+      at verifyJWT (src/middleware/auth.ts:76:13)
+
+  console.log
+    [DEBUG] auth.ts payload: {
+      userId: 'e2e-ml-user-1',
+      role: 'user',
+      sessionId: 'e2e-ml-session-1',
+      tokenType: 'access',
+      iat: 1770229438,
+      exp: 1770230338,
+      jti: '65001a87-6004-4aa5-b752-7b48cd359486'
+    }
+
+      at verifyJWT (src/middleware/auth.ts:84:13)
+
+FAIL src/__tests__/e2e/mlForecasting.e2e.test.ts (16.175 s, 1993 MB heap size)
+  E2E ML Forecasting
+    ÔêÜ GET /readiness-forecast/:userId requires authentication (63 ms)
+    ├ù GET /readiness-forecast/:userId returns forecast (24 ms)
+    ├ù GET /injury-probability/:userId returns probability (10 ms)
+    ├ù GET /fatigue-estimate/:userId returns estimate (13 ms)
+    ├ù GET /training-load/:userId returns suggestion (12 ms)
+    ├ù GET /comprehensive/:userId returns all data (22 ms)
+    ├ù GET /model-info returns metadata (13 ms)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /readiness-forecast/:userId returns forecast
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      134 |             .set('Authorization', `Bearer ${testSession.token}`);
+      135 |
+    > 136 |         expect(res.status).toBe(200);
+          |                            ^
+      137 |         expect(res.body.success).toBe(true);
+      138 |         expect(res.body.data.predictions).toHaveLength(7);
+      139 |         expect(res.body.data.riskLevel).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:136:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /injury-probability/:userId returns probability
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      146 |             .set('Authorization', `Bearer ${testSession.token}`);
+      147 |
+    > 148 |         expect(res.status).toBe(200);
+          |                            ^
+      149 |         expect(res.body.success).toBe(true);
+      150 |         expect(typeof res.body.data.probabilityPercent).toBe('number');
+      151 |         expect(res.body.data.riskFactors).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:148:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /fatigue-estimate/:userId returns estimate
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      158 |             .set('Authorization', `Bearer ${testSession.token}`);
+      159 |
+    > 160 |         expect(res.status).toBe(200);
+          |                            ^
+      161 |         expect(res.body.success).toBe(true);
+      162 |         expect(typeof res.body.data.fatigueLevel).toBe('number');
+      163 |         expect(res.body.data.estimatedRecoveryDays).toBeGreaterThanOrEqual(0);
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:160:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /training-load/:userId returns suggestion
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      170 |             .set('Authorization', `Bearer ${testSession.token}`);
+      171 |
+    > 172 |         expect(res.status).toBe(200);
+          |                            ^
+      173 |         expect(res.body.success).toBe(true);
+      174 |         expect(res.body.data.suggestedLoad).toBeDefined();
+      175 |         expect(Array.isArray(res.body.data.recommendedExercises)).toBe(true);
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:172:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /comprehensive/:userId returns all data
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      182 |             .set('Authorization', `Bearer ${testSession.token}`);
+      183 |
+    > 184 |         expect(res.status).toBe(200);
+          |                            ^
+      185 |         expect(res.body.success).toBe(true);
+      186 |         expect(res.body.data.readinessForecast).toBeDefined();
+      187 |         expect(res.body.data.injuryProbability).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:184:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /model-info returns metadata
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      198 |             .set('Authorization', `Bearer ${testSession.token}`);
+      199 |
+    > 200 |         expect(res.status).toBe(200);
+          |                            ^
+      201 |         expect(res.body.success).toBe(true);
+      202 |         expect(res.body.data.version).toBeDefined();
+      203 |         expect(typeof res.body.data.accuracyScore).toBe('number');
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:200:28)
+
+Test Suites: 1 failed, 1 total
+Tests:       6 failed, 1 passed, 7 total
+Snapshots:   0 total
+Time:        16.452 s, estimated 21 s
+Ran all test suites matching src/__tests__/e2e/mlForecasting.e2e.test.ts.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.

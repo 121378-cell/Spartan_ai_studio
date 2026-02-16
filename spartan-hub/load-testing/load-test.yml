@@ -1,0 +1,85 @@
+# Artillery Load Testing Configuration
+# Performance and stress testing for Spartan Hub API
+
+config:
+  target: "http://localhost:8000"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 10
+      name: "Normal load"
+    - duration: 60
+      arrivalRate: 20
+      name: "High load"
+    - duration: 30
+      arrivalRate: 5
+      name: "Cool down"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+
+scenarios:
+  - name: "User Authentication Flow"
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            email: "test{{ $randomString(10) }}@example.com"
+            password: "TestPass123!"
+            firstName: "Load"
+            lastName: "Tester"
+          capture:
+            json: "$.token"
+            as: "authToken"
+      
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "TestPass123!"
+          capture:
+            json: "$.token"
+            as: "loginToken"
+
+  - name: "Workout Management"
+    flow:
+      - get:
+          url: "/api/workouts"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      - post:
+          url: "/api/workouts"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            title: "Load Test Workout"
+            description: "Automated load testing workout"
+            scheduledDate: "{{ $dateISO }}"
+      
+      - get:
+          url: "/api/workouts/{{ workoutId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  - name: "AI Service Calls"
+    flow:
+      - post:
+          url: "/api/ai/generate-workout"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            userGoals: ["strength", "endurance"]
+            availableEquipment: ["dumbbells", "barbell"]
+            workoutDuration: 60
+      
+      - post:
+          url: "/api/ai/analyze-form"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            exercise: "squat"
+            videoUrl: "https://example.com/video.mp4"

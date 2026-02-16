@@ -1,0 +1,158 @@
+/**
+ * PoseOverlay Component Styles
+ * 
+ * Styles for real-time pose visualization overlay
+ */
+
+.pose-overlay-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.pose-overlay-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: crisp-edges; /* Better rendering for canvas elements */
+}
+
+/* Keypoint visualization styles */
+.keypoint {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.keypoint.high-confidence {
+  background-color: #00ff00;
+  box-shadow: 0 0 8px #00ff00;
+}
+
+.keypoint.medium-confidence {
+  background-color: #ffff00;
+  box-shadow: 0 0 8px #ffff00;
+}
+
+.keypoint.low-confidence {
+  background-color: #ff0000;
+  box-shadow: 0 0 8px #ff0000;
+}
+
+/* Score badge styles */
+.score-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  min-width: 100px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  z-index: 10;
+}
+
+.score-badge.excellent {
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+.score-badge.good {
+  border-color: #ffff00;
+  color: #ffff00;
+}
+
+.score-badge.fair {
+  border-color: #ffa500;
+  color: #ffa500;
+}
+
+.score-badge.poor {
+  border-color: #ff0000;
+  color: #ff0000;
+}
+
+/* Legend styles */
+.pose-legend {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: white;
+  z-index: 5;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+/* Angle measurement overlay */
+.angle-measurement {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .score-badge {
+    top: 8px;
+    right: 8px;
+    min-width: 80px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .pose-legend {
+    bottom: 8px;
+    left: 8px;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .angle-measurement {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+}
+
+/* Performance optimization - use GPU acceleration where possible */
+.pose-overlay-container {
+  transform: translate3d(0, 0, 0);
+  will-change: contents;
+}
+
+.pose-overlay-canvas {
+  transform: translate3d(0, 0, 0);
+}

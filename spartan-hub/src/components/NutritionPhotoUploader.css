@@ -1,0 +1,338 @@
+/* NutritionPhotoUploader Component Styles */
+
+.nutrition-photo-uploader {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  padding: 24px;
+  color: #ffffff;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.uploader-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.uploader-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.uploader-header p {
+  margin: 0;
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+.upload-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #667eea;
+  transform: translateY(-2px);
+}
+
+.camera-btn {
+  border-color: #667eea;
+}
+
+.camera-btn:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.upload-btn span {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.camera-view {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.camera-video {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #0a0a0a;
+  object-fit: cover;
+}
+
+.camera-controls {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  padding: 0 24px;
+}
+
+.camera-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.camera-btn.cancel {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.camera-btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.camera-btn.capture {
+  width: 72px;
+  height: 72px;
+  background: #ffffff;
+  padding: 4px;
+}
+
+.shutter-button {
+  width: 100%;
+  height: 100%;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+}
+
+.preview-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.preview-image {
+  width: 100%;
+  border-radius: 12px;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.preview-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.analysis-results {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.results-header h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.detected-foods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.food-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.food-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.food-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.confidence {
+  font-size: 12px;
+  color: #48bb78;
+  background: rgba(72, 187, 120, 0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.food-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.serving {
+  font-size: 13px;
+  color: #a0aec0;
+}
+
+.macros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.macro {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.macro.calories {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.macro.protein {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.macro.carbs {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.macro.fat {
+  background: rgba(236, 72, 153, 0.2);
+  color: #ec4899;
+}
+
+.total-nutrition {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.total-nutrition h5 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.total-macros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.macro-total {
+  text-align: center;
+}
+
+.macro-total .value {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.macro-total .label {
+  font-size: 12px;
+  color: #a0aec0;
+  text-transform: uppercase;
+}
+
+.suggestions {
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-left: 3px solid #fbbf24;
+}
+
+.suggestions h5 {
+  margin: 0 0 12px 0;
+  color: #fbbf24;
+}
+
+.suggestions ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #e2e8f0;
+  font-size: 14px;
+}
+
+.suggestions li {
+  margin-bottom: 4px;
+}
+
+.save-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}

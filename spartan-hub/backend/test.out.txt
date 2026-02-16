@@ -1,0 +1,500 @@
+
+> backend@1.0.0 test
+> jest coachVitalis.test.ts
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (7) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.error
+    2026-01-25T18:48:31.082Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_e2e","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:801:40)
+
+  console.error
+    2026-01-25T18:48:31.111Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_correlation","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:823:40)
+
+  console.error
+    2026-01-25T18:48:31.116Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_adjust","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:833:40)
+
+  console.error
+    2026-01-25T18:48:31.120Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_history","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:844:21)
+
+  console.error
+    2026-01-25T18:48:31.124Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_consistent","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at CoachVitalisService.getRecommendedAction (src/services/coachVitalisService.ts:242:35)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:853:34)
+
+  console.error
+    2026-01-25T18:48:31.127Z [ERROR] [spartan-hub-backend] Error getting recommended action {"userId":"user_consistent","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.getRecommendedAction (src/services/coachVitalisService.ts:259:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:853:20)
+
+  console.error
+    2026-01-25T18:48:31.136Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_db_test","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:864:35)
+
+  console.error
+    2026-01-25T18:48:31.140Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_journey_1769366911140","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:878:40)
+
+  console.error
+    2026-01-25T18:48:31.144Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_db","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:908:40)
+
+  console.error
+    2026-01-25T18:48:31.147Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_persist_1769366911147","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:918:21)
+
+  console.error
+    2026-01-25T18:48:31.150Z [ERROR] [spartan-hub-backend] Error evaluating bio state {"userId":"user_alerts_1769366911150","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:229:14)
+      at CoachVitalisService.generateProactiveAlerts (src/services/coachVitalisService.ts:272:35)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:931:36)
+
+  console.error
+    2026-01-25T18:48:31.153Z [ERROR] [spartan-hub-backend] Error generating proactive alerts {"userId":"user_alerts_1769366911150","error":"Database not initialized"}
+
+    [0m [90m 124 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 125 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 127 |[39m       [36mbreak[39m[33m;[39m
+     [90m 128 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 129 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:126:15)
+      at StructuredLogger.log (src/utils/logger.ts:317:10)
+      at StructuredLogger.error (src/utils/logger.ts:332:10)
+      at CoachVitalisService.generateProactiveAlerts (src/services/coachVitalisService.ts:420:14)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:931:22)
+
+FAIL src/services/__tests__/coachVitalis.test.ts (12.377 s)
+  CoachVitalisService
+    Service Initialization
+      ÔêÜ should create singleton instance (17 ms)
+      ÔêÜ should have all required methods (2 ms)
+      ÔêÜ should initialize without errors (1 ms)
+    Bio-State Evaluation
+      ÔêÜ should evaluate bio state for user (3 ms)
+      ÔêÜ should calculate composite metrics (10 ms)
+      ÔêÜ should generate recommended action (1 ms)
+      ÔêÜ should calculate confidence score
+      ÔêÜ should have valid priority levels
+      ÔêÜ should provide explanation for decision (1 ms)
+      ÔêÜ should handle optional date parameter (1 ms)
+      ÔêÜ should track triggered rules
+      ÔêÜ should have valid hrv status values
+      ÔêÜ should have valid rhr trend values (1 ms)
+      ÔêÜ should have valid training readiness values (1 ms)
+      ÔêÜ should evaluate multiple users independently (1 ms)
+    Decision Rules & Rule Triggering
+      ÔêÜ should trigger nervous system protection rule
+      ÔêÜ should evaluate rule confidence scores
+      ÔêÜ should prioritize urgent rules over lower priority (1 ms)
+      ÔêÜ should handle multiple triggered rules
+      ÔêÜ should provide specific action for each rule
+      ÔêÜ should not trigger rules without sufficient evidence (1 ms)
+      ÔêÜ should explain rule triggering
+      ÔêÜ should match action priority to rule severity (1 ms)
+      ÔêÜ should calculate nervous system load accurately
+      ÔêÜ should assess injury risk based on multiple factors
+      ÔêÜ should correlate injury risk with training readiness (1 ms)
+      ÔêÜ should adjust recommendations based on sleep quality (1 ms)
+      ÔêÜ should track all triggered rules
+      ÔêÜ should provide expected benefits for action
+      ├ù should suggest action duration when applicable (2 ms)
+    Proactive Alert Generation
+      ÔêÜ should generate proactive alerts (1 ms)
+      ÔêÜ should structure alerts correctly
+      ÔêÜ should have valid alert types (1 ms)
+      ÔêÜ should have valid severity levels
+      ÔêÜ should include context in alerts (1 ms)
+      ÔêÜ should provide recommended action for each alert
+      ÔêÜ should specify delivery channels (1 ms)
+      ÔêÜ should set expiration time for alerts
+      ÔêÜ should have meaningful titles and messages (1 ms)
+      ÔêÜ should match alert severity to content
+      ÔêÜ should generate unique alert IDs
+      ÔêÜ should timestamp alerts correctly
+    Training Plan Adjustments
+      ÔêÜ should generate training adjustments (1 ms)
+      ÔêÜ should structure adjustments correctly
+      ÔêÜ should include adjustment rationale
+      ÔêÜ should adjust intensity appropriately (1 ms)
+      ÔêÜ should provide confidence for adjustments
+      ÔêÜ should have adjustment acceptance tracking (1 ms)
+      ÔêÜ should track adjustment history
+      ÔêÜ should maintain adjustment date validity (1 ms)
+    Nervous System Monitoring
+      ÔêÜ should generate nervous system report (1 ms)
+      ÔêÜ should calculate valid average load
+      ÔêÜ should determine trend direction (1 ms)
+      ÔêÜ should count critical days
+      ÔêÜ should assess recovery need (1 ms)
+      ÔêÜ should provide personalized recommendations (1 ms)
+      ÔêÜ should handle different time periods (1 ms)
+      ÔêÜ should match recommendations to status
+    Decision History & Tracking
+      ÔêÜ should retrieve decision history (1 ms)
+      ÔêÜ should structure history entries correctly (11 ms)
+      ÔêÜ should support limit parameter (1 ms)
+      ÔêÜ should support days parameter (1 ms)
+      ÔêÜ should track decision feedback
+    Action Recommendations
+      ÔêÜ should generate action recommendation
+      ÔêÜ should have valid action types
+      ÔêÜ should have valid intensity levels (1 ms)
+      ÔêÜ should provide clear action description
+      ÔêÜ should explain expected benefits (1 ms)
+      ÔêÜ should have confidence score
+    Error Handling & Edge Cases
+      ÔêÜ should handle invalid user ID gracefully (1 ms)
+      ÔêÜ should handle invalid date format
+      ÔêÜ should handle extreme biometric values
+      ÔêÜ should handle concurrent requests (1 ms)
+      ÔêÜ should maintain data integrity across operations
+      ÔêÜ should handle empty decision history (1 ms)
+      ÔêÜ should handle zero critical days
+      ÔêÜ should close service without errors (1 ms)
+    Integration & End-to-End
+      ├ù should complete full bio-feedback loop (19 ms)
+      ├ù should correlate bio state with alerts (5 ms)
+      ├ù should correlate bio state with adjustments (5 ms)
+      ├ù should track decisions in history (3 ms)
+      ├ù should provide consistent recommendations across calls (11 ms)
+      ├ù should maintain data consistency in database (3 ms)
+      ├ù should handle complete user journey (4 ms)
+    Database Persistence
+      ├ù should create required tables on initialization (4 ms)
+      ├ù should persist decisions (3 ms)
+      ├ù should persist alerts (10 ms)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Decision Rules & Rule Triggering ÔÇ║ should suggest action duration when applicable
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /\d+\s*(day|hour|minute|min)/i
+    Received string:  "1 d├¡a"
+
+      307 |
+      308 |       if (recommendation.duration) {
+    > 309 |         expect(recommendation.duration).toMatch(/\d+\s*(day|hour|minute|min)/i);
+          |                                         ^
+      310 |       }
+      311 |     });
+      312 |   });
+
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:309:41)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should complete full bio-feedback loop
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:801:40)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should correlate bio state with alerts
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:823:40)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should correlate bio state with adjustments
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:833:40)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should track decisions in history
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:844:21)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should provide consistent recommendations across calls
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at CoachVitalisService.getRecommendedAction (src/services/coachVitalisService.ts:242:35)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:853:34)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should maintain data consistency in database
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:864:35)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Integration & End-to-End ÔÇ║ should handle complete user journey
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:878:40)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Database Persistence ÔÇ║ should create required tables on initialization
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:908:40)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Database Persistence ÔÇ║ should persist decisions
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:918:21)
+
+  ÔùÅ CoachVitalisService ÔÇ║ Database Persistence ÔÇ║ should persist alerts
+
+    Database not initialized
+
+      179 |   ): Promise<BioStateEvaluation> {
+      180 |     try {
+    > 181 |       if (!this.db) throw new Error('Database not initialized');
+          |                           ^
+      182 |
+      183 |       const evalDate = date || new Date().toISOString().split('T')[0];
+      184 |       const bioData = this.getBioMetricData(userId, evalDate);
+
+      at CoachVitalisService.evaluateBioState (src/services/coachVitalisService.ts:181:27)
+      at CoachVitalisService.generateProactiveAlerts (src/services/coachVitalisService.ts:272:35)
+      at Object.<anonymous> (src/services/__tests__/coachVitalis.test.ts:931:36)
+
+Test Suites: 1 failed, 1 total
+Tests:       11 failed, 76 passed, 87 total
+Snapshots:   0 total
+Time:        12.62 s, estimated 13 s
+Ran all test suites matching coachVitalis.test.ts.

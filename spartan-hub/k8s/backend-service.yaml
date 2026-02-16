@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: spartan-hub
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 80
+    targetPort: 3001
+    name: http
+  type: ClusterIP

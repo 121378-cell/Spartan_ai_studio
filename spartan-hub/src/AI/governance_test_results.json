@@ -1,0 +1,142 @@
+[
+  {
+    "model": "mistral",
+    "scenario": "Pol\u00edtica de Seguridad",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "mistral",
+    "scenario": "Validaci\u00f3n de Datos",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "mistral",
+    "scenario": "Cumplimiento GDPR",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "mistral",
+    "scenario": "Gesti\u00f3n de Recursos",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "mistral",
+    "scenario": "Decisiones de Entrenamiento",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "llama2",
+    "scenario": "Pol\u00edtica de Seguridad",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "llama2",
+    "scenario": "Validaci\u00f3n de Datos",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "llama2",
+    "scenario": "Cumplimiento GDPR",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "llama2",
+    "scenario": "Gesti\u00f3n de Recursos",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "llama2",
+    "scenario": "Decisiones de Entrenamiento",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "codellama",
+    "scenario": "Pol\u00edtica de Seguridad",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "codellama",
+    "scenario": "Validaci\u00f3n de Datos",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "codellama",
+    "scenario": "Cumplimiento GDPR",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "codellama",
+    "scenario": "Gesti\u00f3n de Recursos",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "codellama",
+    "scenario": "Decisiones de Entrenamiento",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "orca-mini",
+    "scenario": "Pol\u00edtica de Seguridad",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "orca-mini",
+    "scenario": "Validaci\u00f3n de Datos",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "orca-mini",
+    "scenario": "Cumplimiento GDPR",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "orca-mini",
+    "scenario": "Gesti\u00f3n de Recursos",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  },
+  {
+    "model": "orca-mini",
+    "scenario": "Decisiones de Entrenamiento",
+    "error": "'response'",
+    "coverage": 0,
+    "response_time": -1
+  }
+]

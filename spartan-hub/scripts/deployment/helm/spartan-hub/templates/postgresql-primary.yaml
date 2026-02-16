@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "spartan-hub.fullname" . }}-postgres-primary
+  labels:
+    {{- include "spartan-hub.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.postgresql.service.port }}
+      targetPort: postgres
+      protocol: TCP
+      name: postgres
+  selector:
+    {{- include "spartan-hub.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: primary
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "spartan-hub.fullname" . }}-postgres-primary
+  labels:
+    {{- include "spartan-hub.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: primary
+spec:
+  serviceName: {{ include "spartan-hub.fullname" . }}-postgres-primary
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "spartan-hub.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: primary
+  template:
+    metadata:
+      labels:
+        {{- include "spartan-hub.labels" . | nindent 8 }}
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: primary
+    spec:
+      terminationGracePeriodSeconds: 30
+      initContainers:
+      {{- if .Values.postgresql.initContainers }}
+      {{- toYaml .Values.postgresql.initContainers | nindent 6 }}
+      {{- end }}
+      containers:
+      - name: postgres
+        image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+        imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.postgresql.service.port }}
+          name: postgres
+          protocol: TCP
+        env:
+        {{- if .Values.postgresql.primary.env }}
+        {{- range $key, $value := .Values.postgresql.primary.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "spartan-hub.secretName" . }}
+              key: postgres-password
+        - name: POSTGRES_REPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "spartan-hub.secretName" . }}
+              key: postgres-replication-password
+        command:
+        - postgres
+        - -c
+        - wal_level=replica
+        - -c
+        - max_wal_senders=3
+        - -c
+        - wal_keep_segments=10
+        - -c
+        - shared_preload_libraries=pg_stat_statements
+        volumeMounts:
+        - name: postgres-primary-data
+          mountPath: /var/lib/postgresql/data
+        {{- if .Values.postgresql.extraVolumeMounts }}
+        {{- toYaml .Values.postgresql.extraVolumeMounts | nindent 8 }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.postgresql.primary.resources | nindent 10 }}
+        livenessProbe:
+          {{- toYaml .Values.postgresql.primary.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.postgresql.primary.readinessProbe | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.postgresql.primary.securityContext | nindent 10 }}
+      volumes:
+      {{- if .Values.postgresql.extraVolumes }}
+      {{- toYaml .Values.postgresql.extraVolumes | nindent 6 }}
+      {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-primary-data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: {{ .Values.postgresql.storage.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.postgresql.storage.size }}

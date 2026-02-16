@@ -1,0 +1,344 @@
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ­ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ­ƒùé´©Å backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.warn
+    Could not remove existing test database, continuing with setup
+
+    [0m [90m 38 |[39m         } [36mcatch[39m (renameError) {
+     [90m 39 |[39m           [90m// If we can't remove it, continue anyway[39m
+    [31m[1m>[22m[39m[90m 40 |[39m           console[33m.[39mwarn([32m'Could not remove existing test database, continuing with setup'[39m)[33m;[39m
+     [90m    |[39m                   [31m[1m^[22m[39m
+     [90m 41 |[39m         }
+     [90m 42 |[39m       }
+     [90m 43 |[39m     }[0m
+
+      at TestDatabaseManager.setupTestDatabase (src/__tests__/testDatabaseManager.ts:40:19)
+      at Object.<anonymous> (src/__tests__/setup.ts:10:23)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.info
+    Not all input has been taken into account at your final specification.
+
+      at build (node_modules/swagger-jsdoc/src/specification.js:309:15)
+
+  console.error
+    Here's the report: 
+    
+    
+     Error in ./src/routes/healthRoutes.ts :
+    YAMLSyntaxError: All collection items must start at the same column at line 58, column 15:
+    
+                  success: false
+                  ^^^^^^^^^^^^^^ÔÇª
+    
+    YAMLSemanticError: Implicit map keys need to be followed by map values at line 59, column 34:
+    
+                  message: 'Service 'database' not found'
+                                     ^^^^^^^^^^^^^^^^^^^^
+
+    [0m [90m 262 |[39m }[33m;[39m
+     [90m 263 |[39m
+    [31m[1m>[22m[39m[90m 264 |[39m [36mexport[39m [36mconst[39m swaggerSpec [33m=[39m swaggerJsdoc(swaggerOptions)[33m;[39m
+     [90m     |[39m                                        [31m[1m^[22m[39m
+     [90m 265 |[39m [36mexport[39m [36mdefault[39m swaggerSpec[33m;[39m
+     [90m 266 |[39m[0m
+
+      at build (node_modules/swagger-jsdoc/src/specification.js:313:15)
+      at module.exports (node_modules/swagger-jsdoc/src/lib.js:32:10)
+      at Object.<anonymous> (src/config/swagger.config.ts:264:40)
+      at Object.<anonymous> (src/server.ts:10:1)
+      at Object.<anonymous> (src/__tests__/tokenController.test.ts:3:1)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒôí add observability to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒùé´©Å backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+2026-01-12T18:01:24.835Z [ERROR] [spartan-hub-backend] Could not find static files directory
+  console.warn
+    Could not remove existing test database, continuing with setup
+
+    [0m [90m 38 |[39m         } [36mcatch[39m (renameError) {
+     [90m 39 |[39m           [90m// If we can't remove it, continue anyway[39m
+    [31m[1m>[22m[39m[90m 40 |[39m           console[33m.[39mwarn([32m'Could not remove existing test database, continuing with setup'[39m)[33m;[39m
+     [90m    |[39m                   [31m[1m^[22m[39m
+     [90m 41 |[39m         }
+     [90m 42 |[39m       }
+     [90m 43 |[39m     }[0m
+
+      at TestDatabaseManager.setupTestDatabase (src/__tests__/testDatabaseManager.ts:40:19)
+      at Object.<anonymous> (src/__tests__/setup.ts:10:23)
+
+2026-01-12T18:01:24.939Z [ERROR] [spartan-hub-backend] Token refresh error {"error":{}}
+2026-01-12T18:01:24.946Z [ERROR] [spartan-hub-backend] Token refresh error {"error":{}}
+2026-01-12T18:01:24.976Z [ERROR] [spartan-hub-backend] Token refresh error {"error":{}}
+2026-01-12T18:01:25.050Z [ERROR] [spartan-hub-backend] Token refresh error {"error":{}}
+  console.warn
+    Could not clean up test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan.db
+
+    [0m [90m 213 |[39m           } [36mcatch[39m (renameError) {
+     [90m 214 |[39m             [90m// Log but don't fail the test[39m
+    [31m[1m>[22m[39m[90m 215 |[39m             console[33m.[39mwarn([32m'Could not clean up test database file:'[39m[33m,[39m [36mthis[39m[33m.[39mtestDbPath)[33m;[39m
+     [90m     |[39m                     [31m[1m^[22m[39m
+     [90m 216 |[39m           }
+     [90m 217 |[39m         }
+     [90m 218 |[39m       }[0m
+
+      at TestDatabaseManager.cleanupTestDatabase (src/__tests__/testDatabaseManager.ts:215:21)
+      at Object.<anonymous> (src/__tests__/setup.ts:17:3)
+
+FAIL src/__tests__/tokenController.test.ts
+  Token Controller Tests
+    POST /tokens/refresh
+      ÔêÜ should successfully refresh tokens with valid refresh token (83 ms)
+      ÔêÜ should return 401 when no refresh token provided (7 ms)
+      ÔêÜ should return 401 when refresh token is invalid (5 ms)
+      ÔêÜ should return 401 when refresh token is expired (7 ms)
+      ÔêÜ should set new secure cookies on success (7 ms)
+      ÔêÜ should invalidate old refresh token after rotation (6 ms)
+      ÔêÜ should prevent replay attacks by rejecting used refresh token (16 ms)
+    POST /tokens/logout
+      ├ù should successfully logout and revoke all user tokens (9 ms)
+      ├ù should clear cookies on logout (6 ms)
+      ÔêÜ should return success even if no user authenticated (4 ms)
+      ├ù should revoke all refresh tokens for the user (6 ms)
+    POST /tokens/revoke
+      ├ù should successfully revoke specific token (18 ms)
+      ├ù should return 400 when no token provided (5 ms)
+      ├ù should handle revocation errors gracefully (6 ms)
+      ÔêÜ should not revoke tokens of other users (5 ms)
+    Token Security
+      ÔêÜ should require authentication for logout endpoint (3 ms)
+      ÔêÜ should require authentication for revoke endpoint (4 ms)
+      ÔêÜ should not accept access token in refresh endpoint (5 ms)
+
+  ÔùÅ Token Controller Tests ÔÇ║ POST /tokens/logout ÔÇ║ should successfully logout and revoke all user tokens
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      158 |                 .set('Cookie', [`access_token=${tokenPair.accessToken}`]);
+      159 |
+    > 160 |             expect(res.status).toBe(200);
+          |                                ^
+      161 |             expect(res.body.success).toBe(true);
+      162 |             expect(res.body.message).toBe('Logged out successfully');
+      163 |         });
+
+      at Object.<anonymous> (src/__tests__/tokenController.test.ts:160:32)
+
+  ÔùÅ Token Controller Tests ÔÇ║ POST /tokens/logout ÔÇ║ should clear cookies on logout
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      173 |
+      174 |             // Verify cookies are cleared
+    > 175 |             expect(cookies).toBeDefined();
+          |                             ^
+      176 |             expect(Array.isArray(cookies) && cookies.some((c: string) => c.includes('access_token=;'))).toBe(true);
+      177 |             expect(Array.isArray(cookies) && cookies.some((c: string) => c.includes('refresh_token=;'))).toBe(true);
+      178 |         });
+
+      at Object.<anonymous> (src/__tests__/tokenController.test.ts:175:29)
+
+  ÔùÅ Token Controller Tests ÔÇ║ POST /tokens/logout ÔÇ║ should revoke all refresh tokens for the user
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      201 |             const token2Record = await RefreshTokenModel.findByToken(tokenPair2.refreshToken);
+      202 |
+    > 203 |             expect(token1Record?.isActive).toBe(false);
+          |                                            ^
+      204 |             expect(token2Record?.isActive).toBe(false);
+      205 |         });
+      206 |     });
+
+      at Object.<anonymous> (src/__tests__/tokenController.test.ts:203:44)
+
+  ÔùÅ Token Controller Tests ÔÇ║ POST /tokens/revoke ÔÇ║ should successfully revoke specific token
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      215 |                 .send({ token: tokenPair.refreshToken });
+      216 |
+    > 217 |             expect(res.status).toBe(200);
+          |                                ^
+      218 |             expect(res.body.success).toBe(true);
+      219 |             expect(res.body.message).toBe('Token revoked successfully');
+      220 |
+
+      at Object.<anonymous> (src/__tests__/tokenController.test.ts:217:32)
+
+  ÔùÅ Token Controller Tests ÔÇ║ POST /tokens/revoke ÔÇ║ should return 400 when no token provided
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 401
+
+      232 |                 .send({});
+      233 |
+    > 234 |             expect(res.status).toBe(400);
+          |                                ^
+      235 |             expect(res.body.success).toBe(false);
+      236 |             expect(res.body.message).toBe('Token is required');
+      237 |         });
+
+      at Object.<anonymous> (src/__tests__/tokenController.test.ts:234:32)
+
+  ÔùÅ Token Controller Tests ÔÇ║ POST /tokens/revoke ÔÇ║ should handle revocation errors gracefully
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value: 401
+    Received array: [200, 500]
+
+      246 |
+      247 |             // Should return 500 or handle gracefully
+    > 248 |             expect([200, 500]).toContain(res.status);
+          |                                ^
+      249 |         });
+      250 |
+      251 |         it('should not revoke tokens of other users', async () => {
+
+      at Object.<anonymous> (src/__tests__/tokenController.test.ts:248:32)
+
+  console.warn
+    Could not clean up test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan.db
+
+    [0m [90m 213 |[39m           } [36mcatch[39m (renameError) {
+     [90m 214 |[39m             [90m// Log but don't fail the test[39m
+    [31m[1m>[22m[39m[90m 215 |[39m             console[33m.[39mwarn([32m'Could not clean up test database file:'[39m[33m,[39m [36mthis[39m[33m.[39mtestDbPath)[33m;[39m
+     [90m     |[39m                     [31m[1m^[22m[39m
+     [90m 216 |[39m           }
+     [90m 217 |[39m         }
+     [90m 218 |[39m       }[0m
+
+      at TestDatabaseManager.cleanupTestDatabase (src/__tests__/testDatabaseManager.ts:215:21)
+      at Object.<anonymous> (src/__tests__/setup.ts:17:3)
+
+FAIL src/__tests__/tokenService.test.ts
+  TokenService Tests
+    Token Generation
+      ÔêÜ should generate valid access token with correct payload (15 ms)
+      ÔêÜ should generate access token that expires in 15 minutes (3 ms)
+      ÔêÜ should generate valid refresh token with database persistence (2 ms)
+      ÔêÜ should generate refresh token that expires in 7 days (2 ms)
+      ÔêÜ should generate token pair with matching session IDs (2 ms)
+      ÔêÜ should generate unique JWT IDs for each token (2 ms)
+    Access Token Verification
+      ├ù should verify valid access token (3 ms)
+      ÔêÜ should reject invalid access token signature (4 ms)
+      ÔêÜ should reject expired access token (8 ms)
+      ÔêÜ should reject refresh token when verifying access token (type mismatch) (1 ms)
+      ├ù should reject access token with inactive session (1 ms)
+      ÔêÜ should reject access token with no session (2 ms)
+    Refresh Token Verification
+      ÔêÜ should verify valid refresh token (2 ms)
+      ÔêÜ should reject access token when verifying refresh token (type mismatch) (1 ms)
+      ÔêÜ should reject inactive refresh token (1 ms)
+      ÔêÜ should reject expired refresh token (1118 ms)
+      ÔêÜ should reject refresh token not in database (2 ms)
+    Token Rotation
+      ÔêÜ should successfully rotate refresh token (3 ms)
+      ÔêÜ should deactivate old refresh token after rotation (2 ms)
+      ÔêÜ should reject rotation with invalid refresh token (1 ms)
+      ÔêÜ should reject rotation with already used refresh token (2 ms)
+    Token Revocation
+      ÔêÜ should revoke specific refresh token (1 ms)
+      ÔêÜ should revoke all user tokens (1 ms)
+      ÔêÜ should verify revoked tokens cannot be used (2 ms)
+      ÔêÜ should not affect other users tokens when revoking (2 ms)
+    Cookie Management
+      ÔêÜ should set secure cookies with correct flags (5 ms)
+      ÔêÜ should clear cookies properly (2 ms)
+
+  ÔùÅ TokenService Tests ÔÇ║ Access Token Verification ÔÇ║ should verify valid access token
+
+    SqliteError: FOREIGN KEY constraint failed
+
+      282 |     `);
+      283 |
+    > 284 |     stmt?.run(
+          |           ^
+      285 |       sessionData.id, sessionData.userId, sessionData.token, sessionData.userAgent,
+      286 |       sessionData.ipAddress, sessionData.createdAt.toISOString(), sessionData.expiresAt.toISOString(),
+      287 |       sessionData.lastActivityAt.toISOString(), sessionData.isActive ? 1 : 0
+
+      at Object.createSession (src/services/sqliteDatabaseService.ts:284:11)
+      at Function.create (src/models/Session.ts:29:18)
+      at Object.<anonymous> (src/__tests__/tokenService.test.ts:134:32)
+
+  ÔùÅ TokenService Tests ÔÇ║ Access Token Verification ÔÇ║ should reject access token with inactive session
+
+    SqliteError: FOREIGN KEY constraint failed
+
+      282 |     `);
+      283 |
+    > 284 |     stmt?.run(
+          |           ^
+      285 |       sessionData.id, sessionData.userId, sessionData.token, sessionData.userAgent,
+      286 |       sessionData.ipAddress, sessionData.createdAt.toISOString(), sessionData.expiresAt.toISOString(),
+      287 |       sessionData.lastActivityAt.toISOString(), sessionData.isActive ? 1 : 0
+
+      at Object.createSession (src/services/sqliteDatabaseService.ts:284:11)
+      at Function.create (src/models/Session.ts:29:18)
+      at Object.<anonymous> (src/__tests__/tokenService.test.ts:182:48)
+
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+Test Suites: 2 failed, 2 total
+Tests:       8 failed, 37 passed, 45 total
+Snapshots:   0 total
+Time:        5.857 s, estimated 7 s
+Ran all test suites matching src/__tests__/tokenController.test.ts|src/__tests__/tokenService.test.ts.

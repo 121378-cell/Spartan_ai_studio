@@ -1,0 +1,212 @@
+{
+  "monitoring": {
+    "interval": 60000,
+    "enabled": true,
+    "checks": {
+      "database": true,
+      "validation": true,
+      "tests": true
+    },
+    "logLevel": "info",
+    "retention": {
+      "logs": 7,
+      "metrics": 30,
+      "reports": 90
+    }
+  },
+  "alerts": {
+    "email": {
+      "enabled": false,
+      "smtp": {
+        "host": "smtp.gmail.com",
+        "port": 587,
+        "secure": false,
+        "auth": {
+          "user": "",
+          "pass": ""
+        }
+      },
+      "recipients": [
+        "admin@spartanhub.com",
+        "devops@spartanhub.com"
+      ],
+      "templates": {
+        "subject": "🚨 Alerta de Sistema Spartan Hub - {severity}",
+        "from": "monitoring@spartanhub.com"
+      }
+    },
+    "slack": {
+      "enabled": false,
+      "webhook": "",
+      "channel": "#alerts",
+      "username": "SpartanHub-Monitor",
+      "icon_emoji": ":warning:"
+    },
+    "thresholds": {
+      "errorRate": 0.05,
+      "responseTime": 5000,
+      "testFailureRate": 0.1,
+      "foreignKeyViolations": 1,
+      "validationErrors": 10,
+      "testTimeouts": 5
+    },
+    "escalation": {
+      "enabled": true,
+      "levels": [
+        {
+          "severity": "low",
+          "delay": 300000,
+          "channels": ["email"]
+        },
+        {
+          "severity": "medium",
+          "delay": 180000,
+          "channels": ["email", "slack"]
+        },
+        {
+          "severity": "high",
+          "delay": 60000,
+          "channels": ["email", "slack", "sms"]
+        },
+        {
+          "severity": "critical",
+          "delay": 0,
+          "channels": ["email", "slack", "sms", "phone"]
+        }
+      ]
+    }
+  },
+  "metrics": {
+    "collectionInterval": 300000,
+    "enabled": true,
+    "types": [
+      "error_rate",
+      "response_time",
+      "test_failures",
+      "foreign_key_violations",
+      "validation_errors",
+      "test_execution_time"
+    ],
+    "aggregation": {
+      "window": 3600000,
+      "granularity": 60000
+    }
+  },
+  "database": {
+    "monitoring": {
+      "enabled": true,
+      "checkInterval": 30000,
+      "queryTimeout": 10000,
+      "connectionTimeout": 5000
+    },
+    "alerts": {
+      "connectionFailures": true,
+      "slowQueries": true,
+      "foreignKeys": true,
+      "deadlocks": true
+    }
+  },
+  "validation": {
+    "monitoring": {
+      "enabled": true,
+      "checkInterval": 60000,
+      "sampleSize": 100
+    },
+    "standards": {
+      "messageLength": {
+        "min": 10,
+        "max": 200
+      },
+      "messageFormat": {
+        "startsWithField": true,
+        "endsWithDescription": true,
+        "noTechnicalTerms": true
+      },
+      "allowedPatterns": [
+        "must be",
+        "should be",
+        "cannot be",
+        "is required"
+      ],
+      "forbiddenPatterns": [
+        "String must",
+        "Invalid",
+        "Expected",
+        "Error"
+      ]
+    }
+  },
+  "tests": {
+    "monitoring": {
+      "enabled": true,
+      "checkInterval": 120000,
+      "testTimeout": 30000
+    },
+    "standards": {
+      "isolation": true,
+      "mocking": true,
+      "coverage": {
+        "minimum": 80,
+        "branches": 70,
+        "functions": 85,
+        "lines": 90
+      },
+      "executionTime": {
+        "unit": 5000,
+        "integration": 15000,
+        "e2e": 60000
+      }
+    },
+    "checks": {
+      "environment": true,
+      "mocks": true,
+      "dataCleanup": true,
+      "timeoutConfiguration": true
+    }
+  },
+  "reporting": {
+    "enabled": true,
+    "formats": ["json", "html", "csv"],
+    "schedules": {
+      "daily": "02:00",
+      "weekly": "01:00",
+      "monthly": "00:00"
+    },
+    "recipients": {
+      "daily": ["dev-team@spartanhub.com"],
+      "weekly": ["management@spartanhub.com"],
+      "monthly": ["executives@spartanhub.com"]
+    }
+  },
+  "integration": {
+    "grafana": {
+      "enabled": false,
+      "url": "",
+      "apiKey": "",
+      "dashboardId": ""
+    },
+    "prometheus": {
+      "enabled": false,
+      "url": "",
+      "jobName": "spartan-hub"
+    },
+    "datadog": {
+      "enabled": false,
+      "apiKey": "",
+      "applicationKey": "",
+      "site": "datadoghq.com"
+    }
+  },
+  "security": {
+    "encryption": {
+      "enabled": true,
+      "algorithm": "aes-256-gcm",
+      "keyRotation": "monthly"
+    },
+    "accessControl": {
+      "enabled": true,
+      "roles": ["admin", "developer", "viewer"],
+      "auditLogging": true
+    }
+  }
+}

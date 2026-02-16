@@ -1,0 +1,32 @@
+apiVersion: v2
+name: spartan-hub
+description: A Helm chart for Spartan Hub Fitness Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - fitness
+  - coaching
+  - ai
+  - microservices
+home: https://github.com/your-org/spartan-hub
+maintainers:
+  - name: Spartan Hub Team
+    email: team@spartan-hub.com
+dependencies:
+  - name: postgresql
+    version: "~12.1.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: nginx-ingress
+    version: "~0.10.0"
+    repository: "https://helm.nginx.com/stable"
+    condition: nginx-ingress.enabled
+  - name: prometheus
+    version: "~15.0.0"
+    repository: "https://prometheus-community.github.io/helm-charts"
+    condition: monitoring.prometheus.enabled
+  - name: grafana
+    version: "~6.50.0"
+    repository: "https://grafana.github.io/helm-charts"
+    condition: monitoring.grafana.enabled

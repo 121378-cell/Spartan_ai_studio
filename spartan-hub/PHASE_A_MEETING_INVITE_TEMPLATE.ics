@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Spartan Hub//Phase A Kickoff//EN
+METHOD:REQUEST
+BEGIN:VEVENT
+UID:phase-a-kickoff-meeting-2026@sparthanhub.com
+DTSTAMP:20260130T120000Z
+DTSTART:20260203T150000Z
+DTEND:20260203T170000Z
+SUMMARY:Spartan Hub - Phase A Video Form Analysis Kickoff Meeting
+DESCRIPTION:Phase A MVP completion review and next steps planning.\n\nAgenda:\n1. MVP Demo and Status Review (25 min)\n2. Testing & Quality Assurance (15 min)\n3. Deployment Planning (20 min)\n4. Resource Allocation (10 min)\n5. Next Steps & Action Items (10 min)\n\nPreparation required: Review implementation documentation\n\nMeeting materials: Available in project shared drive
+LOCATION:Microsoft Teams/Zoom
+STATUS:CONFIRMED
+SEQUENCE:0
+ORGANIZER;CN=Project Lead:mailto:project-lead@spartanhub.com
+ATTENDEE;CN=Frontend Developer;ROLE=REQ-PARTICIPANT:mailto:frontend-dev@spartanhub.com
+ATTENDEE;CN=Backend Developer;ROLE=REQ-PARTICIPANT:mailto:backend-dev@spartanhub.com
+ATTENDEE;CN=QA Engineer;ROLE=REQ-PARTICIPANT:mailto:qa-engineer@spartanhub.com
+ATTENDEE;CN=DevOps Engineer;ROLE=REQ-PARTICIPANT:mailto:devops@spartanhub.com
+ATTENDEE;CN=UX Designer;ROLE=REQ-PARTICIPANT:mailto:ux-designer@spartanhub.com
+END:VEVENT
+END:VCALENDAR

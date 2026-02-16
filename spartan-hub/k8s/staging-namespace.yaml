@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spartan-hub-staging
+  labels:
+    environment: staging
+    phase: 2
+    managed-by: terraform
+
+---
+# Resource quotas for staging environment
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: staging-quota
+  namespace: spartan-hub-staging
+spec:
+  hard:
+    requests.cpu: "8"
+    requests.memory: "16Gi"
+    limits.cpu: "16"
+    limits.memory: "32Gi"
+    pods: "50"
+
+---
+# Network policy for staging
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: staging-network-policy
+  namespace: spartan-hub-staging
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: spartan-hub-staging
+    - podSelector:
+        matchLabels:
+          app: backend
+  egress:
+  - to:
+    - namespaceSelector: {}

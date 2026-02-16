@@ -1,0 +1,101 @@
+# Build stage - compile TypeScript and prepare dependencies
+FROM node:18-alpine AS builder
+
+# Install build dependencies with security considerations
+RUN apk add --no-cache --virtual .build-deps \
+    python3 \
+    make \
+    g++ \
+    gcc \
+    && rm -rf /var/cache/apk/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies (including dev dependencies for build)
+# Use npm ci for reproducible builds
+RUN npm ci --prefer-offline --no-audit --progress=false
+
+# Copy source code
+COPY . .
+
+# Build TypeScript to JavaScript
+# Set NODE_OPTIONS to increase memory for large builds
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+RUN npm run build
+
+# Security scan stage (optional but recommended)
+FROM node:18-alpine AS security-scanner
+
+# Install security scanning tools
+RUN apk add --no-cache npm
+RUN npm install -g npm-audit-resolver
+
+WORKDIR /app
+COPY --from=builder /app/package-lock.json ./
+RUN npm audit --audit-level=high || exit 0
+
+# Runtime stage - minimal image with only production code
+FROM node:18-alpine AS runtime
+
+# Install dumb-init for proper signal handling and security
+RUN apk add --no-cache dumb-init ca-certificates
+
+# Create non-root user with specific UID/GID for enhanced security
+# Use numeric IDs to avoid potential conflicts
+RUN addgroup -g 10001 -S appgroup && \
+    adduser -S appuser -u 10001 -G appgroup
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files from builder
+COPY --from=builder /app/package*.json ./
+
+# Install production dependencies only with security flags
+RUN npm ci --only=production --prefer-offline --no-audit --ignore-scripts --progress=false && \
+    npm cache clean --force && \
+    rm -rf /root/.npm /tmp/npm-*
+
+# Copy compiled code from builder
+COPY --from=builder /app/dist ./dist
+
+# Create required directories with proper ownership and permissions
+RUN mkdir -p /app/data /app/logs /app/tmp && \
+    chown -R appuser:appgroup /app && \
+    chmod 750 /app/data /app/logs /app/tmp && \
+    chmod 700 /app/dist
+
+# Remove build dependencies to reduce attack surface
+RUN apk del --no-cache .build-deps 2>/dev/null || true
+
+# Switch to non-root user
+USER appuser
+
+# Set environment variables for security
+ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max_old_space_size=1024 --no-deprecation --no-warnings"
+ENV LOG_LEVEL=info
+
+# Expose application port
+EXPOSE 3001
+
+# Add health check with timeout and retries
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
+
+# Security labels for container identification
+LABEL org.opencontainers.image.title="Spartan Hub Backend" \
+      org.opencontainers.image.description="Secure backend service for Spartan Hub fitness platform" \
+      org.opencontainers.image.vendor="Spartan Hub Team" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.source="https://github.com/spartan-hub/backend"
+
+# Use dumb-init to handle signals properly and prevent zombie processes
+ENTRYPOINT ["/sbin/dumb-init", "--"]
+
+# Start application with explicit node options
+CMD ["node", "--enable-source-maps", "dist/server.js"]

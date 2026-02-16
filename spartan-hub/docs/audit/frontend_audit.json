@@ -1,0 +1,52 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "pkg": {
+      "name": "pkg",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1096454,
+          "name": "pkg",
+          "dependency": "pkg",
+          "title": "Pkg Local Privilege Escalation",
+          "url": "https://github.com/advisories/GHSA-22r3-9w55-cj54",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-276"
+          ],
+          "cvss": {
+            "score": 6.6,
+            "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:N"
+          },
+          "range": "<=5.8.1"
+        }
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/pkg"
+      ],
+      "fixAvailable": false
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 0,
+      "critical": 0,
+      "total": 1
+    },
+    "dependencies": {
+      "prod": 169,
+      "dev": 696,
+      "optional": 75,
+      "peer": 8,
+      "peerOptional": 0,
+      "total": 865
+    }
+  }
+}

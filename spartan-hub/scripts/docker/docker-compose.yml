@@ -1,0 +1,414 @@
+version: '3.8'
+
+x-logging: &default-logging
+  options:
+    max-size: "10m"
+    max-file: "5"
+  driver: json-file
+
+services:
+  # Local development reverse proxy
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.local
+    container_name: nginx_proxy
+    ports:
+      - "127.0.0.1:80:80"
+    networks:
+      - synergycoach_net
+    depends_on:
+      - synergycoach_backend_1
+      - synergycoach_backend_2
+      - ai_microservice
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # PostgreSQL Primary Database
+  postgres-primary:
+    image: postgres:16
+    container_name: postgres_primary
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      - POSTGRES_DB=spartan_fitness
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+      - POSTGRES_REPLICATION_USER=replicator
+      - POSTGRES_REPLICATION_PASSWORD_FILE=/run/secrets/postgres_replication_password
+    command: >
+      postgres 
+      -c wal_level=replica
+      -c max_wal_senders=3
+      -c wal_keep_segments=10
+      -c shared_preload_libraries=pg_stat_statements
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+      - ./postgresql/primary_init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    secrets:
+      - postgres_password
+      - postgres_replication_password
+    networks:
+      - synergycoach_net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spartan_user -d spartan_fitness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # PostgreSQL Read Replica 1
+  postgres-replica-1:
+    image: postgres:16
+    container_name: postgres_replica_1
+    ports:
+      - "127.0.0.1:5434:5432"
+    environment:
+      - POSTGRES_DB=spartan_fitness
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_REPLICATION_USER=replicator
+      - POSTGRES_REPLICATION_PASSWORD_FILE=/run/secrets/postgres_replication_password
+      - PRIMARY_HOST=postgres-primary
+    command: >
+      bash -c "
+      set -e &&
+      if [ ! -f /var/lib/postgresql/data/PG_VERSION ]; then
+        echo 'Initializing replica...' &&
+        rm -rf /var/lib/postgresql/data/* &&
+        pg_basebackup -h $$PRIMARY_HOST -D /var/lib/postgresql/data -U replicator -v -P --wal-method=stream &&
+        echo 'standby_mode = on' > /var/lib/postgresql/data/standby.signal &&
+        echo "primary_conninfo = 'host=$$PRIMARY_HOST port=5432 user=replicator password=`cat /run/secrets/postgres_replication_password`'" > /var/lib/postgresql/data/postgresql.auto.conf
+        echo 'host all all 0.0.0.0/0 md5' >> /var/lib/postgresql/data/pg_hba.conf
+      fi &&
+      exec postgres -c shared_preload_libraries=pg_stat_statements
+      "
+    volumes:
+      - postgres_replica_1_data:/var/lib/postgresql/data
+    networks:
+      - synergycoach_net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+
+  # PostgreSQL Read Replica 2
+  postgres-replica-2:
+    image: postgres:16
+    container_name: postgres_replica_2
+    ports:
+      - "127.0.0.1:5435:5432"
+    environment:
+      - POSTGRES_DB=spartan_fitness
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_REPLICATION_USER=replicator
+      - POSTGRES_REPLICATION_PASSWORD_FILE=/run/secrets/postgres_replication_password
+      - PRIMARY_HOST=postgres-primary
+    command: >
+      bash -c "
+      set -e &&
+      if [ ! -f /var/lib/postgresql/data/PG_VERSION ]; then
+        echo 'Initializing replica...' &&
+        rm -rf /var/lib/postgresql/data/* &&
+        pg_basebackup -h $$PRIMARY_HOST -D /var/lib/postgresql/data -U replicator -v -P --wal-method=stream &&
+        echo 'standby_mode = on' > /var/lib/postgresql/data/standby.signal &&
+        echo "primary_conninfo = 'host=$$PRIMARY_HOST port=5432 user=replicator password=`cat /run/secrets/postgres_replication_password`'" > /var/lib/postgresql/data/postgresql.auto.conf
+        echo 'host all all 0.0.0.0/0 md5' >> /var/lib/postgresql/data/pg_hba.conf
+      fi &&
+      exec postgres -c shared_preload_libraries=pg_stat_statements
+      "
+    volumes:
+      - postgres_replica_2_data:/var/lib/postgresql/data
+    networks:
+      - synergycoach_net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+
+  # Ollama Service for AI model inference
+  ollama:
+    image: ollama/ollama
+    container_name: ollama_service
+    ports:
+      - "127.0.0.1:11434:11434"
+    logging: *default-logging
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - synergycoach_net
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # AI Microservice for handling AI requests
+  ai_microservice:
+    build:
+      context: ../../backend/ai-microservice
+      dockerfile: Dockerfile
+    container_name: ai_microservice
+    ports:
+      - "127.0.0.1:9000:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=gemma2:2b
+    networks:
+      - synergycoach_net
+    depends_on:
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Backend Service Instance 1
+  synergycoach_backend_1:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: synergycoach_backend_1
+    ports:
+      - "127.0.0.1:3001:3001"
+    # Use secrets only if they exist, otherwise rely on environment variables
+    secrets:
+      - source: api_key
+        target: /run/secrets/api_key
+        mode: 0444
+      - source: db_password
+        target: /run/secrets/db_password
+        mode: 0444
+      - source: ollama_api_key
+        target: /run/secrets/ollama_api_key
+        mode: 0444
+    logging: *default-logging
+    env_file:
+      - ../../.env.docker
+    environment:
+      - INSTANCE_ID=1
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_for_dev}
+      - SESSION_SECRET=${SESSION_SECRET:-default_session_secret_for_dev}
+      - API_KEY_FILE=/run/secrets/api_key
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - OLLAMA_API_KEY_FILE=/run/secrets/ollama_api_key
+      - JWT_ALGO=HS256
+    networks:
+      - synergycoach_net
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+      postgres-replica-1:
+        condition: service_healthy
+      postgres-replica-2:
+        condition: service_healthy
+      ai_microservice:
+        condition: service_started
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - backend_data_1:/app/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Backend Service Instance 2
+  synergycoach_backend_2:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: synergycoach_backend_2
+    ports:
+      - "127.0.0.1:3002:3001"
+    # Use secrets only if they exist, otherwise rely on environment variables
+    secrets:
+      - source: api_key
+        target: /run/secrets/api_key
+        mode: 0444
+      - source: db_password
+        target: /run/secrets/db_password
+        mode: 0444
+      - source: ollama_api_key
+        target: /run/secrets/ollama_api_key
+        mode: 0444
+    logging: *default-logging
+    env_file:
+      - .env.docker
+    environment:
+      - INSTANCE_ID=2
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_for_dev}
+      - SESSION_SECRET=${SESSION_SECRET:-default_session_secret_for_dev}
+      - API_KEY_FILE=/run/secrets/api_key
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - OLLAMA_API_KEY_FILE=/run/secrets/ollama_api_key
+      - JWT_ALGO=HS256
+    networks:
+      - synergycoach_net
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+      postgres-replica-1:
+        condition: service_healthy
+      postgres-replica-2:
+        condition: service_healthy
+      ai_microservice:
+        condition: service_started
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - backend_data_2:/app/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  ollama_data:
+  backend_data_1:
+  backend_data_2:
+  postgres_primary_data:
+  postgres_replica_1_data:
+  postgres_replica_2_data:
+
+networks:
+  synergycoach_net:
+    driver: bridge
+    internal: false
+    enable_ipv6: false
+    attachable: false
+    driver_opts:
+      encrypted: "true"
+
+# Define secrets with fallbacks for development
+# In production, use Docker Swarm secrets or environment variables
+secrets:
+  api_key:
+    file: ./backend/secrets/api_key.txt
+    # Fallback to example file if main file doesn't exist
+    # To use: cp ./backend/secrets/api_key.txt.example ./backend/secrets/api_key.txt
+  db_password:
+    file: ./backend/secrets/db_password.txt
+    # Fallback to example file if main file doesn't exist
+    # To use: cp ./backend/secrets/db_password.txt.example ./backend/secrets/db_password.txt
+  ollama_api_key:
+    file: ./backend/secrets/ollama_api_key.txt
+    # Fallback to example file if main file doesn't exist
+    # To use: cp ./backend/secrets/ollama_api_key.txt.example ./backend/secrets/ollama_api_key.txt
+  postgres_password:
+    file: ./backend/secrets/postgres_password.txt
+    # Fallback to example file if main file doesn't exist
+    # To use: cp ./backend/secrets/postgres_password.txt.example ./backend/secrets/postgres_password.txt
+  postgres_replication_password:
+    file: ./backend/secrets/postgres_replication_password.txt
+    # Fallback to example file if main file doesn't exist
+    # To use: cp ./backend/secrets/postgres_replication_password.txt.example ./backend/secrets/postgres_replication_password.txt

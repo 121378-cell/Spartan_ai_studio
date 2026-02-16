@@ -1,0 +1,426 @@
+version: '3.8'
+
+x-logging: &default-logging
+  options:
+    max-size: "10m"
+    max-file: "5"
+  driver: json-file
+
+x-security-headers: &security-headers
+  security_opt:
+    - no-new-privileges:true
+  read_only: true
+  tmpfs:
+    - /tmp
+    - /var/run
+    - /run
+
+x-resource-limits: &resource-limits
+  deploy:
+    resources:
+      limits:
+        cpus: '0.5'
+        memory: 512M
+      reservations:
+        cpus: '0.25'
+        memory: 256M
+
+services:
+  # Local development reverse proxy with enhanced security
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.secure
+    container_name: nginx_proxy_secure
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    networks:
+      - synergycoach_net
+    depends_on:
+      - synergycoach_backend_1
+      - synergycoach_backend_2
+      - ai_microservice
+    restart: unless-stopped
+    <<: [*security-headers, *resource-limits]
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "autoheal=true"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # PostgreSQL Primary Database with enhanced security
+  postgres-primary:
+    image: postgres:16-alpine
+    container_name: postgres_primary_secure
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      - POSTGRES_DB=spartan_fitness
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --auth-host=scram-sha-256
+      - POSTGRES_REPLICATION_USER=replicator
+      - POSTGRES_REPLICATION_PASSWORD_FILE=/run/secrets/postgres_replication_password
+    command: >
+      postgres 
+      -c wal_level=replica
+      -c max_wal_senders=3
+      -c wal_keep_segments=10
+      -c shared_preload_libraries=pg_stat_statements
+      -c log_statement=ddl
+      -c log_connections=on
+      -c log_disconnections=on
+      -c password_encryption=scram-sha-256
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+      - ./postgresql/primary_init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    secrets:
+      - postgres_password
+      - postgres_replication_password
+    networks:
+      - synergycoach_net
+    restart: unless-stopped
+    user: "70:70"  # postgres user
+    <<: *resource-limits
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spartan_user -d spartan_fitness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "autoheal=true"
+
+  # PostgreSQL Read Replica 1 with enhanced security
+  postgres-replica-1:
+    image: postgres:16-alpine
+    container_name: postgres_replica_1_secure
+    ports:
+      - "127.0.0.1:5434:5432"
+    environment:
+      - POSTGRES_DB=spartan_fitness
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_REPLICATION_USER=replicator
+      - POSTGRES_REPLICATION_PASSWORD_FILE=/run/secrets/postgres_replication_password
+      - PRIMARY_HOST=postgres-primary
+    command: >
+      bash -c "
+      set -e &&
+      if [ ! -f /var/lib/postgresql/data/PG_VERSION ]; then
+        echo 'Initializing replica...' &&
+        rm -rf /var/lib/postgresql/data/* &&
+        pg_basebackup -h $$PRIMARY_HOST -D /var/lib/postgresql/data -U replicator -v -P --wal-method=stream &&
+        echo 'standby_mode = on' > /var/lib/postgresql/data/standby.signal &&
+        echo \"primary_conninfo = 'host=$$PRIMARY_HOST port=5432 user=replicator password=`cat /run/secrets/postgres_replication_password`'\" > /var/lib/postgresql/data/postgresql.auto.conf &&
+        echo 'host all all 0.0.0.0/0 scram-sha-256' >> /var/lib/postgresql/data/pg_hba.conf
+      fi &&
+      exec postgres -c shared_preload_libraries=pg_stat_statements -c password_encryption=scram-sha-256
+      "
+    volumes:
+      - postgres_replica_1_data:/var/lib/postgresql/data
+    networks:
+      - synergycoach_net
+    restart: unless-stopped
+    user: "70:70"  # postgres user
+    <<: *resource-limits
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+    labels:
+      - "autoheal=true"
+
+  # PostgreSQL Read Replica 2 with enhanced security
+  postgres-replica-2:
+    image: postgres:16-alpine
+    container_name: postgres_replica_2_secure
+    ports:
+      - "127.0.0.1:5435:5432"
+    environment:
+      - POSTGRES_DB=spartan_fitness
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_REPLICATION_USER=replicator
+      - POSTGRES_REPLICATION_PASSWORD_FILE=/run/secrets/postgres_replication_password
+      - PRIMARY_HOST=postgres-primary
+    command: >
+      bash -c "
+      set -e &&
+      if [ ! -f /var/lib/postgresql/data/PG_VERSION ]; then
+        echo 'Initializing replica...' &&
+        rm -rf /var/lib/postgresql/data/* &&
+        pg_basebackup -h $$PRIMARY_HOST -D /var/lib/postgresql/data -U replicator -v -P --wal-method=stream &&
+        echo 'standby_mode = on' > /var/lib/postgresql/data/standby.signal &&
+        echo \"primary_conninfo = 'host=$$PRIMARY_HOST port=5432 user=replicator password=`cat /run/secrets/postgres_replication_password`'\" > /var/lib/postgresql/data/postgresql.auto.conf &&
+        echo 'host all all 0.0.0.0/0 scram-sha-256' >> /var/lib/postgresql/data/pg_hba.conf
+      fi &&
+      exec postgres -c shared_preload_libraries=pg_stat_statements -c password_encryption=scram-sha-256
+      "
+    volumes:
+      - postgres_replica_2_data:/var/lib/postgresql/data
+    networks:
+      - synergycoach_net
+    restart: unless-stopped
+    user: "70:70"  # postgres user
+    <<: *resource-limits
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+    labels:
+      - "autoheal=true"
+
+  # Ollama Service for AI model inference with enhanced security
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_service_secure
+    ports:
+      - "127.0.0.1:11434:11434"
+    logging: *default-logging
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - synergycoach_net
+    restart: unless-stopped
+    <<: *security-headers
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    labels:
+      - "autoheal=true"
+
+  # AI Microservice for handling AI requests with enhanced security
+  ai_microservice:
+    build:
+      context: ../../backend/ai-microservice
+      dockerfile: Dockerfile.secure
+    container_name: ai_microservice_secure
+    ports:
+      - "127.0.0.1:9000:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=gemma2:2b
+    networks:
+      - synergycoach_net
+    depends_on:
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+    <<: *security-headers
+    <<: *resource-limits
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "autoheal=true"
+
+  # Backend Service Instance 1 with enhanced security
+  synergycoach_backend_1:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile.secure
+    container_name: synergycoach_backend_1_secure
+    ports:
+      - "127.0.0.1:3001:3001"
+    secrets:
+      - source: api_key
+        target: /run/secrets/api_key
+        mode: 0400
+      - source: db_password
+        target: /run/secrets/db_password
+        mode: 0400
+      - source: ollama_api_key
+        target: /run/secrets/ollama_api_key
+        mode: 0400
+    logging: *default-logging
+    env_file:
+      - ../../.env.docker
+    environment:
+      - INSTANCE_ID=1
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_for_dev}
+      - SESSION_SECRET=${SESSION_SECRET:-default_session_secret_for_dev}
+      - API_KEY_FILE=/run/secrets/api_key
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - OLLAMA_API_KEY_FILE=/run/secrets/ollama_api_key
+      - JWT_ALGO=HS256
+      - NODE_ENV=production
+    networks:
+      - synergycoach_net
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+      postgres-replica-1:
+        condition: service_healthy
+      postgres-replica-2:
+        condition: service_healthy
+      ai_microservice:
+        condition: service_started
+    restart: unless-stopped
+    <<: *security-headers
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "autoheal=true"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # Backend Service Instance 2 with enhanced security
+  synergycoach_backend_2:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile.secure
+    container_name: synergycoach_backend_2_secure
+    ports:
+      - "127.0.0.1:3002:3001"
+    secrets:
+      - source: api_key
+        target: /run/secrets/api_key
+        mode: 0400
+      - source: db_password
+        target: /run/secrets/db_password
+        mode: 0400
+      - source: ollama_api_key
+        target: /run/secrets/ollama_api_key
+        mode: 0400
+    logging: *default-logging
+    env_file:
+      - ../../.env.docker
+    environment:
+      - INSTANCE_ID=2
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_for_dev}
+      - SESSION_SECRET=${SESSION_SECRET:-default_session_secret_for_dev}
+      - API_KEY_FILE=/run/secrets/api_key
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - OLLAMA_API_KEY_FILE=/run/secrets/ollama_api_key
+      - JWT_ALGO=HS256
+      - NODE_ENV=production
+    networks:
+      - synergycoach_net
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+      postgres-replica-1:
+        condition: service_healthy
+      postgres-replica-2:
+        condition: service_healthy
+      ai_microservice:
+        condition: service_started
+    restart: unless-stopped
+    <<: *security-headers
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "autoheal=true"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # Security scanning service
+  security-scanner:
+    image: aquasec/trivy:latest
+    container_name: security_scanner
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./reports:/reports
+    command:
+      - image
+      - --severity
+      - HIGH,CRITICAL
+      - --format
+      - table
+      - --output
+      - /reports/trivy-report.txt
+      - nginx_proxy_secure
+    networks:
+      - synergycoach_net
+    profiles:
+      - security-scan
+
+volumes:
+  ollama_data:
+  backend_data_1:
+  backend_data_2:
+  postgres_primary_data:
+  postgres_replica_1_data:
+  postgres_replica_2_data:
+  security_reports:
+
+networks:
+  synergycoach_net:
+    driver: bridge
+    internal: false
+    enable_ipv6: false
+    attachable: false
+    driver_opts:
+      encrypted: "true"
+      com.docker.network.bridge.enable_icc: "false"
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+
+# Define secrets with fallbacks for development
+secrets:
+  api_key:
+    file: ./backend/secrets/api_key.txt
+  db_password:
+    file: ./backend/secrets/db_password.txt
+  ollama_api_key:
+    file: ./backend/secrets/ollama_api_key.txt
+  postgres_password:
+    file: ./backend/secrets/postgres_password.txt
+  postgres_replication_password:
+    file: ./backend/secrets/postgres_replication_password.txt

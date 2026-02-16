@@ -1,0 +1,269 @@
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ÔÜÖ´©Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (7) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.setupTestDatabase (src/__tests__/testDatabaseManager.ts:30:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:12:23)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db-wal
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.setupTestDatabase (src/__tests__/testDatabaseManager.ts:30:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:12:23)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db-shm
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.setupTestDatabase (src/__tests__/testDatabaseManager.ts:30:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:12:23)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.error
+    2026-02-04T18:06:52.071Z [ERROR] [spartan-hub-backend] TypeError: The database connection is not open
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at NotificationService.createNotificationTables (src/services/notificationService.ts:180:14)
+      at new NotificationService (src/services/notificationService.ts:97:10)
+      at Function.getInstance (src/services/notificationService.ts:102:38)
+      at getNotificationService (src/services/notificationService.ts:912:30)
+      at Object.<anonymous> (src/controllers/notificationController.ts:7:51)
+      at Object.<anonymous> (src/routes/notificationRoutes.ts:2:1)
+      at Object.<anonymous> (src/server.ts:28:1)
+      at src/__tests__/e2e/mlForecasting.e2e.test.ts:32:30
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:32:30)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [DEBUG] server.ts initializing database with DB_PATH: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_e2e.db
+
+      at Object.<anonymous> (src/server.ts:83:9)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.cleanupTestDatabase (src/__tests__/testDatabaseManager.ts:52:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:22:23)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db-wal
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.cleanupTestDatabase (src/__tests__/testDatabaseManager.ts:52:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:22:23)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db-shm
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.cleanupTestDatabase (src/__tests__/testDatabaseManager.ts:52:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:22:23)
+
+FAIL src/__tests__/e2e/mlForecasting.e2e.test.ts (20.181 s)
+  E2E ML Forecasting
+    ÔêÜ GET /readiness-forecast/:userId requires authentication (49 ms)
+    ├ù GET /readiness-forecast/:userId returns forecast (18 ms)
+    ├ù GET /injury-probability/:userId returns probability (35 ms)
+    ├ù GET /fatigue-estimate/:userId returns estimate (31 ms)
+    ├ù GET /training-load/:userId returns suggestion (12 ms)
+    ├ù GET /comprehensive/:userId returns all data (13 ms)
+    ├ù GET /model-info returns metadata (22 ms)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /readiness-forecast/:userId returns forecast
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      131 |             .set('Authorization', `Bearer ${testSession.token}`);
+      132 |
+    > 133 |         expect(res.status).toBe(200);
+          |                            ^
+      134 |         expect(res.body.success).toBe(true);
+      135 |         expect(res.body.data.predictions).toHaveLength(7);
+      136 |         expect(res.body.data.riskLevel).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:133:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /injury-probability/:userId returns probability
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      143 |             .set('Authorization', `Bearer ${testSession.token}`);
+      144 |
+    > 145 |         expect(res.status).toBe(200);
+          |                            ^
+      146 |         expect(res.body.success).toBe(true);
+      147 |         expect(typeof res.body.data.probabilityPercent).toBe('number');
+      148 |         expect(res.body.data.riskFactors).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:145:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /fatigue-estimate/:userId returns estimate
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      155 |             .set('Authorization', `Bearer ${testSession.token}`);
+      156 |
+    > 157 |         expect(res.status).toBe(200);
+          |                            ^
+      158 |         expect(res.body.success).toBe(true);
+      159 |         expect(typeof res.body.data.fatigueLevel).toBe('number');
+      160 |         expect(res.body.data.estimatedRecoveryDays).toBeGreaterThanOrEqual(0);
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:157:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /training-load/:userId returns suggestion
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      167 |             .set('Authorization', `Bearer ${testSession.token}`);
+      168 |
+    > 169 |         expect(res.status).toBe(200);
+          |                            ^
+      170 |         expect(res.body.success).toBe(true);
+      171 |         expect(res.body.data.suggestedLoad).toBeDefined();
+      172 |         expect(Array.isArray(res.body.data.recommendedExercises)).toBe(true);
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:169:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /comprehensive/:userId returns all data
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      179 |             .set('Authorization', `Bearer ${testSession.token}`);
+      180 |
+    > 181 |         expect(res.status).toBe(200);
+          |                            ^
+      182 |         expect(res.body.success).toBe(true);
+      183 |         expect(res.body.data.readinessForecast).toBeDefined();
+      184 |         expect(res.body.data.injuryProbability).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:181:28)
+
+  ÔùÅ E2E ML Forecasting ÔÇ║ GET /model-info returns metadata
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+      195 |             .set('Authorization', `Bearer ${testSession.token}`);
+      196 |
+    > 197 |         expect(res.status).toBe(200);
+          |                            ^
+      198 |         expect(res.body.success).toBe(true);
+      199 |         expect(res.body.data.version).toBeDefined();
+      200 |         expect(typeof res.body.data.accuracyScore).toBe('number');
+
+      at Object.<anonymous> (src/__tests__/e2e/mlForecasting.e2e.test.ts:197:28)
+
+Test Suites: 1 failed, 1 total
+Tests:       6 failed, 1 passed, 7 total
+Snapshots:   0 total
+Time:        20.465 s, estimated 29 s
+Ran all test suites matching src/__tests__/e2e/mlForecasting.e2e.test.ts.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.

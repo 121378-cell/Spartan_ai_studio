@@ -1,0 +1,8 @@
+{
+  "name": "Spartan Local Fitness Hub",
+  "description": "A comprehensive, local-first dashboard for managing your fitness journey, including routines, scheduling, and AI-powered guidance. This application is designed to run entirely on your local machine, ensuring privacy and offline availability.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}

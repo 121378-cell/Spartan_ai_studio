@@ -1,0 +1,59 @@
+# CODEOWNERS for Spartan Hub Project
+# Defines code ownership and required approvals for different parts of the repository
+
+# Global owners (fallback for any file not specifically covered)
+* @121378-cell
+
+# Backend API - Core business logic and security
+backend/src/**/* @121378-cell
+backend/src/controllers/**/* @121378-cell
+backend/src/services/**/* @121378-cell
+backend/src/middleware/**/* @121378-cell
+backend/src/utils/**/* @121378-cell
+
+# Backend Security Components - Require extra scrutiny
+backend/src/controllers/authController.ts @121378-cell
+backend/src/middleware/authMiddleware.ts @121378-cell
+backend/src/services/tokenService.ts @121378-cell
+backend/src/config/**/* @121378-cell
+backend/src/utils/passwordUtils.ts @121378-cell
+
+# Database Layer - Schema and migrations
+backend/src/models/**/* @121378-cell
+backend/src/config/database.ts @121378-cell
+backend/src/scripts/**/* @121378-cell
+
+# Frontend - User interface and client-side security
+src/**/* @121378-cell
+components/**/* @121378-cell
+hooks/**/* @121378-cell
+utils/**/* @121378-cell
+
+# Security Configuration Files
+config/**/* @121378-cell
+nginx/**/* @121378-cell
+k8s/**/* @121378-cell
+docker-compose*.yml @121378-cell
+Dockerfile* @121378-cell
+
+# Testing and Quality Assurance
+backend/src/__tests__/**/* @121378-cell
+**/*.test.ts @121378-cell
+**/*.spec.ts @121378-cell
+
+# Documentation and Process
+README.md @121378-cell
+SECURITY.md @121378-cell
+PULL_REQUEST_SECURITY_CHECKLIST.md @121378-cell
+.github/**/* @121378-cell
+
+# Infrastructure and CI/CD
+.github/workflows/**/* @121378-cell
+scripts/**/* @121378-cell
+package.json @121378-cell
+tsconfig.json @121378-cell
+.eslintrc.json @121378-cell
+
+# Secrets and Environment Configuration
+.env* @121378-cell
+secrets/**/* @121378-cell

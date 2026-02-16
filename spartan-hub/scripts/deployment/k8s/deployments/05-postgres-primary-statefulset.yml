@@ -1,0 +1,150 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-primary
+  namespace: spartan-hub
+  labels:
+    app: postgres-primary
+    component: database
+spec:
+  serviceName: postgres-primary
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-primary
+      component: database
+  template:
+    metadata:
+      labels:
+        app: postgres-primary
+        component: database
+        tier: backend
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: postgres
+        image: postgres:16
+        ports:
+        - containerPort: 5432
+          name: postgres
+          protocol: TCP
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: postgres-db
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: postgres-password
+        - name: POSTGRES_INITDB_ARGS
+          value: "--encoding=UTF-8"
+        - name: POSTGRES_REPLICATION_USER
+          value: "replicator"
+        - name: POSTGRES_REPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: postgres-replication-password
+        command:
+        - postgres
+        - -c
+        - wal_level=replica
+        - -c
+        - max_wal_senders=3
+        - -c
+        - wal_keep_segments=10
+        - -c
+        - shared_preload_libraries=pg_stat_statements
+        volumeMounts:
+        - name: postgres-primary-data
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-init-script
+          mountPath: /docker-entrypoint-initdb.d
+          readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - spartan_user
+            - -d
+            - spartan_fitness
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - spartan_user
+            - -d
+            - spartan_fitness
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: false
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+      volumes:
+      - name: postgres-init-script
+        configMap:
+          name: postgres-init-config
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-primary-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 100Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-config
+  namespace: spartan-hub
+data:
+  init.sql: |
+    -- Initial setup for PostgreSQL primary
+    CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+    
+    -- Create replication user
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='replicator') THEN
+        CREATE ROLE replicator WITH REPLICATION LOGIN PASSWORD :'POSTGRES_REPLICATION_PASSWORD';
+      END IF;
+    END
+    $$;
+    
+    -- Configure pg_hba.conf for replication
+    ALTER SYSTEM SET hba_file = 'pg_hba.conf';
+    
+    -- Allow replication connections
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_hba_file_rules WHERE database='replication') THEN
+        ALTER SYSTEM SET hba_file TO 'host replication replicator 0.0.0.0/0 md5';
+      END IF;
+    END
+    $$;

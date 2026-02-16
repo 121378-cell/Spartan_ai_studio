@@ -1,0 +1,410 @@
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ÔÜÖ´©Å  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (7) from .env -- tip: ÔÜÖ´©Å  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒùé´©Å backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    Added column stressLevel to daily_biometric_summaries
+
+      at addStressLevelColumn (src/database/migrations/005-add-stress-level.ts:16:21)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒøá´©Å  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöæ add access controls to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒôí add observability to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒøá´©Å  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒùé´©Å backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒôí add observability to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöæ add access controls to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒùé´©Å backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒøá´©Å  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒôí add observability to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒôí add observability to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒôí add observability to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöæ add access controls to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  suppress all logs with { quiet: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  suppress all logs with { quiet: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.cleanupTestDatabase (src/__tests__/testDatabaseManager.ts:52:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:22:23)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db-wal
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.cleanupTestDatabase (src/__tests__/testDatabaseManager.ts:52:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:22:23)
+
+  console.warn
+    Could not delete or rename test database file: C:\Users\sergi\Spartan hub 2.0\spartan-hub\backend\data\test_spartan_1.db-shm
+
+    [0m [90m 73 |[39m             fs[33m.[39mrenameSync(file[33m,[39m tempPath)[33m;[39m
+     [90m 74 |[39m           } [36mcatch[39m (renameError) {
+    [31m[1m>[22m[39m[90m 75 |[39m             console[33m.[39mwarn([32m`Could not delete or rename test database file: ${file}`[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 76 |[39m           }
+     [90m 77 |[39m         }
+     [90m 78 |[39m       }[0m
+
+      at TestDatabaseManager.deleteDatabaseFiles (src/__tests__/testDatabaseManager.ts:75:21)
+      at TestDatabaseManager.cleanupTestDatabase (src/__tests__/testDatabaseManager.ts:52:10)
+      at Object.<anonymous> (src/__tests__/setup.ts:22:23)
+
+FAIL src/__tests__/brainOrchestrator.test.ts (19.755 s)
+  BrainOrchestrator
+    Daily Brain Cycle - Happy Path
+      ÔêÜ should execute complete daily cycle successfully (125 ms)
+      ÔêÜ should complete cycle within 30 minute simulation (19 ms)
+    Data Aggregation
+      ÔêÜ should aggregate daily data correctly from biometric service (23 ms)
+      ├ù should handle missing data from some sources (21 ms)
+    Analysis Pipeline
+      ÔêÜ should execute cascading analysis pipeline accurately (25 ms)
+      ÔêÜ should provide accurate readiness score (17 ms)
+    Decision Generation
+      ÔêÜ should generate appropriate coach decisions (18 ms)
+      ÔêÜ should include decision confidence level (22 ms)
+    Plan Adjustments
+      ÔêÜ should generate specific plan adjustments correctly (19 ms)
+    Database Consistency
+      ÔêÜ should update all required database tables (24 ms)
+      ÔêÜ should use transactions for data consistency (16 ms)
+      ÔêÜ should maintain referential integrity (21 ms)
+    Error Handling
+      ÔêÜ should handle biometric data aggregation failure (18 ms)
+      ÔêÜ should handle analysis service failure (16 ms)
+      ÔêÜ should handle coach decision generation failure (15 ms)
+      ÔêÜ should log errors appropriately (23 ms)
+    Event Emission
+      ÔêÜ should emit event when cycle completes (14 ms)
+      ÔêÜ should emit events for significant findings (14 ms)
+      ÔêÜ should broadcast updates via WebSocket (14 ms)
+    Weekly Rebalancing
+      ├ù should execute weekly rebalancing cycle (16 ms)
+      ÔêÜ should analyze 7-day trends (22 ms)
+    Critical Signal Monitoring
+      ÔêÜ should monitor critical signals continuously (15 ms)
+      ÔêÜ should generate immediate alerts for critical signals (15 ms)
+    Singleton Pattern
+      ÔêÜ should return same instance on multiple calls (16 ms)
+    Performance and Scalability
+      ÔêÜ should handle multiple concurrent cycles (16 ms)
+      ÔêÜ should not leak memory with repeated cycles (29 ms)
+
+  ÔùÅ BrainOrchestrator ÔÇ║ Data Aggregation ÔÇ║ should handle missing data from some sources
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 65
+    Received: undefined
+
+      186 |
+      187 |       expect(result.aggregatedData).toBeDefined();
+    > 188 |       expect(result.aggregatedData.avgHR).toBe(65);
+          |                                           ^
+      189 |     });
+      190 |   });
+      191 |
+
+      at Object.<anonymous> (src/__tests__/brainOrchestrator.test.ts:188:43)
+
+  ÔùÅ BrainOrchestrator ÔÇ║ Weekly Rebalancing ÔÇ║ should execute weekly rebalancing cycle
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "user_123"
+    Received: undefined
+
+      376 |
+      377 |       expect(result).toBeDefined();
+    > 378 |       expect(result.userId).toBe(userId);
+          |                             ^
+      379 |     });
+      380 |
+      381 |     test('should analyze 7-day trends', async () => {
+
+      at Object.<anonymous> (src/__tests__/brainOrchestrator.test.ts:378:29)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 24 passed, 26 total
+Snapshots:   0 total
+Time:        20.026 s
+Ran all test suites matching src/__tests__/brainOrchestrator.test.ts.

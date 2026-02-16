@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cdn-proxy
+  namespace: spartan-hub
+  labels:
+    app: cdn-proxy
+    component: static-assets
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: cdn-http
+  selector:
+    app: cdn-proxy
+    component: static-assets
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cdn-proxy
+  namespace: spartan-hub
+  labels:
+    app: cdn-proxy
+    component: static-assets
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cdn-proxy
+      component: static-assets
+  template:
+    metadata:
+      labels:
+        app: cdn-proxy
+        component: static-assets
+    spec:
+      containers:
+      - name: cdn-proxy
+        image: nginx:alpine
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: static-assets
+          mountPath: /usr/share/nginx/html
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-cdn-config
+      - name: static-assets
+        persistentVolumeClaim:
+          claimName: frontend-assets-pvc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-cdn-config
+  namespace: spartan-hub
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        upstream frontend_backend {
+            server frontend:3000;
+        }
+
+        server {
+            listen 8080;
+            
+            # Cache static assets
+            location ~* \.(jpg|jpeg|png|gif|ico|svg|webp)$ {
+                proxy_pass http://frontend_backend;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                
+                # Cache for CDN
+                expires 30d;
+                add_header Cache-Control "public, immutable";
+                add_header Vary Accept-Encoding;
+            }
+
+            # Cache CSS and JS
+            location ~* \.(css|js)$ {
+                proxy_pass http://frontend_backend;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                
+                # Cache for CDN
+                expires 7d;
+                add_header Cache-Control "public, immutable";
+                add_header Vary Accept-Encoding;
+            }
+
+            # Fonts
+            location ~* \.(woff|woff2|ttf|eot)$ {
+                proxy_pass http://frontend_backend;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                
+                expires 30d;
+                add_header Cache-Control "public";
+            }
+
+            # Default pass-through
+            location / {
+                proxy_pass http://frontend_backend;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+            }
+        }
+    }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frontend-assets-pvc
+  namespace: spartan-hub
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi

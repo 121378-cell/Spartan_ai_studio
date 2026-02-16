@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-01-30T03:02:11.646Z",
+  "detailedResults": [
+    {
+      "timestamp": "2026-01-30T03:00:39.696Z",
+      "testName": "Simple SELECT Query",
+      "iterations": 1000,
+      "totalTime": 15503.976499999997,
+      "averageTime": 15.503976499999997,
+      "minTime": 14.188700000000608,
+      "maxTime": 22.63299999999981,
+      "percentile95": 16.133700000000317,
+      "percentile99": 16.362199999999575,
+      "throughput": 64.49958176858694
+    },
+    {
+      "timestamp": "2026-01-30T03:01:05.494Z",
+      "testName": "Complex JOIN Query",
+      "iterations": 500,
+      "totalTime": 25792.218300000102,
+      "averageTime": 51.5844366000002,
+      "minTime": 29.840900000002875,
+      "maxTime": 79.65869999999995,
+      "percentile95": 77.79060000000027,
+      "percentile99": 78.63040000000183,
+      "throughput": 19.385692001528927
+    },
+    {
+      "timestamp": "2026-01-30T03:01:25.411Z",
+      "testName": "INSERT Operation",
+      "iterations": 800,
+      "totalTime": 19910.817199999976,
+      "averageTime": 24.88852149999997,
+      "minTime": 12.116500000003725,
+      "maxTime": 44.95629999999801,
+      "percentile95": 31.72819999999774,
+      "percentile99": 32.25770000000193,
+      "throughput": 40.17916451967632
+    },
+    {
+      "timestamp": "2026-01-30T03:01:56.124Z",
+      "testName": "Metric Collection Overhead",
+      "iterations": 2000,
+      "totalTime": 30696.425100000008,
+      "averageTime": 15.348212550000003,
+      "minTime": 0.030299999998533167,
+      "maxTime": 16.739199999996345,
+      "percentile95": 16.126399999993737,
+      "percentile99": 16.354200000001583,
+      "throughput": 65.15416676321698
+    },
+    {
+      "timestamp": "2026-01-30T03:02:11.644Z",
+      "testName": "Trace Context Propagation",
+      "iterations": 1000,
+      "totalTime": 15512.1035000001,
+      "averageTime": 15.5121035000001,
+      "minTime": 12.787100000001374,
+      "maxTime": 18.152600000001257,
+      "percentile95": 16.112999999997555,
+      "percentile99": 16.327100000009523,
+      "throughput": 64.46578956877083
+    }
+  ]
+}

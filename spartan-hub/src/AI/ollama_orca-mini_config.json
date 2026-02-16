@@ -1,0 +1,8 @@
+{
+  "model": "orca-mini",
+  "parameters": {
+    "context_window": 2048,
+    "num_ctx": 2048,
+    "temperature": 0.9
+  }
+}

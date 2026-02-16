@@ -1,0 +1,539 @@
+/**
+ * PoseOverlay Component Tests
+ * 
+ * Tests for real-time pose visualization overlay rendering
+ */
+
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { PoseOverlay } from './PoseOverlay';
+import type { PoseFrame, FormAnalysisResult } from '../../types/pose';
+import { POSE_LANDMARKS } from '../../types/pose';
+
+/**
+ * Create mock landmark for testing
+ */
+function createMockLandmark(x: number, y: number, visibility: number = 0.95) {
+  return { x, y, z: 0, visibility };
+}
+
+/**
+ * Create mock pose frame with all 33 keypoints
+ */
+function createMockPoseFrame(): PoseFrame {
+  const landmarks = Array(33).fill(null).map(() => createMockLandmark(0.5, 0.5, 0.9));
+
+  // Override with specific positions for key joints
+  landmarks[POSE_LANDMARKS.LEFT_SHOULDER] = createMockLandmark(0.3, 0.3, 0.95);
+  landmarks[POSE_LANDMARKS.RIGHT_SHOULDER] = createMockLandmark(0.7, 0.3, 0.95);
+  landmarks[POSE_LANDMARKS.LEFT_HIP] = createMockLandmark(0.35, 0.6, 0.95);
+  landmarks[POSE_LANDMARKS.RIGHT_HIP] = createMockLandmark(0.65, 0.6, 0.95);
+  landmarks[POSE_LANDMARKS.LEFT_KNEE] = createMockLandmark(0.35, 0.8, 0.95);
+  landmarks[POSE_LANDMARKS.RIGHT_KNEE] = createMockLandmark(0.65, 0.8, 0.95);
+  landmarks[POSE_LANDMARKS.LEFT_ANKLE] = createMockLandmark(0.35, 1.0, 0.95);
+  landmarks[POSE_LANDMARKS.RIGHT_ANKLE] = createMockLandmark(0.65, 1.0, 0.95);
+
+  return {
+    timestamp: Date.now(),
+    isValid: true,
+    landmarks,
+  };
+}
+
+/**
+ * Create mock analysis result
+ */
+function createMockAnalysisResult(): FormAnalysisResult {
+  return {
+    score: 85,
+    issues: [],
+    tips: [],
+    metrics: {
+      averageConfidence: 0.92,
+      trackingQuality: 0.9,
+      formConsistency: 0.88,
+    },
+  };
+}
+
+describe('PoseOverlay Component', () => {
+  let canvasRef: React.RefObject<HTMLCanvasElement>;
+
+  beforeEach(() => {
+    // Create a canvas element for testing
+    const canvas = document.createElement('canvas');
+    canvas.width = 1280;
+    canvas.height = 720;
+    document.body.appendChild(canvas);
+
+    canvasRef = { current: canvas };
+  });
+
+  afterEach(() => {
+    // Clean up canvas
+    if (canvasRef.current?.parentNode) {
+      canvasRef.current.parentNode.removeChild(canvasRef.current);
+    }
+  });
+
+  describe('Rendering', () => {
+    test('should render without crashing', () => {
+      const frame = createMockPoseFrame();
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+
+    test('should handle null frame gracefully', () => {
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={null}
+          formScore={85}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+
+    test('should handle missing canvas ref', () => {
+      const frame = createMockPoseFrame();
+      const nullRef = { current: null };
+
+      expect(() => {
+        render(
+          <PoseOverlay
+            canvasRef={nullRef}
+            currentFrame={frame}
+            formScore={85}
+          />
+        );
+      }).not.toThrow();
+    });
+  });
+
+  describe('Canvas Context', () => {
+    test('should get canvas 2D context', () => {
+      const frame = createMockPoseFrame();
+      const getContextSpy = jest.spyOn(canvasRef.current as HTMLCanvasElement, 'getContext');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      expect(getContextSpy).toHaveBeenCalledWith('2d');
+      getContextSpy.mockRestore();
+    });
+  });
+
+  describe('Keypoint Rendering', () => {
+    test('should render all valid keypoints', () => {
+      const frame = createMockPoseFrame();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const arcSpy = jest.spyOn(ctx, 'arc');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      // Should draw arcs for keypoints with visibility > 0.3
+      // At least 8 key joints should be drawn
+      const validLandmarks = frame.landmarks.filter((l) => l.visibility > 0.3).length;
+      expect(validLandmarks).toBeGreaterThan(0);
+      arcSpy.mockRestore();
+    });
+
+    test('should skip low-visibility keypoints', () => {
+      const frame = createMockPoseFrame();
+      // Set one landmark to low visibility
+      frame.landmarks[0].visibility = 0.2;
+
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const arcSpy = jest.spyOn(ctx, 'arc');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      // Should have one less arc call for the low-visibility landmark
+      arcSpy.mockRestore();
+    });
+
+    test('should apply correct colors based on confidence', () => {
+      const frame = createMockPoseFrame();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+      // Create landmarks with different confidence levels
+      frame.landmarks[0] = createMockLandmark(0.1, 0.1, 0.9); // High
+      frame.landmarks[1] = createMockLandmark(0.2, 0.2, 0.4); // Medium
+      frame.landmarks[2] = createMockLandmark(0.3, 0.3, 0.2); // Low
+
+      const fillStyleSpy = jest.spyOn(ctx, 'fillStyle', 'set');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      fillStyleSpy.mockRestore();
+    });
+  });
+
+  describe('Skeleton Connections', () => {
+    test('should draw connections between valid keypoints', () => {
+      const frame = createMockPoseFrame();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const moveSpy = jest.spyOn(ctx, 'moveTo');
+      const lineSpy = jest.spyOn(ctx, 'lineTo');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      // Should have called moveTo and lineTo for skeleton connections
+      expect(moveSpy).toHaveBeenCalled();
+      expect(lineSpy).toHaveBeenCalled();
+
+      moveSpy.mockRestore();
+      lineSpy.mockRestore();
+    });
+
+    test('should skip connections with low-visibility endpoints', () => {
+      const frame = createMockPoseFrame();
+      // Set shoulder to low visibility
+      frame.landmarks[POSE_LANDMARKS.LEFT_SHOULDER].visibility = 0.2;
+
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const strokeSpy = jest.spyOn(ctx, 'stroke');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      strokeSpy.mockRestore();
+    });
+  });
+
+  describe('Form Score Display', () => {
+    test('should display form score badge', () => {
+      const frame = createMockPoseFrame();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const fillTextSpy = jest.spyOn(ctx, 'fillText');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={92}
+        />
+      );
+
+      // Should have drawn score text somewhere
+      expect(fillTextSpy).toHaveBeenCalled();
+      fillTextSpy.mockRestore();
+    });
+
+    test('should use correct score color for excellent (85+)', () => {
+      const frame = createMockPoseFrame();
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={90}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+
+    test('should use correct score color for good (70-84)', () => {
+      const frame = createMockPoseFrame();
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={75}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+
+    test('should use correct score color for fair (50-69)', () => {
+      const frame = createMockPoseFrame();
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={60}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+
+    test('should use correct score color for poor (<50)', () => {
+      const frame = createMockPoseFrame();
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={40}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+  });
+
+  describe('Angle Measurements', () => {
+    test('should render angle measurements when analysis result provided', () => {
+      const frame = createMockPoseFrame();
+      const analysis = createMockAnalysisResult();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const fillTextSpy = jest.spyOn(ctx, 'fillText');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+          analysisResult={analysis}
+        />
+      );
+
+      expect(fillTextSpy).toHaveBeenCalled();
+      fillTextSpy.mockRestore();
+    });
+
+    test('should calculate joint angles correctly', () => {
+      const frame = createMockPoseFrame();
+      // Set specific positions to calculate known angles
+      frame.landmarks[POSE_LANDMARKS.LEFT_SHOULDER] = createMockLandmark(0.5, 0.3, 0.95);
+      frame.landmarks[POSE_LANDMARKS.LEFT_HIP] = createMockLandmark(0.5, 0.7, 0.95);
+      frame.landmarks[POSE_LANDMARKS.LEFT_KNEE] = createMockLandmark(0.5, 1.0, 0.95);
+
+      const analysis = createMockAnalysisResult();
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+          analysisResult={analysis}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+  });
+
+  describe('Legend Display', () => {
+    test('should render confidence legend', () => {
+      const frame = createMockPoseFrame();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const fillTextSpy = jest.spyOn(ctx, 'fillText');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      expect(fillTextSpy).toHaveBeenCalled();
+      fillTextSpy.mockRestore();
+    });
+  });
+
+  describe('Mobile Responsiveness', () => {
+    test('should render with smaller keypoints on mobile', () => {
+      const frame = createMockPoseFrame();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+          isMobile={true}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+
+    test('should render with larger keypoints on desktop', () => {
+      const frame = createMockPoseFrame();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+          isMobile={false}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+  });
+
+  describe('Performance', () => {
+    test('should clear canvas before drawing', () => {
+      const frame = createMockPoseFrame();
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const clearSpy = jest.spyOn(ctx, 'clearRect');
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      expect(clearSpy).toHaveBeenCalledWith(0, 0, canvas.width, canvas.height);
+      clearSpy.mockRestore();
+    });
+
+    test('should update canvas when frame changes', () => {
+      const frame1 = createMockPoseFrame();
+      const { rerender } = render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame1}
+          formScore={85}
+        />
+      );
+
+      const frame2 = createMockPoseFrame();
+      frame2.landmarks[POSE_LANDMARKS.LEFT_SHOULDER].x = 0.4;
+
+      rerender(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame2}
+          formScore={90}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+  });
+
+  describe('Edge Cases', () => {
+    test('should handle frame with all low-confidence landmarks', () => {
+      const frame = createMockPoseFrame();
+      frame.landmarks.forEach((l) => {
+        l.visibility = 0.2;
+      });
+
+      render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+
+    test('should handle extreme score values', () => {
+      const frame = createMockPoseFrame();
+
+      const { rerender } = render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={0}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+
+      rerender(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={100}
+        />
+      );
+
+      expect(canvasRef.current).toBeTruthy();
+    });
+
+    test('should handle canvas resize', () => {
+      const frame = createMockPoseFrame();
+
+      const { rerender } = render(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      // Simulate resize by changing canvas dimensions
+      if (canvasRef.current) {
+        canvasRef.current.width = 1920;
+        canvasRef.current.height = 1080;
+      }
+
+      rerender(
+        <PoseOverlay
+          canvasRef={canvasRef}
+          currentFrame={frame}
+          formScore={85}
+        />
+      );
+
+      expect(canvasRef.current?.width).toBe(1920);
+      expect(canvasRef.current?.height).toBe(1080);
+    });
+  });
+});

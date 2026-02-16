@@ -1,0 +1,10 @@
+
+<--- Last few GCs --->
+
+[29076:0000018A4D213000]      844 ms: Mark-Compact 17.9 (31.6) -> 14.1 (33.1) MB, pooled: 0 MB, 1.86 / 0.00 ms  (+ 0.1 ms in 0 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 9 ms) (average mu = 0.998, current mu = 0.998[29076:0000018A4D213000]     9960 ms: Mark-Compact (reduce) 15.7 (33.4) -> 14.4 (17.4) MB, pooled: 0 MB, 1008.46 / 0.01 ms  (+ 3.1 ms in 0 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 1013 ms) (average mu = 0.898, cur
+
+<--- JS stacktrace --->
+
+FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+

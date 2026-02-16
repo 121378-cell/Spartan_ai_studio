@@ -1,0 +1,130 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: spartan-hub-ingress
+  namespace: spartan-hub
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "${ALLOWED_ORIGINS}"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    # CDN and performance optimizations
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      # CDN-specific headers for static assets
+      location ~* \.(jpg|jpeg|png|gif|ico|svg|webp|css|js|woff|woff2|ttf|eot)$ {
+        # Set cache headers for CDN
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        add_header Vary Accept-Encoding;
+        # Add CDN-specific headers
+        add_header X-Cache-Enable "true";
+        add_header X-CDN-Cache "enabled";
+      }
+    # Rate limiting for CDN protection
+    nginx.ingress.kubernetes.io/rate-limit-connections: "100"
+    nginx.ingress.kubernetes.io/rate-limit-requests-per-second: "10"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - spartan-hub.com
+    secretName: spartan-hub-tls
+  - hosts:
+    - www.spartan-hub.com
+    secretName: spartan-hub-tls
+  rules:
+  - host: spartan-hub.com
+    http:
+      paths:
+      # CDN-optimized paths for static assets
+      - path: /assets
+        pathType: Prefix
+        backend:
+          service:
+            name: cdn-proxy
+            port:
+              number: 80
+      - path: /images
+        pathType: Prefix
+        backend:
+          service:
+            name: cdn-proxy
+            port:
+              number: 80
+      - path: /fonts
+        pathType: Prefix
+        backend:
+          service:
+            name: cdn-proxy
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 3001
+      - path: /ai
+        pathType: Prefix
+        backend:
+          service:
+            name: ai-microservice
+            port:
+              number: 8000
+  - host: www.spartan-hub.com
+    http:
+      paths:
+      # CDN-optimized paths for static assets
+      - path: /assets
+        pathType: Prefix
+        backend:
+          service:
+            name: cdn-proxy
+            port:
+              number: 80
+      - path: /images
+        pathType: Prefix
+        backend:
+          service:
+            name: cdn-proxy
+            port:
+              number: 80
+      - path: /fonts
+        pathType: Prefix
+        backend:
+          service:
+            name: cdn-proxy
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 3001
+      - path: /ai
+        pathType: Prefix
+        backend:
+          service:
+            name: ai-microservice
+            port:
+              number: 8000
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: spartan-hub-tls
+  namespace: spartan-hub
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUcwRENDQVJpZ0F3SUJBZ0lKQUtOUG5VMzV4U2JSTUEwR0NTcUdTSWIzRFFFQkN3VUFNSUdsTVFzd0NRWUQKVlFRR0V3SlZVekVYTUJVR0F5RVRNQkVHQTFVRUJ3d0tRMkZzYVdadmNtNXJNUjB3R3dZSktvWklodmNOQVFrQk4KWWlpYkdGakxuTmxjblpwWTJWa2FYVXVkMjl5YXpFbE1Cb0dBMVVFQ2d3VFQybHVaMjkyTG1ObGNuWnBZMlZrYVhVdQpkMjl5YXpFTE1Ba0dBMVVFQ3d3Q1YybHVaekFlRncwd05UQTFNVE14T1RVMU4wb0hNSUlCSWpBTkJna3Foa2lHCjl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRREIxbDE1OXphREhhMUJzMDVPUkxqaUFkMlpFeCtkVFpnSVpTQTgKSDZDZkR6LzJQZ1BJM1JNMklPZTVFRzBLM0R3UDdMbU5pUGdkTmRyZmZ5ZmN1MjRvNHRSYjY2NUJDcmVQMDlIMDlMSgpqRXUxL1hybEgvcWk0YkFJZUt3ZkFDWnpPZmRrakhuRHF1QVArWHJLY1BHMTBMcVVQbktZUEhKbFc3QnByeE5kCkIvdXIrZkVqSXBxQzdZM3RTc0FVSG9vcGR6VS92TWhVNVJSdDJ6SWw0WnBlK3F0NnNQcnBucTZEOTRMM3NaTGsKWWJBRFAxS0dvdzRINlRvd2x4T09Edm5tK0tPcEFGbFVTUndCVmpJcHNHem5iakFiRHlXOVBHTElmbW1LNlhoUApCbEFhRU5rZGNFWk5nMGJmb0cvOXljS1pNVFU5d2J1ZzRJeExCMW80Y0QreVdJZ2JGaGhnQjl3ZW11Uks4WDRCClJGM0VzUDZZTVUrRkhTZnF5OVdKdHJnL3ZmWFFlUGpVbXRzN21mRUVwcVhjWjNYamhaYjZMN0s0RjBIVjZTb0oKVkhUemZoRThtNlROVHgvRkllNUg3ajN0ZXYzNVBYZnRSMWkvNnFVTW5IQ1Rod3hJSW1PMjRxcUJjMjVVUDFBUgo2T05mTWhQV2c5NGRPZEcyWEdWaTVCWFhrMzVLQXVYZXJYeksrd2tVL1VRZ3Q3OUtCcG5tNHByUnhrOVNFVzVMCi0tLS0tRUVEQ0lyR1FRS0JnSTdEaXlEQUE0YVNBUEFKQUxDQVFRRUJ1Q3hJQUxDQVFEUUdUd2dNQk1nR0ExVWQKQVFXQk1VSnVkbkR3TUMzd0xuTnZjbXN3TVE4R0ExVUVDZ3dSVDJsdVoyOTJMbU5sY25acFkyVmthWFV1ZDI5eQphdkVMTUFrR0ExVUVCQ3dDVjJsdVp6QWVGdzB4TmpBMU1UTXhOVGsxTlRkYUZ3MHhOVEExTVRNeE5UazFOVGRhCk1JR3hNUXN3Q1FZRFZRUUdFd0pWVXpFWE1CVUdBMVVFQ2d3T1YyOXlhMlY1TFZOcFoyNWhkSFZ5WlNCVVpYTmwKYVd4a0lFTkJNQjRYRFRFME1ERXdNakExTlRVMU5sb1hEVEUwTURJd01qQTFOVFUxTmxvd1V6RU9NQXdHQTFVRQpDaDRNUjFOcFoyNWhkSFZ5WlMxaFpHMXBiaTVrYjNKaGJHeDVNUnN3R1FZRFZRUUtEQkJrYjNKaGJHeDVJRUYxCmIyTnBaWE1nUTJGeWFXSmxaekVNTUFvR0ExVUVBd3dEVjJsdVp6Q0JoQ0J0WlhoMGNtbDZZWFJwYjI0Z1VtVm4KYjJ0bGNpQkRRVEFlRncwdE5UQXhNRGd3TmpFd01EQmFGdzB0TlRBeE1EZ3dOak0wTURCYU1JRzVNUXN3Q1FZRApWUVFHRXdKVlV6RVhNQmdHQTFVRUNnd0RSV1J0YVhOMFpYSWlRM1Z5WW14bElFTkJNRmt3RXdZSEtvWklodmNOCkFRa0JGZ1pKaGJHbHpjMlYwYUdGc2N5NXdZV1JrTUI4R0Nnb0Fia0hFTUVJQkJRQURnZ0lCQURvSm1ocGJpQnUKWlhKNUlIUmxJR0oxYkdGd2IyNWhkR1Z6SUdSbGJHRnVaMlVnVVdWeWIzSjVVMlYwSUhOMGIzSm5JRUJCTkVGeApNQ2dBQkFBc0FBQW9nQUFFR0NBUUlCQURJQUF3RUdDQVVDQndZR0NBY0ZDaEFHQkF3RUFBUUlMQW9FR0JDRUEKQUlJREFnRUNBZ0lCQWpBR0JnZ3Foa2pPWFJoZEdWcExtTnNiM1ZrWlhJdVkyOXRMeWhzYjJOaGJHVXVjM0JzClpBME1CZ1lFQUVkTU1BMEdDU3FHU0liM0RRRUJDd1VFQVF3d0VBWU9WQmdBOE1SOHdIUVlEVlIwbEJDCXd3CkpnY1RCb0lGMGpBU0JveWdZS0tuUjVFQzdNQXdHQzNNSQpPQ292aHdBd0lEQVFBUTcxZkRDMGxFb0VNL0o0b0NUYitwb1dFQTdYOXFBbk5uMkxZN3Jrc3dnT1l3T1ZBSUNSCjd0Yi9jaGlBL1NQN2tibURBLzJadGVMUGM3STI3QjNZRHh5NlNTTTJ5cDJoZkFoTWxNVVVoRm16RUdNUk1SB0pCWWI0YzVQTklJSXNBR0RMR0RtNGxhQ0JCQVJsNVRSb1pBU0JCRGpJQUFJd01CQVlLS3dHQkJRRQpBVlM1TFF4RXpBZ0ZoRUVGT0JwMVRwVWxDRWxDZ1RCdnBFUnVVUUlGQUNBZmtBd2dtYUtYRW1EQWdNREJBTVRCClFPQUdNQXdFQXhNSUNSUUFSQmdBd0RnWUpLb1pJaHZjTkFRRUxCUUFEZ2dJQkFJQlBEdzZLUDd5TzEwN3oKRFRuUGk3MVhoTjRHWEE3ajZ4bGJHalpLOXF5dE94UUNoNVRVZFdrbElpcEI2WWNWekIyc01GNDRUdHVVK0tUZQowdGpIOUc4bktNQWVELzhrckdUZHU1OVRHV3RMOE1YUjVZNjBvdWtqOGVtbkZvVXdTMTdpU1NqMlZYRm5VeE9BCmZuRnJmTjU0d2dQbC9wNkRTTmdZVGJ4YUhmVThtQmMrUG43RHBSdE5URks4dVRMVU5DYjJtb2RvUDhDTG8KNXB6MVlNWnhqVThZQVBGd3BjNHE2a3BDVnNpMEZ0NTBHeVU0cFA3TnI3ZDVaYzgxNVBsUHlpdGp3c1U3OQowMFd4eHlOVHZvb1hMZ3JOaldWWkNyMGViRG91QTArQW5NWnNrM3B4QlpBR3FNTHBxZUoxZHJ6MkxNdXA3Cm5Nd0pEQW9md1NMcjh5R2NpZUIxZjlBYmd4UndkUG5Dd3NYS3ZaaS90cE5BczIwTzZjSktvYlRCQ0I3dXMKd0JLQkFCcXVGRy9ZUVdDbm02U1JQck5BYUN2QT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBUUlMQVlIS3E3TVJvd0hnWUtLb1pJaHZjTkFRa0JGZ1pKaEcKa2x6YzJWMGFHRnNjeTV3WVdSa01DRUdDQ1FxR0NpcUdUeUJHUURnWURBTUlCQkF3R0NBVUlCQVRBT0JnRwpCZ1FCTUJFSERqQUtCZ2dxaGtpRzl3MEJCd0VBQUlDQ05BQXc0U2dRcU5mbE44N1dFMStMZncrMEtVODV0Z0tRCklJNStacjIzZHR1QWU4Q0N2NlBGTVdrZ3A1U1E9PQotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg==

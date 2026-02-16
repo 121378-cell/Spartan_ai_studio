@@ -1,0 +1,121 @@
+version: 2
+updates:
+  # Maintain dependencies for npm in root
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "admin"
+    assignees:
+      - "admin"
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+
+  # Maintain dependencies for npm in backend
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "admin"
+    assignees:
+      - "admin"
+    labels:
+      - "dependencies"
+      - "npm"
+      - "backend"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+
+  # Maintain dependencies for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "admin"
+    assignees:
+      - "admin"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "admin"
+    assignees:
+      - "admin"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      prefix-development: "ci"
+
+  # Maintain dependencies for pip (AI/Python components)
+  - package-ecosystem: "pip"
+    directory: "/AI"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "admin"
+    assignees:
+      - "admin"
+    labels:
+      - "dependencies"
+      - "python"
+      - "ai"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+
+  # Maintain dependencies for pip in ai-microservice
+  - package-ecosystem: "pip"
+    directory: "/ai-microservice"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "admin"
+    assignees:
+      - "admin"
+    labels:
+      - "dependencies"
+      - "python"
+      - "ai"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"

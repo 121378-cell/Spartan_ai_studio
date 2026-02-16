@@ -1,0 +1,59 @@
+# Stress Test Configuration
+# Tests system behavior under extreme load conditions
+
+config:
+  target: "http://localhost:8000"
+  phases:
+    - duration: 30
+      arrivalRate: 5
+      name: "Warmup"
+    - duration: 60
+      arrivalRate: 15
+      name: "Moderate Load"
+    - duration: 60
+      arrivalRate: 30
+      name: "High Load"
+    - duration: 60
+      arrivalRate: 50
+      name: "Stress Load"
+    - duration: 30
+      arrivalRate: 10
+      name: "Cooldown"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+
+scenarios:
+  - name: "Database Intensive Operations"
+    weight: 3
+    flow:
+      - get:
+          url: "/api/workouts?limit=100"
+      
+      - get:
+          url: "/api/exercises?workoutId={{ $randomNumber(1, 1000) }}"
+      
+      - post:
+          url: "/api/workouts/search"
+          json:
+            query: "strength training"
+
+  - name: "AI Service Load"
+    weight: 2
+    flow:
+      - post:
+          url: "/api/ai/generate-workout"
+          json:
+            goals: ["muscle gain"]
+            duration: 45
+            equipment: ["dumbbells"]
+
+  - name: "Authentication Flood"
+    weight: 1
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "user{{ $randomNumber(1, 10000) }}@test.com"
+            password: "Password123!"

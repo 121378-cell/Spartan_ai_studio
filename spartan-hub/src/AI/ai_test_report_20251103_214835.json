@@ -1,0 +1,110 @@
+{
+  "timestamp": "20251103_214835",
+  "summary": {
+    "total_tests": 9,
+    "successful_tests": 9,
+    "failed_tests": 0,
+    "average_latency": 6.5184017817179365,
+    "average_coverage": 0.0
+  },
+  "model_performance": {
+    "mixtral": {
+      "success_rate": 100.0,
+      "average_latency": 0.24621216456095377,
+      "average_coverage": 0.0
+    },
+    "llama2": {
+      "success_rate": 100.0,
+      "average_latency": 0.20987176895141602,
+      "average_coverage": 0.0
+    },
+    "orca-mini": {
+      "success_rate": 100.0,
+      "average_latency": 19.099121411641438,
+      "average_coverage": 0.0
+    }
+  },
+  "detailed_results": [
+    {
+      "model": "mixtral",
+      "scenario": "Evaluaci\u00f3n de Ejercicio",
+      "success": true,
+      "response": "",
+      "error": null,
+      "latency": 0.49628281593322754,
+      "coverage": 0.0
+    },
+    {
+      "model": "mixtral",
+      "scenario": "An\u00e1lisis de Nutrici\u00f3n",
+      "success": true,
+      "response": "",
+      "error": null,
+      "latency": 0.1221017837524414,
+      "coverage": 0.0
+    },
+    {
+      "model": "mixtral",
+      "scenario": "Evaluaci\u00f3n de Riesgo",
+      "success": true,
+      "response": "",
+      "error": null,
+      "latency": 0.12025189399719238,
+      "coverage": 0.0
+    },
+    {
+      "model": "llama2",
+      "scenario": "Evaluaci\u00f3n de Ejercicio",
+      "success": true,
+      "response": "",
+      "error": null,
+      "latency": 0.26363539695739746,
+      "coverage": 0.0
+    },
+    {
+      "model": "llama2",
+      "scenario": "An\u00e1lisis de Nutrici\u00f3n",
+      "success": true,
+      "response": "",
+      "error": null,
+      "latency": 0.19616007804870605,
+      "coverage": 0.0
+    },
+    {
+      "model": "llama2",
+      "scenario": "Evaluaci\u00f3n de Riesgo",
+      "success": true,
+      "response": "",
+      "error": null,
+      "latency": 0.16981983184814453,
+      "coverage": 0.0
+    },
+    {
+      "model": "orca-mini",
+      "scenario": "Evaluaci\u00f3n de Ejercicio",
+      "success": true,
+      "response": " Siendo el peso de la sentadilla con peso de 100kg y el nivel del usuario medio, los ejercicios estar\u00edan encubiertos para un usuario de tal nivel. Sin embargo, no se proporciona una evaluaci\u00f3n detallada al respecto.\n\nAparte de las tres cifras que se incluyen en el plan, no se mencionan otros datos importantes que pueden ayudar a evaluar si un usuario est\u00e1 apto para ejecutar este plan o no. Por lo tanto, es necesario informar m\u00e1s sobre la evaluaci\u00f3n del usuario y otros par\u00e1metros adicionales para poder hacer una evaluaci\u00f3n detallada de si el plan es apropiado o no.",
+      "error": null,
+      "latency": 29.03077483177185,
+      "coverage": 0.0
+    },
+    {
+      "model": "orca-mini",
+      "scenario": "An\u00e1lisis de Nutrici\u00f3n",
+      "success": true,
+      "response": " Yes, thisnutritional plan appears to be appropriate. It includes a variety of foods from different food groups, which should provide the necessary nutrients for growth and development. The goal of gaining muscular mass is also achievable with this plan. However, it's important to note that individual dietary needs may vary, so it's recommended to consult a healthcare professional before starting any new diet plan.",
+      "error": null,
+      "latency": 13.90652084350586,
+      "coverage": 0.0
+    },
+    {
+      "model": "orca-mini",
+      "scenario": "Evaluaci\u00f3n de Riesgo",
+      "success": true,
+      "response": " No, based on the results you have provided, the person can continue with their exercise routine. The heart rate is within normal range, blood pressure is within acceptable levels, and the perceived effort is around 9/10. There are no apparent symptoms of discomfort. However, it is important to monitor these vital signs during exercise to ensure safety and to assess any changes in performance. A risk evaluation should be provided based on the individual's health status.",
+      "error": null,
+      "latency": 14.360068559646606,
+      "coverage": 0.0
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"backupStatus.d.ts","sourceRoot":"","sources":["backupStatus.ts"],"names":[],"mappings":"AAQA,qBAAa,YAAY;IACvB,OAAO,CAAC,cAAc,CAAiB;;IASjC,eAAe,IAAI,OAAO,CAAC,GAAG,CAAC;IAgC/B,eAAe,IAAI,OAAO,CAAC,OAAO,CAAC;IA2CnC,cAAc,IAAI,OAAO,CAAC,MAAM,CAAC;CA0CxC"}

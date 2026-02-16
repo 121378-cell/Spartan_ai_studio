@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-primary
+  namespace: spartan-hub
+  labels:
+    app: postgres-primary
+    component: database
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: postgres-primary
+    component: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-replica-1
+  namespace: spartan-hub
+  labels:
+    app: postgres-replica-1
+    component: database
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: postgres
+    protocol: TCP
+    name: postgres
+  selector:
+    app: postgres-replica-1
+    component: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-replica-2
+  namespace: spartan-hub
+  labels:
+    app: postgres-replica-2
+    component: database
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: postgres
+    protocol: TCP
+    name: postgres
+  selector:
+    app: postgres-replica-2
+    component: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-read-replicas
+  namespace: spartan-hub
+  labels:
+    app: postgres-read-replicas
+    component: database-read
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: postgres
+    protocol: TCP
+    name: postgres
+  selector:
+    component: database
+  sessionAffinity: None

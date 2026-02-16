@@ -1,0 +1,75 @@
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ÔÜÖ´©Å  suppress all logs with { quiet: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (7) from .env -- tip: ­ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+FAIL src/__tests__/formAnalysis.monolithic.test.ts
+  ÔùÅ Test suite failed to run
+
+    src/server.ts:18:8 - error TS1192: Module '"C:/Users/sergi/Spartan hub 2.0/spartan-hub/backend/src/routes/fitnessRoutes"' has no default export.
+
+    18 import fitnessRoutes from './routes/fitnessRoutes';
+              ~~~~~~~~~~~~~
+    src/server.ts:62:61 - error TS2307: Cannot find module './middleware/modernCsrfProtection' or its corresponding type declarations.
+
+    62 import { setupModernCsrfProtection, csrfErrorHandler } from './middleware/modernCsrfProtection';
+                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    src/server.ts:64:3 - error TS2300: Duplicate identifier 'getDatabasePassword'.
+
+    64   getDatabasePassword,
+         ~~~~~~~~~~~~~~~~~~~
+    src/server.ts:65:3 - error TS2300: Duplicate identifier 'getApiKey'.
+
+    65   getApiKey,
+         ~~~~~~~~~
+    src/server.ts:66:3 - error TS2300: Duplicate identifier 'getOllamaApiKey'.
+
+    66   getOllamaApiKey,
+         ~~~~~~~~~~~~~~~
+    src/server.ts:67:3 - error TS2300: Duplicate identifier 'getJwtSecret'.
+
+    67   getJwtSecret,
+         ~~~~~~~~~~~~
+    src/server.ts:68:3 - error TS2300: Duplicate identifier 'getSessionSecret'.
+
+    68   getSessionSecret
+         ~~~~~~~~~~~~~~~~
+    src/server.ts:70:10 - error TS2300: Duplicate identifier 'AuthenticatedRequest'.
+
+    70 import { AuthenticatedRequest } from './types/index';
+                ~~~~~~~~~~~~~~~~~~~~
+    src/server.ts:72:3 - error TS2300: Duplicate identifier 'getDatabasePassword'.
+
+    72   getDatabasePassword,
+         ~~~~~~~~~~~~~~~~~~~
+    src/server.ts:73:3 - error TS2300: Duplicate identifier 'getApiKey'.
+
+    73   getApiKey,
+         ~~~~~~~~~
+    src/server.ts:74:3 - error TS2300: Duplicate identifier 'getOllamaApiKey'.
+
+    74   getOllamaApiKey,
+         ~~~~~~~~~~~~~~~
+    src/server.ts:75:3 - error TS2300: Duplicate identifier 'getJwtSecret'.
+
+    75   getJwtSecret,
+         ~~~~~~~~~~~~
+    src/server.ts:76:3 - error TS2300: Duplicate identifier 'getSessionSecret'.
+
+    76   getSessionSecret
+         ~~~~~~~~~~~~~~~~
+    src/server.ts:78:10 - error TS2300: Duplicate identifier 'AuthenticatedRequest'.
+
+    78 import { AuthenticatedRequest } from './types/index';
+                ~~~~~~~~~~~~~~~~~~~~
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        13.547 s
+Ran all test suites matching src/__tests__/formAnalysis.monolithic.test.ts.

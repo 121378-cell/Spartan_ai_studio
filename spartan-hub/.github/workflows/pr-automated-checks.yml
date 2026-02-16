@@ -1,0 +1,177 @@
+name: PR Automated Checks
+
+on:
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          package-lock.json
+          backend/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./
+    
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: ./backend
+    
+    - name: Run security audit
+      run: npm audit --audit-level high
+      working-directory: ./backend
+
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          package-lock.json
+          backend/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./
+    
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: ./backend
+    
+    - name: Run ESLint
+      run: npx eslint . --ext .ts,.tsx --max-warnings 0
+      working-directory: ./backend
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          package-lock.json
+          backend/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./
+    
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: ./backend
+    
+    - name: Run unit tests
+      run: npm test
+      working-directory: ./backend
+      env:
+        CI: true
+
+  rate-limit-validation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          backend/package-lock.json
+    
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: ./backend
+    
+    - name: Verify rate limiting implementation
+      run: |
+        # Check that rate limiting middleware is properly configured
+        if grep -r "express-rate-limit" ./backend/src/middleware/; then
+          echo "✓ Rate limiting middleware found"
+        else
+          echo "✗ Rate limiting middleware not found"
+          exit 1
+        fi
+        
+        # Check for Redis store implementation
+        if grep -r "RedisStore" ./backend/src/middleware/; then
+          echo "✓ Redis store for rate limiting found"
+        else
+          echo "✗ Redis store for rate limiting not found"
+          exit 1
+        fi
+        
+        # Check for differentiated rate limits
+        if grep -r "authRateLimit\|getRateLimit\|writeRateLimit" ./backend/src/server.ts; then
+          echo "✓ Differentiated rate limits found"
+        else
+          echo "✗ Differentiated rate limits not found"
+          exit 1
+        fi
+
+  zod-validation-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          backend/package-lock.json
+    
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: ./backend
+    
+    - name: Verify Zod validation implementation
+      run: |
+        # Check that Zod schemas are used for validation
+        if grep -r "zod\|Zod" ./backend/src/middleware/ ./backend/src/schemas/; then
+          echo "✓ Zod validation found"
+        else
+          echo "✗ Zod validation not found"
+          exit 1
+        fi
+
+  typescript-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          backend/package-lock.json
+    
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: ./backend
+    
+    - name: Run TypeScript type check
+      run: npx tsc --noEmit
+      working-directory: ./backend

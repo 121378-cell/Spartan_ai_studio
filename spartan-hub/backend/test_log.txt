@@ -1,0 +1,74 @@
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+FAIL src/__tests__/formAnalysis.monolithic.test.ts
+  ÔùÅ Test suite failed to run
+
+    src/config/database.ts:11:15 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    11 type DBType = Database.Database | { type: 'postgres' } | null;
+                     ~~~~~~~~
+    src/config/database.ts:14:32 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    14 export type DatabaseInstance = Database.Database | { type: 'postgres' } | null;
+                                      ~~~~~~~~
+    src/config/database.ts:69:23 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    69     if (typeof (db as Database.Database).close === 'function') {
+                             ~~~~~~~~
+    src/config/database.ts:71:16 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    71         (db as Database.Database).close();
+                      ~~~~~~~~
+    src/config/database.ts:98:9 - error TS2353: Object literal may only specify known properties, and 'fileMustExist' does not exist in type '{ readonly?: boolean; timeout?: number; verbose?: boolean; }'.
+
+    98         fileMustExist: false, // Create database file if it doesn't exist
+               ~~~~~~~~~~~~~
+    src/config/database.ts:129:43 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    129   if (usePostgres || !db || typeof (db as Database.Database).exec !== 'function') {
+                                                  ~~~~~~~~
+    src/config/database.ts:136:12 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    136     (db as Database.Database).exec(`
+                   ~~~~~~~~
+    src/config/database.ts:162:12 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    162     (db as Database.Database).exec(`
+                   ~~~~~~~~
+    src/config/database.ts:178:12 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    178     (db as Database.Database).exec(`
+                   ~~~~~~~~
+    src/config/database.ts:194:12 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    194     (db as Database.Database).exec(`
+                   ~~~~~~~~
+    src/config/database.ts:212:12 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    212     (db as Database.Database).exec(`
+                   ~~~~~~~~
+    src/config/database.ts:225:12 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    225     (db as Database.Database).exec(`
+                   ~~~~~~~~
+    src/config/database.ts:239:12 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    239     (db as Database.Database).exec(`
+                   ~~~~~~~~
+    src/config/database.ts:261:27 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    261   if (db && typeof (db as Database.Database).close === 'function') {
+                                  ~~~~~~~~
+    src/config/database.ts:263:14 - error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+
+    263       (db as Database.Database).close();
+                     ~~~~~~~~
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        12.857 s
+Ran all test suites matching src/__tests__/formAnalysis.monolithic.test.ts.

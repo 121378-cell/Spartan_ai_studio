@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: spartan-hub
+data:
+  NODE_ENV: "production"
+  DATABASE_URL: "postgresql://spartan_user:${POSTGRES_PASSWORD}@postgres-primary:5432/spartan_fitness"
+  INSTANCE_ID: "1"
+  JWT_ALGO: "HS256"
+  POSTGRES_HOST: "postgres-primary"
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: "spartan_user"
+  POSTGRES_DB: "spartan_fitness"
+  POSTGRES_POOL_MAX: "20"
+  POSTGRES_POOL_IDLE_TIMEOUT: "30000"
+  POSTGRES_POOL_CONNECTION_TIMEOUT: "2000"
+  REPLICA_HOSTS: "postgres-replica-1,postgres-replica-2"
+  REPLICA_PORTS: "5432,5432"
+  ALLOWED_ORIGINS: "${ALLOWED_ORIGINS}"
+  OLLAMA_HOST: "http://ollama:11434"
+  AI_MICROSERVICE_URL: "http://ai-microservice:8000"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: spartan-hub
+data:
+  postgres-user: "spartan_user"
+  postgres-db: "spartan_fitness"
+  postgres-wal-level: "replica"
+  postgres-max-wal-senders: "3"
+  postgres-wal-keep-segments: "10"
+  postgres-shared-preload-libraries: "pg_stat_statements"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-microservice-config
+  namespace: spartan-hub
+data:
+  OLLAMA_MODEL: "gemma2:2b"
+  AI_SERVICE_PORT: "8000"
+  LOG_LEVEL: "info"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-config
+  namespace: spartan-hub
+data:
+  OLLAMA_PORT: "11434"
+  MODEL_CACHE_DIR: "/root/.ollama"

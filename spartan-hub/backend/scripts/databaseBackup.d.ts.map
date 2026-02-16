@@ -1,0 +1,1 @@
+{"version":3,"file":"databaseBackup.d.ts","sourceRoot":"","sources":["databaseBackup.ts"],"names":[],"mappings":"AA+DA,qBAAa,cAAc;IACzB,OAAO,CAAC,MAAM,CAAe;IAC7B,OAAO,CAAC,WAAW,CAAU;;IAyBvB,YAAY,IAAI,OAAO,CAAC,MAAM,CAAC;YA+CvB,kBAAkB;YAkDlB,oBAAoB;YAmCpB,YAAY;YAgDZ,oBAAoB;IA+F5B,eAAe,IAAI,OAAO,CAAC,GAAG,CAAC;CAkCtC"}

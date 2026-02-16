@@ -1,0 +1,99 @@
+# Configuración del motor de gobernanza
+governance:
+  models:
+    mixtral:
+      temperature: 0.7
+      max_tokens: 2000
+      timeout: 10.0
+      priority:
+        - HEALTH
+        - SECURITY
+        - COMPLIANCE
+    llama2:
+      temperature: 0.8
+      max_tokens: 1000
+      timeout: 5.0
+      priority:
+        - TRAINING
+        - DATA_VALIDATION
+    orca-mini:
+      temperature: 0.9
+      max_tokens: 500
+      timeout: 2.0
+      priority: []
+
+  # Configuración de prompts por tipo de decisión
+  prompts:
+    security:
+      template: |
+        Evaluación de Seguridad:
+        
+        Contexto:
+        {context}
+        
+        Consideraciones de seguridad:
+        1. Autenticación y autorización
+        2. Validación de entrada
+        3. Exposición de datos sensibles
+        4. Vectores de ataque potenciales
+        
+        Por favor proporciona:
+        1. Evaluación de riesgo (Alto/Medio/Bajo)
+        2. Justificación detallada
+        3. Recomendaciones específicas
+    
+    training:
+      template: |
+        Evaluación de Plan de Entrenamiento:
+        
+        Contexto del usuario:
+        {context}
+        
+        Evaluar:
+        1. Seguridad del ejercicio
+        2. Progresión adecuada
+        3. Factores de riesgo
+        4. Adaptaciones necesarias
+        
+        Proporciona:
+        1. Decisión (Aprobar/Modificar/Rechazar)
+        2. Justificación
+        3. Modificaciones sugeridas si aplica
+    
+    health:
+      template: |
+        Evaluación de Riesgo de Salud:
+        
+        Datos del usuario:
+        {context}
+        
+        Análisis requerido:
+        1. Indicadores de riesgo inmediato
+        2. Contraindicaciones
+        3. Limitaciones necesarias
+        4. Monitoreo requerido
+        
+        Entregar:
+        1. Nivel de riesgo (Alto/Medio/Bajo)
+        2. Justificación médica
+        3. Precauciones recomendadas
+
+  # Configuración de métricas
+  metrics:
+    enabled: true
+    port: 9090
+    path: /metrics
+
+  # Configuración de logging
+  logging:
+    level: INFO
+    file: governance.log
+    format: '%(asctime)s [%(levelname)s] %(message)s'
+
+  # Configuración de API
+  api:
+    host: 0.0.0.0
+    port: 8000
+    cors_origins:
+      - http://localhost:3002
+    timeout: 30

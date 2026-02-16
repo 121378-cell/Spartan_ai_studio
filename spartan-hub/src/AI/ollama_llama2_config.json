@@ -1,0 +1,8 @@
+{
+  "model": "llama2",
+  "parameters": {
+    "context_window": 4096,
+    "num_ctx": 4096,
+    "temperature": 0.8
+  }
+}

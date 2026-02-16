@@ -1,0 +1,186 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: spartan-hub
+  labels:
+    app: backend
+    component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+      component: api
+  template:
+    metadata:
+      labels:
+        app: backend
+        component: api
+        tier: backend
+    spec:
+      securityContext:
+        runAsNonRoot: false
+        fsGroup: 1000
+      containers:
+      - name: backend
+        image: synergycoach/backend:latest
+        ports:
+        - containerPort: 3001
+          name: backend-api
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: NODE_ENV
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: DATABASE_URL
+        - name: INSTANCE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: jwt-secret
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: session-secret
+        - name: JWT_ALGO
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: JWT_ALGO
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: POSTGRES_HOST
+        - name: POSTGRES_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: POSTGRES_PORT
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: POSTGRES_USER
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: POSTGRES_DB
+        - name: OLLAMA_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: OLLAMA_HOST
+        - name: AI_MICROSERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: AI_MICROSERVICE_URL
+        - name: API_NINJAS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: external-api-keys
+              key: api-ninjas-key
+        - name: EDAMAM_APP_ID
+          valueFrom:
+            secretKeyRef:
+              name: external-api-keys
+              key: edamam-app-id
+        - name: EDAMAM_APP_KEY
+          valueFrom:
+            secretKeyRef:
+              name: external-api-keys
+              key: edamam-app-key
+        - name: FATSECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: external-api-keys
+              key: fatsecret-key
+        - name: RAPIDAPI_KEY
+          valueFrom:
+            secretKeyRef:
+              name: external-api-keys
+              key: rapidapi-key
+        - name: EXERCISE_DB_KEY
+          valueFrom:
+            secretKeyRef:
+              name: external-api-keys
+              key: exercise-db-key
+        - name: OLLAMA_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: ollama-api-key
+        - name: ALLOWED_ORIGINS
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: ALLOWED_ORIGINS
+        volumeMounts:
+        - name: backend-data
+          mountPath: /app/data
+        - name: tmp
+          mountPath: /tmp
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+      volumes:
+      - name: backend-data
+        persistentVolumeClaim:
+          claimName: backend-pvc
+      - name: tmp
+        emptyDir: {}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-pvc
+  namespace: spartan-hub
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
