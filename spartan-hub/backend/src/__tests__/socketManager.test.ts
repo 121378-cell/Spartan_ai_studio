@@ -5,16 +5,16 @@
  * event emission, and real-time communication.
  */
 
-import { SocketManager } from '../../realtime/socketManager';
+import { SocketManager } from '../realtime/socketManager';
 import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
-import { eventBus } from '../../services/eventBus';
-import { logger } from '../../utils/logger';
+import { eventBus } from '../services/eventBus';
+import { logger } from '../utils/logger';
 
 jest.mock('socket.io');
 jest.mock('jsonwebtoken');
-jest.mock('../../services/eventBus');
-jest.mock('../../utils/logger');
+jest.mock('../services/eventBus');
+jest.mock('../utils/logger');
 
 describe('SocketManager', () => {
   let socketManager: any;
@@ -54,7 +54,7 @@ describe('SocketManager', () => {
       clients: jest.fn().mockResolvedValue([mockSocket]),
     };
 
-    (Server as jest.Mock).mockImplementation(() => mockServer);
+    (Server as unknown as jest.Mock).mockImplementation(() => mockServer);
     (jwt.verify as jest.Mock).mockReturnValue({ userId: 'user_123' });
 
     socketManager = SocketManager.getInstance();

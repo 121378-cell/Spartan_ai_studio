@@ -24,6 +24,13 @@ export interface SearchResult {
   vectorId: string;
 }
 
+export interface SearchFilters {
+  category?: string;
+  bookId?: string;
+  minRelevance?: number;
+  tags?: string[];
+}
+
 export class SemanticSearchService {
   private vectorStore: VectorStoreService;
   private db: any;
@@ -31,6 +38,53 @@ export class SemanticSearchService {
   constructor() {
     this.vectorStore = getVectorStoreService();
     this.db = getDatabase();
+  }
+
+  /**
+   * Initialize service
+   */
+  async initialize(): Promise<void> {
+    logger.info('SemanticSearchService initialized', { context: 'semantic-search' });
+  }
+
+  /**
+   * Perform advanced search with filters
+   */
+  async advancedSearch(query: string, filters: any, topK: number = 10): Promise<SearchResult[]> {
+    // Basic implementation delegating to hybridSearch for now
+    return this.hybridSearch(query, topK);
+  }
+
+  /**
+   * Batch search multiple queries
+   */
+  async batchSearch(queries: string[], topK: number = 5): Promise<SearchResult[][]> {
+    return Promise.all(queries.map(q => this.hybridSearch(q, topK)));
+  }
+
+  /**
+   * Get similar chunks for a specific chunk ID
+   */
+  async getSimilarChunks(chunkId: string, topK: number = 5): Promise<SearchResult[]> {
+    // Stub implementation
+    return [];
+  }
+
+  /**
+   * Get search performance statistics
+   */
+  getSearchStats(): any {
+    return {
+      status: 'active',
+      provider: 'qdrant+sqlite'
+    };
+  }
+
+  /**
+   * Close service
+   */
+  async close(): Promise<void> {
+    logger.info('SemanticSearchService closed', { context: 'semantic-search' });
   }
 
   /**

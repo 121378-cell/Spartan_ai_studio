@@ -5,10 +5,10 @@
  * 1M concurrent connections, <500ms delivery
  */
 
-import { SocketManager } from '../../../services/socketManager';
-import { eventBus } from '../../../services/eventBus';
+import { SocketManager } from '../../realtime/socketManager';
+import { eventBus } from '../../services/eventBus';
 
-jest.mock('../../../services/eventBus');
+jest.mock('../../services/eventBus');
 
 describe('WebSocket Broadcast Performance - Phase 3.3', () => {
   let socketManager: any;

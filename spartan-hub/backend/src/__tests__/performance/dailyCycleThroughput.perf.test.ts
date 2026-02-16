@@ -5,16 +5,16 @@
  * 1000 concurrent users processing daily cycles in <5 minutes
  */
 
-import { BrainOrchestrator } from '../../../services/brainOrchestrator';
-import { TerraHealthService } from '../../../services/terraHealthService';
-import { CriticalSignalMonitor } from '../../../services/criticalSignalMonitor';
-import { CoachVitalisService } from '../../../services/coachVitalisService';
-import { getDatabase } from '../../../database/databaseManager';
+import { BrainOrchestrator } from '../../services/brainOrchestrator';
+import { TerraHealthService } from '../../services/terraHealthService';
+import { CriticalSignalMonitor } from '../../services/criticalSignalMonitor';
+import { CoachVitalisService } from '../../services/coachVitalisService';
+import { getDatabase } from '../../database/databaseManager';
 
-jest.mock('../../../database/databaseManager');
-jest.mock('../../../services/terraHealthService');
-jest.mock('../../../services/criticalSignalMonitor');
-jest.mock('../../../services/coachVitalisService');
+jest.mock('../../database/databaseManager');
+jest.mock('../../services/terraHealthService');
+jest.mock('../../services/criticalSignalMonitor');
+jest.mock('../../services/coachVitalisService');
 
 describe('Daily Cycle Throughput Performance - Phase 3.3', () => {
   let orchestrator: any;

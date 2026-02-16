@@ -6,7 +6,7 @@
  */
 
 import * as crypto from 'crypto';
-import { EncryptionService } from '../../../services/encryptionService';
+import { EncryptionService } from '../../utils/encryptionService';
 
 describe('Data Encryption Security - Phase 3.4', () => {
   let encryptionService: any;

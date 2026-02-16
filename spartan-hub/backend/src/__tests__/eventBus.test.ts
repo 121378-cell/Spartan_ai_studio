@@ -5,10 +5,10 @@
  * and statistics collection.
  */
 
-import { EventBus } from '../../services/eventBus';
-import { logger } from '../../utils/logger';
+import { EventBus } from '../services/eventBus';
+import { logger } from '../utils/logger';
 
-jest.mock('../../utils/logger');
+jest.mock('../utils/logger');
 
 describe('EventBus', () => {
   let eventBus: any;

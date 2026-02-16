@@ -7,7 +7,7 @@
 
 import { Server as SocketIOServer } from 'socket.io';
 import { Socket } from 'socket.io-client';
-import { SocketManager } from '../../services/socketManager';
+import { SocketManager } from '../../realtime/socketManager';
 import { eventBus } from '../../services/eventBus';
 
 jest.mock('socket.io');

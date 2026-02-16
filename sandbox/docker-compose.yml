@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # Database
+  db:
+    image: postgres:16
+    container_name: sandbox_db
+    environment:
+      - POSTGRES_DB=spartan_fitness
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD=dev-db-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spartan_user -d spartan_fitness"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache & Rate Limiting
+  redis:
+    image: redis:alpine
+    container_name: sandbox_redis
+    ports:
+      - "6379:6379"
+
+  # AI Inference Engine
+  ollama:
+    image: ollama/ollama
+    container_name: sandbox_ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11436:11434"
+
+  # AI Microservice
+  ai_microservice:
+    build:
+      context: ../spartan-hub/backend/ai-microservice
+    container_name: sandbox_ai
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=gemma2:2b
+    ports:
+      - "9002:8000"
+    depends_on:
+      - ollama
+
+  # Main Backend API
+  backend:
+    build:
+      context: ../spartan-hub/backend
+    container_name: sandbox_backend
+    environment:
+      - NODE_ENV=development
+      - DATABASE_TYPE=postgres
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_PRIMARY_HOST=db
+      - POSTGRES_PRIMARY_PORT=5432
+      - POSTGRES_CONNECTION_TIMEOUT=10000
+      - POSTGRES_DB=spartan_fitness
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD=dev-db-password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=sandbox_jwt_secret_12345_67890_abcdef_long
+      - SESSION_SECRET=sandbox_session_secret_12345_67890_abcdef_long
+      - AI_SERVICE_URL=http://ai_microservice:8000
+      - USE_MOCK_EMBEDDINGS=true
+    ports:
+      - "3003:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      ai_microservice:
+        condition: service_started
+
+volumes:
+  pgdata:
+  ollama_data:

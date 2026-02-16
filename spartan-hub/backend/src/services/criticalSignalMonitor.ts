@@ -38,7 +38,7 @@ interface SignalThresholds {
   maxRHRBpm: number;
 }
 
-class CriticalSignalMonitor {
+export class CriticalSignalMonitor {
   private static instance: CriticalSignalMonitor;
   private db: any;
   private monitoringEnabled: boolean;
@@ -486,5 +486,7 @@ class CriticalSignalMonitor {
 export const getCriticalSignalMonitor = (): CriticalSignalMonitor => {
   return CriticalSignalMonitor.getInstance();
 };
+
+export const criticalSignalMonitor = CriticalSignalMonitor.getInstance();
 
 export default CriticalSignalMonitor;

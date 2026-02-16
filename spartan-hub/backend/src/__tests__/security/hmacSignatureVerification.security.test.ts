@@ -6,7 +6,7 @@
  */
 
 import * as crypto from 'crypto';
-import { TerraHealthService } from '../../../services/terraHealthService';
+import { TerraHealthService } from '../../services/terraHealthService';
 
 describe('HMAC Signature Verification Security - Phase 3.4', () => {
   const webhookSecret = 'webhook_secret_key_256_bit_minimum_for_security_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';

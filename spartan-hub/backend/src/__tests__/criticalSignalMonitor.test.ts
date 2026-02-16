@@ -5,19 +5,19 @@
  * intervention proposals, and user notifications.
  */
 
-import { CriticalSignalMonitor } from '../../services/criticalSignalMonitor';
-import { getDatabase } from '../../database/databaseManager';
-import { eventBus } from '../../services/eventBus';
-import { notificationService } from '../../services/notificationService';
-import { anomalyDetector } from '../../services/anomalyDetector';
-import { logger } from '../../utils/logger';
+import { CriticalSignalMonitor } from '../services/criticalSignalMonitor';
+import { getDatabase } from '../database/databaseManager';
+import { eventBus } from '../services/eventBus';
+import { notificationService } from '../services/notificationService';
+import { anomalyDetector } from '../services/anomalyDetector';
+import { logger } from '../utils/logger';
 
 // Mock dependencies
-jest.mock('../../database/databaseManager');
-jest.mock('../../services/eventBus');
-jest.mock('../../services/notificationService');
-jest.mock('../../services/anomalyDetector');
-jest.mock('../../utils/logger');
+jest.mock('../database/databaseManager');
+jest.mock('../services/eventBus');
+jest.mock('../services/notificationService');
+jest.mock('../services/anomalyDetector');
+jest.mock('../utils/logger');
 
 describe('CriticalSignalMonitor', () => {
   let monitor: any;
@@ -451,7 +451,7 @@ describe('CriticalSignalMonitor', () => {
 
       // Verify timestamp is captured
       const callArgs = mockDb.prepare.mock.calls[0][0];
-      expect(callArgs).toContain('created_at') || expect(callArgs).toContain('timestamp');
+      expect(callArgs.includes('created_at') || callArgs.includes('timestamp')).toBe(true);
     });
   });
 
@@ -510,7 +510,7 @@ describe('CriticalSignalMonitor', () => {
 
       // Verify scheduled time is in future
       const callArgs = mockDb.prepare.mock.calls[0];
-      expect(callArgs[0]).toContain('scheduled_time') || expect(callArgs[0]).toContain('follow_up');
+      expect(callArgs[0].includes('scheduled_time') || callArgs[0].includes('follow_up')).toBe(true);
     });
 
     test('should track intervention effectiveness', async () => {

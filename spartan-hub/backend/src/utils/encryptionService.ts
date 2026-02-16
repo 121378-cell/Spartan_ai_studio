@@ -194,6 +194,42 @@ export const enableDatabaseEncryption = (dbPath: string, encryptionKey: string):
   }
 };
 
+/**
+ * Encryption Service Class (Singleton)
+ * Wrapping standalone functions for test compatibility
+ */
+export class EncryptionService {
+  private static instance: EncryptionService;
+  private masterKey: string;
+
+  private constructor(masterKey: string | Buffer) {
+    this.masterKey = masterKey.toString();
+  }
+
+  static getInstance(masterKey: string | Buffer): EncryptionService {
+    if (!EncryptionService.instance) {
+      EncryptionService.instance = new EncryptionService(masterKey);
+    }
+    return EncryptionService.instance;
+  }
+
+  encrypt(data: string | object): string {
+    return encryptData(data, this.masterKey);
+  }
+
+  decrypt(encryptedData: string): string {
+    return decryptData(encryptedData, this.masterKey);
+  }
+
+  encryptJson(data: object): string {
+    return encryptJson(data, this.masterKey);
+  }
+
+  decryptJson<T>(encryptedData: string): T {
+    return decryptJson<T>(encryptedData, this.masterKey);
+  }
+}
+
 export default {
   encryptData,
   decryptData,

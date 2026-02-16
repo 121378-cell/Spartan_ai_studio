@@ -421,4 +421,12 @@ export function getDatabaseManager(dbPath?: string): DatabaseManager {
   return DatabaseManager.getInstance(dbPath);
 }
 
+/**
+ * Close database connection
+ */
+export async function closeDatabase(): Promise<void> {
+  const manager = DatabaseManager.getInstance();
+  return manager.close();
+}
+
 export default DatabaseManager;

@@ -5,13 +5,13 @@
  * 100+ requests per second with <100ms latency
  */
 
-import { TerraHealthService } from '../../../services/terraHealthService';
-import { getDatabase } from '../../../database/databaseManager';
-import { eventBus } from '../../../services/eventBus';
+import { TerraHealthService } from '../../services/terraHealthService';
+import { getDatabase } from '../../database/databaseManager';
+import { eventBus } from '../../services/eventBus';
 import * as crypto from 'crypto';
 
-jest.mock('../../../database/databaseManager');
-jest.mock('../../../services/eventBus');
+jest.mock('../../database/databaseManager');
+jest.mock('../../services/eventBus');
 
 describe('Webhook Ingestion Rate Performance - Phase 3.3', () => {
   let terraService: any;

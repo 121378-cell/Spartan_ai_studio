@@ -22,8 +22,8 @@ RUN npm run build
 # Runtime stage - minimal image with only production code
 FROM node:18-alpine
 
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
+# Install dumb-init for proper signal handling and libc6-compat for ONNX
+RUN apk add --no-cache dumb-init libc6-compat
 
 # Create non-root user with specific UID/GID for security
 RUN addgroup -g 1001 -S nodejs && \
@@ -58,7 +58,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
 # Use dumb-init to handle signals properly
-ENTRYPOINT ["/sbin/dumb-init", "--"]
+ENTRYPOINT ["dumb-init", "--"]
 
 # Start application
 CMD ["node", "dist/server.js"]

@@ -272,7 +272,7 @@ describe('Critical Signal Alert Flow - E2E Integration', () => {
 
       // Verify timestamp was captured
       const sqlCall = mockDb.prepare.mock.calls[0][0];
-      expect(sqlCall).toContain('timestamp') || expect(sqlCall).toContain('created_at');
+      expect(sqlCall.includes('timestamp') || sqlCall.includes('created_at')).toBe(true);
     });
 
     test('should use transactions for data consistency', async () => {

@@ -36,7 +36,18 @@ interface RankingWeightUpdate {
 }
 
 export class FeedbackLearningService {
+  private static instance: FeedbackLearningService;
   private feedbackHistory: QueryFeedback[] = [];
+
+  public constructor() {}
+
+  static getInstance(): FeedbackLearningService {
+    if (!FeedbackLearningService.instance) {
+      FeedbackLearningService.instance = new FeedbackLearningService();
+    }
+    return FeedbackLearningService.instance;
+  }
+
   private rankingWeights: Map<string, number> = new Map([
     ['relevance', 0.5],
     ['recency', 0.15],
@@ -374,4 +385,5 @@ export class FeedbackLearningService {
   }
 }
 
+export const feedbackLearningService = FeedbackLearningService.getInstance();
 export default FeedbackLearningService;

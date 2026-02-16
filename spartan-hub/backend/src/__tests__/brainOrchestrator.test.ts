@@ -57,7 +57,7 @@ describe('BrainOrchestrator', () => {
     (BiometricService as jest.Mock).mockImplementation(() => mockBiometricService);
 
     // Setup PlanAdjusterService mock
-    (PlanAdjusterService as jest.Mock).mockImplementation(() => mockPlanAdjuster);
+    (PlanAdjusterService as unknown as jest.Mock).mockImplementation(() => mockPlanAdjuster);
 
     // Setup MLForecastingService Singleton mock
     (MLForecastingService.getInstance as jest.Mock).mockReturnValue({

@@ -1,4 +1,34 @@
 import { ROLES, Role } from '../middleware/auth';
+import { Request, Response, NextFunction } from 'express';
+import { logger } from './logger';
+
+export { ROLES, Role };
+
+/**
+ * Middleware to require a specific role or higher
+ */
+export const requireRole = (requiredRole: string | string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const user = (req as any).user;
+    
+    if (!user || !user.role) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const rolesToCheck = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+    const isAuthorized = rolesToCheck.some(role => hasRoleOrHigher(user.role, role));
+
+    if (!isAuthorized) {
+      logger.warn('Access denied: insufficient permissions', {
+        context: 'auth',
+        metadata: { userId: user.id, userRole: user.role, requiredRole }
+      });
+      return res.status(403).json({ error: 'Insufficient permissions' });
+    }
+
+    next();
+  };
+};
 
 // Define role hierarchies and permissions
 export const ROLE_HIERARCHY = {

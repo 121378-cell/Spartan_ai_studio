@@ -30,19 +30,19 @@ interface SocketUser {
   subscriptions: Set<string>;
 }
 
-class SocketManager {
+export class SocketManager {
   private static instance: SocketManager;
   private io: Server | null = null;
   private activeConnections: Map<string, SocketUser> = new Map();
   private namespaces: Map<string, Namespace> = new Map();
 
-  private constructor() {
+  public constructor() {
     logger.info('SocketManager initialized (not yet attached to HTTP server)', {
       context: 'socket-manager'
     });
   }
 
-  static getInstance(): SocketManager {
+  static getInstance(server?: any): SocketManager {
     if (!SocketManager.instance) {
       SocketManager.instance = new SocketManager();
     }

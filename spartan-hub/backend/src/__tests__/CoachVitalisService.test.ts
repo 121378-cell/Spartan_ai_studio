@@ -5,18 +5,18 @@
  * auto-approval rules, and AI-driven coaching decisions.
  */
 
-import { CoachVitalisService } from '../../services/coachVitalisService';
-import { getDatabase } from '../../database/databaseManager';
-import { eventBus } from '../../services/eventBus';
-import { notificationService } from '../../services/notificationService';
-import { feedbackLearningService } from '../../services/feedbackLearningService';
-import { logger } from '../../utils/logger';
+import { CoachVitalisService } from '../services/coachVitalisService';
+import { getDatabase } from '../database/databaseManager';
+import { eventBus } from '../services/eventBus';
+import { notificationService } from '../services/notificationService';
+import { feedbackLearningService } from '../services/feedbackLearningService';
+import { logger } from '../utils/logger';
 
-jest.mock('../../database/databaseManager');
-jest.mock('../../services/eventBus');
-jest.mock('../../services/notificationService');
-jest.mock('../../services/feedbackLearningService');
-jest.mock('../../utils/logger');
+jest.mock('../database/databaseManager');
+jest.mock('../services/eventBus');
+jest.mock('../services/notificationService');
+jest.mock('../services/feedbackLearningService');
+jest.mock('../utils/logger');
 
 describe('CoachVitalisService', () => {
   let coachVitalisService: any;

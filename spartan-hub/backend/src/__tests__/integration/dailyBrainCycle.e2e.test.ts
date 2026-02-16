@@ -107,7 +107,7 @@ describe('Daily Brain Cycle - E2E Integration', () => {
       applyAdjustments: jest.fn().mockResolvedValue([]),
       rebalanceRemainingDays: jest.fn().mockResolvedValue({ rebalanced: false })
     };
-    (PlanAdjusterService as jest.Mock).mockImplementation(() => mockPlanAdjusterInstance);
+    (PlanAdjusterService as unknown as jest.Mock).mockImplementation(() => mockPlanAdjusterInstance);
 
     const mockCoachVitalis = {
       initialize: jest.fn().mockResolvedValue(undefined),

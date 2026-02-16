@@ -24,7 +24,7 @@ interface BrainEvent {
   priority?: 'low' | 'medium' | 'high' | 'critical';
 }
 
-class EventBus extends EventEmitter {
+export class EventBus extends EventEmitter {
   private static instance: EventBus;
   private eventLog: BrainEvent[] = [];
   private maxLogSize: number = 10000; // Keep last 10k events in memory

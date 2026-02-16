@@ -94,12 +94,12 @@ interface TerraBodyMetricsData {
   water_percentage?: number;
 }
 
-class TerraHealthService {
+export class TerraHealthService {
   private static instance: TerraHealthService;
   private axiosInstance: AxiosInstance;
   private db: BetterSqliteDb;
 
-  private constructor() {
+  public constructor() {
     this.db = getDatabase() as BetterSqliteDb;
     
     this.axiosInstance = axios.create({
@@ -722,5 +722,7 @@ class TerraHealthService {
 export const getTerraHealthService = (): TerraHealthService => {
   return TerraHealthService.getInstance();
 };
+
+export const terraHealthService = TerraHealthService.getInstance();
 
 export default TerraHealthService;

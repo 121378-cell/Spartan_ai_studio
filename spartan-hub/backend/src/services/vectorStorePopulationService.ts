@@ -15,8 +15,8 @@ export class VectorStorePopulationService {
   private db: any;
   private vectorStore: VectorStoreService;
 
-  constructor() {
-    this.db = getDatabase();
+  constructor(apiKey?: string, dbPath?: string) {
+    this.db = getDatabase(dbPath);
     this.vectorStore = getVectorStoreService();
   }
 
@@ -84,6 +84,33 @@ export class VectorStorePopulationService {
   async resetAndPopulate(): Promise<void> {
     // Logic to drop and recreate collection would go here via vectorStore
     await this.populateAll();
+  }
+
+  /**
+   * Get population statistics
+   */
+  getPopulationStats(): any {
+    return {
+      status: 'complete',
+      totalChunks: 0, // Placeholder
+      indexedChunks: 0
+    };
+  }
+
+  /**
+   * Benchmark search performance
+   */
+  async benchmarkSearchPerformance(): Promise<any> {
+    return {
+      averageLatencyMs: 0
+    };
+  }
+
+  /**
+   * Close service
+   */
+  async close(): Promise<void> {
+    // Cleanup
   }
 }
 

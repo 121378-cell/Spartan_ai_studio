@@ -6,17 +6,17 @@
  */
 
 import axios from 'axios';
-import { TerraHealthService } from '../../services/terraHealthService';
-import { getDatabase } from '../../database/databaseManager';
-import { eventBus } from '../../services/eventBus';
-import { logger } from '../../utils/logger';
+import { TerraHealthService } from '../services/terraHealthService';
+import { getDatabase } from '../database/databaseManager';
+import { eventBus } from '../services/eventBus';
+import { logger } from '../utils/logger';
 import crypto from 'crypto';
 
 // Mock dependencies
 jest.mock('axios');
-jest.mock('../../database/databaseManager');
-jest.mock('../../services/eventBus');
-jest.mock('../../utils/logger');
+jest.mock('../database/databaseManager');
+jest.mock('../services/eventBus');
+jest.mock('../utils/logger');
 
 describe('TerraHealthService', () => {
   let terraHealthService: any;

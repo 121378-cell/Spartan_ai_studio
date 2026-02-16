@@ -9,8 +9,6 @@
 
 import { logger } from '../utils/logger';
 import { QdrantClient } from '@qdrant/js-client-rest';
-// @ts-ignore
-import { pipeline } from '@xenova/transformers';
 
 export interface VectorSearchResult {
   chunkId: string;
@@ -82,8 +80,14 @@ export class VectorStoreService {
       });
 
       // Load local embedding model
-      logger.info('VectorStoreService: Loading local embedding model (all-MiniLM-L6-v2)...');
-      this.extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+      if (process.env.USE_MOCK_EMBEDDINGS === 'true') {
+        logger.info('VectorStoreService: Using deterministic MOCK embeddings (USE_MOCK_EMBEDDINGS=true)');
+        this.extractor = null;
+      } else {
+        logger.info('VectorStoreService: Loading local embedding model (all-MiniLM-L6-v2)...');
+        const { pipeline } = await (eval('import("@xenova/transformers")') as any);
+        this.extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+      }
       
       // Ensure collection exists
       await this.ensureCollection();
@@ -125,6 +129,21 @@ export class VectorStoreService {
    */
   public async embedText(text: string): Promise<EmbeddingResult> {
     try {
+      if (process.env.USE_MOCK_EMBEDDINGS === 'true') {
+        // Generate a deterministic mock vector based on text content
+        const vector = new Array(this.vectorDimension).fill(0).map((_, i) => {
+          const charCode = text.charCodeAt(i % text.length) || 0;
+          return (charCode / 255) * (i % 2 === 0 ? 1 : -1);
+        });
+        
+        return {
+          chunkId: '',
+          vector,
+          model: 'deterministic-mock',
+          tokenCount: Math.ceil(text.length / 4)
+        };
+      }
+
       if (!this.extractor) {
         throw new Error('Embedding model not initialized');
       }
@@ -142,6 +161,16 @@ export class VectorStoreService {
       logger.error('Failed to embed text', { metadata: { error: String(error) } });
       throw error;
     }
+  }
+
+  /**
+   * Embed multiple texts in batch
+   */
+  public async batchEmbed(items: Array<{ id: string; text: string }>): Promise<EmbeddingResult[]> {
+    return Promise.all(items.map(async (item) => {
+      const result = await this.embedText(item.text);
+      return { ...result, chunkId: item.id };
+    }));
   }
 
   /**

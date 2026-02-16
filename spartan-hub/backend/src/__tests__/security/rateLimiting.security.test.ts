@@ -5,7 +5,7 @@
  * Token bucket, per-user limits, IP-based limits
  */
 
-import { RateLimitService } from '../../../services/rateLimitService';
+import { RateLimitService } from '../../services/rateLimitService';
 
 describe('Rate Limiting & DDoS Protection Security - Phase 3.4', () => {
   let rateLimitService: any;

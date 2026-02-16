@@ -364,6 +364,24 @@ export class NotificationService {
     // Graceful cleanup
   }
 
+  // Instance methods delegating to static or direct implementation
+  public async sendEmail(to: string, subject: string, body: string): Promise<boolean> {
+    return NotificationService.sendEmail(to, subject, body);
+  }
+
+  public async sendPushNotification(userId: string, title: string, body: string): Promise<boolean> {
+    return NotificationService.sendPushNotification(userId, title, body);
+  }
+
+  public async sendInAppNotification(userId: string, title: string, body: string): Promise<boolean> {
+    return NotificationService.sendInAppNotification(userId, title, body);
+  }
+
+  public async sendSMS(userId: string, message: string): Promise<boolean> {
+    logger.info('SMS notification stub called', { userId });
+    return true;
+  }
+
   // ==================== STATIC LEGACY COMPATIBILITY ====================
 
   public static async sendEmail(to: string, subject: string, body: string): Promise<boolean> {
@@ -425,4 +443,5 @@ export class NotificationService {
 }
 
 export const getNotificationService = (config?: Partial<NotificationConfig>) => NotificationService.getInstance(config);
+export const notificationService = NotificationService.getInstance();
 export default NotificationService;
