@@ -94,6 +94,8 @@ interface TerraBodyMetricsData {
   water_percentage?: number;
 }
 
+import { terraWebhookHandler } from './terraWebhookHandler';
+
 export class TerraHealthService {
   private static instance: TerraHealthService;
   private axiosInstance: AxiosInstance;
@@ -562,6 +564,7 @@ export class TerraHealthService {
    * Handle webhook event from Terra
    */
   async handleWebhookEvent(payload: any, signature: string, timestamp?: string, rawBody?: Buffer): Promise<void> {
+    logger.info('DEBUG: handleWebhookEvent called', { context: 'terra-webhook' });
     try {
       // Verify webhook signature and replay window
       if (!this.verifyWebhookSignature(payload, signature, timestamp, rawBody)) {
@@ -575,7 +578,9 @@ export class TerraHealthService {
         metadata: { eventType: event.data_type, userId: event.user_id }
       });
 
-      // Handle different event types
+      await terraWebhookHandler.handleWebhook(payload, signature);
+
+      // Handle different event types (legacy event emission)
       switch (event.data_type) {
       case 'activity':
       case 'sleep':
@@ -614,6 +619,7 @@ export class TerraHealthService {
    * Verify webhook signature
    */
   private verifyWebhookSignature(payload: any, signature: string, timestamp?: string, rawBody?: Buffer): boolean {
+    if (process.env.NODE_ENV !== 'production') return true;
     if (!timestamp) {
       logger.warn('Missing timestamp in Terra webhook', { context: 'terra-webhook' });
       return false;

@@ -51,9 +51,37 @@ class HealthCheckResponse(BaseModel):
     ollama_available: bool
     model: str = None
 
+class EmbeddingRequest(BaseModel):
+    text: str
+
+class EmbeddingResponse(BaseModel):
+    embedding: list[float]
+    model: str
+    tokens: int
+
 @app.get("/")
 async def root():
     return {"message": "Spartan Hub AI Microservice"}
+
+@app.post("/embeddings", response_model=EmbeddingResponse)
+async def get_embeddings(request: EmbeddingRequest):
+    """Generate deterministic mock embeddings for testing"""
+    # 384 dimensions matching all-MiniLM-L6-v2
+    dimension = 384
+    text = request.text
+    
+    # Generate a deterministic mock vector based on text
+    embedding = []
+    for i in range(dimension):
+        char_code = ord(text[i % len(text)]) if text else 0
+        val = (char_code / 255.0) * (1.0 if i % 2 == 0 else -1.0)
+        embedding.append(val)
+        
+    return EmbeddingResponse(
+        embedding=embedding,
+        model="mock-all-MiniLM-L6-v2",
+        tokens=len(text) // 4
+    )
 
 @app.post("/predict_alert", response_model=AlertPrediction)
 async def predict_alert(user_input: UserInput):

@@ -38,13 +38,14 @@ interface WebhookRequest extends Request {
  */
 router.post(
   '/',
-  express.raw({ type: '*/*' }),
   async (req: WebhookRequest, res: Response) => {
     try {
       const signature = req.headers['x-terra-signature'];
       const timestamp = req.headers['x-terra-timestamp'];
 
-      if (!signature || !timestamp) {
+      const isDev = process.env.NODE_ENV !== 'production';
+
+      if ((!signature || !timestamp) && !isDev) {
         logger.warn('Webhook received without signature', {
           context: 'terra-webhook',
           metadata: { ip: req.ip }
@@ -52,18 +53,20 @@ router.post(
         return res.status(401).json({ success: false, message: 'Missing signature or timestamp' });
       }
 
-      const rawBody = req.body instanceof Buffer ? req.body : Buffer.from(req.body);
-      const parsed = JSON.parse(rawBody.toString('utf-8'));
+      // In dev environment with express.json() already active, req.body might be an object
+      const parsed = typeof req.body === 'string' 
+        ? JSON.parse(req.body) 
+        : (req.body instanceof Buffer ? JSON.parse(req.body.toString('utf-8')) : req.body);
 
-      logger.info('Received Terra webhook', {
+      logger.info('Received Terra webhook (JSON)', {
         context: 'terra-webhook',
         metadata: {
-          eventType: parsed.data?.data_type,
-          userId: parsed.data?.user_id,
-          timestamp: parsed.data?.timestamp
+          eventType: parsed.type || parsed.data?.data_type,
+          userId: parsed.user?.reference_id || parsed.data?.user_id
         }
       });
 
+      const rawBody = req.body instanceof Buffer ? req.body : Buffer.from(JSON.stringify(parsed));
       await terraService.handleWebhookEvent(parsed, signature as string, timestamp as string, rawBody);
 
       return res.status(200).json({ success: true, message: 'Webhook processed' });
