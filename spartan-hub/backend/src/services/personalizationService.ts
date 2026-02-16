@@ -193,8 +193,7 @@ export class PersonalizationService {
       );
 
       CREATE TABLE IF NOT EXISTS response_patterns (
-        id TEXT PRIMARY KEY,
-        userId TEXT NOT NULL,
+        userId TEXT PRIMARY KEY,
         pattern TEXT NOT NULL,
         avg_recovery_time INTEGER,
         training_load TEXT,
@@ -202,8 +201,7 @@ export class PersonalizationService {
         sleep_quality TEXT,
         confidence_score INTEGER,
         last_updated TEXT DEFAULT CURRENT_TIMESTAMP,
-        next_review_date TEXT,
-        PRIMARY KEY (userId)
+        next_review_date TEXT
       );
 
       CREATE TABLE IF NOT EXISTS recommendation_timings (

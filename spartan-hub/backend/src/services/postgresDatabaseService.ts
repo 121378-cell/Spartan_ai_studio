@@ -433,10 +433,115 @@ export const userDb = {
       });
       return [];
     }
+  },
+
+  // Session and token cleanup
+  cleanupExpiredSessions: async (): Promise<number> => {
+    try {
+      const now = new Date().toISOString();
+      const result = await executeQuery(
+        'DELETE FROM sessions WHERE expires_at < $1',
+        [now],
+        'write'
+      );
+      return result.rowCount || 0;
+    } catch (error) {
+      logger.error('Error cleaning up expired sessions', { context: 'database', metadata: { error } });
+      return 0;
+    }
+  },
+
+  cleanupExpiredTokens: async (): Promise<number> => {
+    return 0;
+  },
+
+  // Session Management
+  createSession: async (session: any): Promise<void> => {
+    await executeQuery(
+      `INSERT INTO sessions (
+        id, user_id, token, user_agent, ip_address, created_at, expires_at, last_activity_at, is_active
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        session.id,
+        session.userId,
+        session.token,
+        session.userAgent,
+        session.ipAddress,
+        session.createdAt.toISOString(),
+        session.expiresAt.toISOString(),
+        session.lastActivityAt.toISOString(),
+        session.isActive ? 1 : 0
+      ],
+      'write'
+    );
+  },
+
+  findSessionById: async (id: string): Promise<any | null> => {
+    const result = await executeQuery('SELECT * FROM sessions WHERE id = $1', [id], 'read');
+    if (result.rows.length === 0) return null;
+    const row = result.rows[0];
+    return {
+      id: row.id,
+      userId: row.user_id,
+      token: row.token,
+      userAgent: row.user_agent,
+      ipAddress: row.ip_address,
+      createdAt: new Date(row.created_at),
+      expiresAt: new Date(row.expires_at),
+      lastActivityAt: new Date(row.last_activity_at),
+      isActive: row.is_active === 1
+    };
+  },
+
+  findSessionByToken: async (token: string): Promise<any | null> => {
+    const result = await executeQuery('SELECT * FROM sessions WHERE token = $1', [token], 'read');
+    if (result.rows.length === 0) return null;
+    const row = result.rows[0];
+    return {
+      id: row.id,
+      userId: row.user_id,
+      token: row.token,
+      userAgent: row.user_agent,
+      ipAddress: row.ip_address,
+      createdAt: new Date(row.created_at),
+      expiresAt: new Date(row.expires_at),
+      lastActivityAt: new Date(row.last_activity_at),
+      isActive: row.is_active === 1
+    };
+  },
+
+  findSessionsByUserId: async (userId: string): Promise<any[]> => {
+    const result = await executeQuery('SELECT * FROM sessions WHERE user_id = $1', [userId], 'read');
+    return result.rows.map(row => ({
+      id: row.id,
+      userId: row.user_id,
+      token: row.token,
+      userAgent: row.user_agent,
+      ipAddress: row.ip_address,
+      createdAt: new Date(row.created_at),
+      expiresAt: new Date(row.expires_at),
+      lastActivityAt: new Date(row.last_activity_at),
+      isActive: row.is_active === 1
+    }));
+  },
+
+  updateSessionLastActivity: async (id: string): Promise<void> => {
+    const now = new Date().toISOString();
+    await executeQuery('UPDATE sessions SET last_activity_at = $1 WHERE id = $2', [now, id], 'write');
+  },
+
+  deactivateSession: async (id: string): Promise<void> => {
+    await executeQuery('UPDATE sessions SET is_active = 0 WHERE id = $1', [id], 'write');
+  },
+
+  deactivateAllUserSessions: async (userId: string): Promise<void> => {
+    await executeQuery('UPDATE sessions SET is_active = 0 WHERE user_id = $1', [userId], 'write');
+  },
+
+  deleteSession: async (id: string): Promise<void> => {
+    await executeQuery('DELETE FROM sessions WHERE id = $1', [id], 'write');
   }
 };
-
-// Routine database operations
 export const routineDb = {
   // Find routine by ID (read operation)
   findById: async (id: string): Promise<Routine | null> => {

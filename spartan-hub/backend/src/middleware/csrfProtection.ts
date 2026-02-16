@@ -41,6 +41,7 @@ export const setupCsrfProtection = (app: Express): void => {
     const path = req.path;
     if (
       path.startsWith('/api/webhooks') ||
+      path.startsWith('/auth/') ||
       path.startsWith('/health') ||
       path.startsWith('/metrics')
     ) {

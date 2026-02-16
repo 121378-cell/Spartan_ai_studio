@@ -69,7 +69,7 @@ services:
       - JWT_SECRET=sandbox_jwt_secret_12345_67890_abcdef_long
       - SESSION_SECRET=sandbox_session_secret_12345_67890_abcdef_long
       - AI_SERVICE_URL=http://ai_microservice:8000
-      - USE_MOCK_EMBEDDINGS=true
+      - USE_MOCK_EMBEDDINGS=false
     ports:
       - "3003:3001"
     depends_on:
