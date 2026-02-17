@@ -37,7 +37,7 @@ export class FormAnalysisService {
 
       // Process rep data if provided
       if (analysisData.repData) {
-        await this.processRepAnalysis(sessionId, analysisData.repData);
+        await this.processRepAnalysis(sessionId, analysisData.repData, analysisData.exerciseType);
       }
 
       // Update session statistics if session is ending
@@ -83,7 +83,7 @@ export class FormAnalysisService {
 
       if (data.reps && Array.isArray(data.reps)) {
         for (const rep of data.reps) {
-          await this.processRepAnalysis(sessionId, rep);
+          await this.processRepAnalysis(sessionId, rep, data.exerciseType);
         }
       } else if (data.metrics) {
         // If it's a summary result from frontend like in the POC
@@ -95,7 +95,7 @@ export class FormAnalysisService {
           metrics: data.metrics || {},
           feedback: data.recommendations?.join('. ')
         };
-        await this.processRepAnalysis(sessionId, repData);
+        await this.processRepAnalysis(sessionId, repData, data.exerciseType);
       }
 
       const stats = data.sessionStats || {
@@ -157,10 +157,18 @@ export class FormAnalysisService {
       throw new Error('Exercise type is required');
     }
 
-    const validExercises = ['squat', 'deadlift', 'pushup', 'pullup', 'lunge', 'bench_press'];
-    if (!validExercises.includes(data.exerciseType)) {
-      throw new Error(`Invalid exercise type: ${data.exerciseType}`);
+    // Valid exercise types aligned with frontend ExerciseType
+    const validExercises = [
+      'squat', 'deadlift', 'push_up', 'overhead_press', 'bench_press',
+      'row', 'pull_up', 'lunge', 'plank', 'custom'
+    ];
+    // Normalize legacy exercise type names for backward compatibility
+    const normalizedType = data.exerciseType === 'pushup' ? 'push_up' :
+                          data.exerciseType === 'pullup' ? 'pull_up' : data.exerciseType;
+    if (!validExercises.includes(normalizedType)) {
+      throw new Error(`Invalid exercise type: ${data.exerciseType}. Valid types: ${validExercises.join(', ')}`);
     }
+    data.exerciseType = normalizedType;
 
     if (data.repData) {
       if (data.repData.score === undefined || data.repData.score < 0 || data.repData.score > 100) {
@@ -185,16 +193,16 @@ export class FormAnalysisService {
   /**
    * Process individual rep analysis data
    */
-  private async processRepAnalysis(sessionId: number, repData: any): Promise<number> {
+  private async processRepAnalysis(sessionId: number, repData: any, exerciseType?: string): Promise<number> {
     try {
       // Calculate additional metrics if not provided
-      const processedRepData = await this.enhanceRepData(repData);
+      const processedRepData = await this.enhanceRepData(repData, exerciseType);
 
       // Add to database
       const repId = await this.dbService.addRepAnalysis(sessionId, processedRepData);
 
       // Generate automatic feedback based on analysis
-      await this.generateAutomaticFeedback(sessionId, repId, processedRepData);
+      await this.generateAutomaticFeedback(sessionId, repId, processedRepData, exerciseType);
 
       return repId;
     } catch (error) {
@@ -209,7 +217,7 @@ export class FormAnalysisService {
   /**
    * Enhance rep data with calculated metrics
    */
-  private async enhanceRepData(repData: any): Promise<any> {
+  private async enhanceRepData(repData: any, exerciseType?: string): Promise<any> {
     const enhancedData = { ...repData };
 
     // Calculate duration if start/end times provided
@@ -226,7 +234,7 @@ export class FormAnalysisService {
 
     // Generate basic feedback if not provided
     if (!enhancedData.feedback && repData.angles) {
-      enhancedData.feedback = this.generateBasicFeedback(repData.angles, repData.metrics);
+      enhancedData.feedback = this.generateBasicFeedback(repData.angles, repData.metrics, exerciseType);
     }
 
     return enhancedData;
@@ -278,10 +286,93 @@ export class FormAnalysisService {
   /**
    * Generate basic feedback from angle measurements
    */
-  private generateBasicFeedback(angles: any, metrics: any): string {
+  private generateBasicFeedback(angles: any, metrics: any, exerciseType?: string): string {
     const feedbackParts: string[] = [];
 
-    // Knee angle feedback (for squats/deadlifts)
+    switch (exerciseType) {
+    case 'push_up':
+      return this.generatePushUpFeedback(angles, metrics);
+    case 'plank':
+      return this.generatePlankFeedback(angles, metrics);
+    case 'row':
+      return this.generateRowFeedback(angles, metrics);
+    default:
+      return this.generateGenericFeedback(angles, metrics);
+    }
+  }
+
+  private generatePushUpFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+
+    if (metrics?.depth !== undefined && metrics.depth < 0.8) {
+      feedbackParts.push('Aim for deeper push-ups - chest closer to ground');
+    }
+    if (metrics?.backStraightness !== undefined && metrics.backStraightness < 0.85) {
+      feedbackParts.push('Maintain a straight line from head to heels');
+    }
+    if (metrics?.elbowAngle !== undefined && metrics.elbowAngle > 80) {
+      feedbackParts.push('Keep elbows closer to body at 45 degrees');
+    }
+    if (metrics?.armExtension !== undefined && metrics.armExtension < 0.9) {
+      feedbackParts.push('Extend arms fully at the top');
+    }
+
+    if (feedbackParts.length === 0) {
+      feedbackParts.push('Excellent push-up form!');
+    }
+
+    return feedbackParts.join('. ') + '.';
+  }
+
+  private generatePlankFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+
+    if (metrics?.bodyAlignment !== undefined && metrics.bodyAlignment < 0.8) {
+      feedbackParts.push('Keep body in a straight line from head to heels');
+    }
+    if (metrics?.hipPosition !== undefined && metrics.hipPosition < 0.8) {
+      feedbackParts.push('Avoid sagging or piking hips');
+    }
+    if (metrics?.coreEngagement !== undefined && metrics.coreEngagement < 0.7) {
+      feedbackParts.push('Engage your core more actively');
+    }
+    if (metrics?.shoulderStability !== undefined && metrics.shoulderStability < 0.7) {
+      feedbackParts.push('Keep shoulders stacked over wrists');
+    }
+
+    if (feedbackParts.length === 0) {
+      feedbackParts.push('Perfect plank position maintained!');
+    }
+
+    return feedbackParts.join('. ') + '.';
+  }
+
+  private generateRowFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+
+    if (metrics?.elbowRetraction !== undefined && metrics.elbowRetraction < 80) {
+      feedbackParts.push('Pull elbows further back for full contraction');
+    }
+    if (metrics?.backStraightness !== undefined && metrics.backStraightness < 0.8) {
+      feedbackParts.push('Maintain neutral spine throughout the movement');
+    }
+    if (metrics?.shoulderBladeMovement !== undefined && metrics.shoulderBladeMovement < 0.7) {
+      feedbackParts.push('Focus on squeezing shoulder blades together');
+    }
+    if (metrics?.torsoAngle !== undefined && metrics.torsoAngle < 0.3) {
+      feedbackParts.push('Maintain proper hinge angle at hips');
+    }
+
+    if (feedbackParts.length === 0) {
+      feedbackParts.push('Excellent row technique with great scapular retraction!');
+    }
+
+    return feedbackParts.join('. ') + '.';
+  }
+
+  private generateGenericFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+
     if (angles.knee_angle !== undefined) {
       if (angles.knee_angle < 70) {
         feedbackParts.push('Knees bending adequately');
@@ -290,7 +381,6 @@ export class FormAnalysisService {
       }
     }
 
-    // Back angle feedback
     if (angles.back_angle !== undefined) {
       if (angles.back_angle < 160) {
         feedbackParts.push('Maintain straighter back position');
@@ -299,7 +389,6 @@ export class FormAnalysisService {
       }
     }
 
-    // Hip angle feedback
     if (angles.hip_angle !== undefined) {
       if (angles.hip_angle < 60) {
         feedbackParts.push('Hip hinge needs adjustment');
@@ -308,7 +397,6 @@ export class FormAnalysisService {
       }
     }
 
-    // Add metric-based feedback
     if (metrics?.controlScore !== undefined && metrics.controlScore < 0.7) {
       feedbackParts.push('Focus on controlled movement');
     }
@@ -325,7 +413,7 @@ export class FormAnalysisService {
   /**
    * Generate automatic feedback based on analysis results
    */
-  private async generateAutomaticFeedback(sessionId: number, repId: number, repData: any): Promise<void> {
+  private async generateAutomaticFeedback(sessionId: number, repId: number, repData: any, exerciseType?: string): Promise<void> {
     try {
       const feedbackItems: Array<{
         feedbackType: 'correction' | 'encouragement' | 'tip' | 'warning';
@@ -335,46 +423,19 @@ export class FormAnalysisService {
         severity: 'low' | 'medium' | 'high';
       }> = [];
 
-      // Analyze angles for common issues
-      if (repData.angles) {
-        // Knee tracking issues
-        if (repData.angles.knee_angle !== undefined) {
-          if (repData.angles.knee_angle > 130) {
-            feedbackItems.push({
-              feedbackType: 'correction',
-              bodyPart: 'knees',
-              issue: 'Insufficient knee bend depth',
-              suggestion: 'Aim for deeper knee flexion while maintaining proper form',
-              severity: 'medium'
-            });
-          }
-        }
-
-        // Back posture issues
-        if (repData.angles.back_angle !== undefined) {
-          if (repData.angles.back_angle < 150) {
-            feedbackItems.push({
-              feedbackType: 'warning',
-              bodyPart: 'back',
-              issue: 'Excessive forward lean',
-              suggestion: 'Keep chest up and maintain neutral spine position',
-              severity: 'high'
-            });
-          }
-        }
-
-        // Hip positioning
-        if (repData.angles.hip_angle !== undefined) {
-          if (repData.angles.hip_angle < 50) {
-            feedbackItems.push({
-              feedbackType: 'correction',
-              bodyPart: 'hips',
-              issue: 'Limited hip mobility',
-              suggestion: 'Focus on hip hinge movement pattern',
-              severity: 'medium'
-            });
-          }
-        }
+      // Generate exercise-specific feedback
+      switch (exerciseType) {
+      case 'push_up':
+        this.generatePushUpAutomaticFeedback(repData, feedbackItems);
+        break;
+      case 'plank':
+        this.generatePlankAutomaticFeedback(repData, feedbackItems);
+        break;
+      case 'row':
+        this.generateRowAutomaticFeedback(repData, feedbackItems);
+        break;
+      default:
+        this.generateGenericAutomaticFeedback(repData, feedbackItems);
       }
 
       // Add encouragement for good performance
@@ -424,6 +485,161 @@ export class FormAnalysisService {
         metadata: { error: String(error), sessionId: sessionId.toString(), repId: repId.toString() }
       });
       // Don't throw error as this is supplementary functionality
+    }
+  }
+
+  private generatePushUpAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.depth !== undefined && repData.metrics.depth < 0.8) {
+        feedbackItems.push({
+          feedbackType: 'correction',
+          bodyPart: 'chest',
+          issue: 'Insufficient depth in push-up',
+          suggestion: 'Lower chest closer to the ground for full range of motion',
+          severity: 'medium'
+        });
+      }
+      if (repData.metrics.backStraightness !== undefined && repData.metrics.backStraightness < 0.85) {
+        feedbackItems.push({
+          feedbackType: 'warning',
+          bodyPart: 'back',
+          issue: 'Sagging or arching back',
+          suggestion: 'Engage core and glutes to maintain straight body line',
+          severity: 'high'
+        });
+      }
+      if (repData.metrics.elbowAngle !== undefined && repData.metrics.elbowAngle > 80) {
+        feedbackItems.push({
+          feedbackType: 'correction',
+          bodyPart: 'elbows',
+          issue: 'Elbows flaring out too wide',
+          suggestion: 'Keep elbows at 45 degrees from body for optimal shoulder health',
+          severity: 'medium'
+        });
+      }
+      if (repData.metrics.armExtension !== undefined && repData.metrics.armExtension < 0.9) {
+        feedbackItems.push({
+          feedbackType: 'tip',
+          bodyPart: 'arms',
+          issue: 'Incomplete arm extension',
+          suggestion: 'Fully extend arms at the top of each rep',
+          severity: 'low'
+        });
+      }
+    }
+  }
+
+  private generatePlankAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.bodyAlignment !== undefined && repData.metrics.bodyAlignment < 0.8) {
+        feedbackItems.push({
+          feedbackType: 'warning',
+          bodyPart: 'body',
+          issue: 'Body alignment breakdown',
+          suggestion: 'Maintain straight line from head to heels throughout hold',
+          severity: 'high'
+        });
+      }
+      if (repData.metrics.hipPosition !== undefined && repData.metrics.hipPosition < 0.8) {
+        feedbackItems.push({
+          feedbackType: 'correction',
+          bodyPart: 'hips',
+          issue: 'Hip position incorrect',
+          suggestion: 'Keep hips level - avoid sagging or piking',
+          severity: 'medium'
+        });
+      }
+      if (repData.metrics.coreEngagement !== undefined && repData.metrics.coreEngagement < 0.7) {
+        feedbackItems.push({
+          feedbackType: 'tip',
+          bodyPart: 'core',
+          issue: 'Insufficient core activation',
+          suggestion: 'Draw belly button toward spine and brace abs',
+          severity: 'medium'
+        });
+      }
+      if (repData.metrics.shoulderStability !== undefined && repData.metrics.shoulderStability < 0.7) {
+        feedbackItems.push({
+          feedbackType: 'correction',
+          bodyPart: 'shoulders',
+          issue: 'Unstable shoulder position',
+          suggestion: 'Stack shoulders directly over wrists',
+          severity: 'medium'
+        });
+      }
+    }
+  }
+
+  private generateRowAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.elbowRetraction !== undefined && repData.metrics.elbowRetraction < 80) {
+        feedbackItems.push({
+          feedbackType: 'correction',
+          bodyPart: 'back',
+          issue: 'Incomplete pull - limited range of motion',
+          suggestion: 'Pull elbows further back to fully engage back muscles',
+          severity: 'medium'
+        });
+      }
+      if (repData.metrics.backStraightness !== undefined && repData.metrics.backStraightness < 0.8) {
+        feedbackItems.push({
+          feedbackType: 'warning',
+          bodyPart: 'back',
+          issue: 'Rounded back during row',
+          suggestion: 'Maintain neutral spine throughout the movement',
+          severity: 'high'
+        });
+      }
+      if (repData.metrics.shoulderBladeMovement !== undefined && repData.metrics.shoulderBladeMovement < 0.7) {
+        feedbackItems.push({
+          feedbackType: 'tip',
+          bodyPart: 'shoulders',
+          issue: 'Limited scapular retraction',
+          suggestion: 'Focus on squeezing shoulder blades together at top of pull',
+          severity: 'medium'
+        });
+      }
+      if (repData.metrics.torsoAngle !== undefined && repData.metrics.torsoAngle < 0.3) {
+        feedbackItems.push({
+          feedbackType: 'correction',
+          bodyPart: 'torso',
+          issue: 'Incorrect torso angle',
+          suggestion: 'Maintain consistent hinge angle throughout exercise',
+          severity: 'low'
+        });
+      }
+    }
+  }
+
+  private generateGenericAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.angles) {
+      if (repData.angles.knee_angle !== undefined && repData.angles.knee_angle > 130) {
+        feedbackItems.push({
+          feedbackType: 'correction',
+          bodyPart: 'knees',
+          issue: 'Insufficient knee bend depth',
+          suggestion: 'Aim for deeper knee flexion while maintaining proper form',
+          severity: 'medium'
+        });
+      }
+      if (repData.angles.back_angle !== undefined && repData.angles.back_angle < 150) {
+        feedbackItems.push({
+          feedbackType: 'warning',
+          bodyPart: 'back',
+          issue: 'Excessive forward lean',
+          suggestion: 'Keep chest up and maintain neutral spine position',
+          severity: 'high'
+        });
+      }
+      if (repData.angles.hip_angle !== undefined && repData.angles.hip_angle < 50) {
+        feedbackItems.push({
+          feedbackType: 'correction',
+          bodyPart: 'hips',
+          issue: 'Limited hip mobility',
+          suggestion: 'Focus on hip hinge movement pattern',
+          severity: 'medium'
+        });
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 import HttpBackend from 'i18next-http-backend';
 import * as HttpMiddleware from 'i18next-http-middleware';
+import { coachTranslations } from './coachTranslations';
 
 // Define supported languages
 export const SUPPORTED_LANGUAGES = ['en', 'es', 'fr', 'de', 'it', 'pt'] as const;
@@ -90,7 +91,10 @@ export const resources = {
       cancel: 'Cancel',
       delete: 'Delete',
       edit: 'Edit',
-      submit: 'Submit'
+      submit: 'Submit',
+
+      // Coach translations
+      ...coachTranslations.en
     }
   },
   es: {
@@ -172,7 +176,10 @@ export const resources = {
       cancel: 'Cancelar',
       delete: 'Eliminar',
       edit: 'Editar',
-      submit: 'Enviar'
+      submit: 'Enviar',
+
+      // Coach translations
+      ...coachTranslations.es
     }
   },
   fr: {
@@ -254,7 +261,10 @@ export const resources = {
       cancel: 'Annuler',
       delete: 'Supprimer',
       edit: 'Modifier',
-      submit: 'Soumettre'
+      submit: 'Soumettre',
+
+      // Coach translations
+      ...coachTranslations.fr
     }
   }
 } as const;

@@ -1,13 +1,15 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { VideoCaptureState, PoseFrame, FormAnalysisResult } from '../../types/pose';
 import VideoCapture from './VideoCapture';
 import { getPoseDetectionService } from '../../services/poseDetection';
+import VitalisFeedbackAlert from './VitalisFeedbackAlert';
 
 interface FormAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAnalysisComplete?: (result: FormAnalysisResult) => void;
-  exerciseType: 'squat' | 'deadlift';
+  exerciseType: 'squat' | 'deadlift' | 'push_up' | 'plank' | 'row';
+  userId?: string;
 }
 
 export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
@@ -15,6 +17,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
   onClose,
   onAnalysisComplete,
   exerciseType,
+  userId,
 }) => {
   const [captureState, setCaptureState] = useState<VideoCaptureState>({
     isActive: false,
@@ -26,6 +29,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
 
   const [analysisResult, setAnalysisResult] = useState<FormAnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentFormScore, setCurrentFormScore] = useState<number | undefined>();
 
   const handleCaptureStateChange = useCallback((newState: VideoCaptureState) => {
     setCaptureState(newState);
@@ -33,24 +37,37 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
 
   const handleAnalysisComplete = useCallback((result: FormAnalysisResult) => {
     setAnalysisResult(result);
+    setCurrentFormScore(result.score);
     onAnalysisComplete?.(result);
   }, [onAnalysisComplete]);
 
   const handleClose = useCallback(() => {
     setCaptureState({ isActive: false, framesProcessed: 0, fps: 0, lastFrameTime: 0, error: null });
     setAnalysisResult(null);
+    setCurrentFormScore(undefined);
     onClose();
   }, [onClose]);
+
+  const getExerciseLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      squat: 'Sentadilla',
+      deadlift: 'Peso Muerto',
+      push_up: 'Flexiones',
+      plank: 'Plancha',
+      row: 'Remo'
+    };
+    return labels[type] || type;
+  };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative w-full max-w-2xl bg-white rounded-lg shadow-xl">
+      <div className="relative w-full max-w-2xl bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4">
+        <div className="flex items-center justify-between border-b px-6 py-4 sticky top-0 bg-white z-10">
           <h2 className="text-xl font-semibold text-gray-900">
-            Análisis de Forma - {exerciseType === 'squat' ? 'Sentadilla' : 'Peso Muerto'}
+            Análisis de Forma - {getExerciseLabel(exerciseType)}
           </h2>
           <button
             onClick={handleClose}
@@ -60,6 +77,17 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
             ×
           </button>
         </div>
+
+        {/* Vitalis Alerts - Show during and after analysis */}
+        {userId && (
+          <div className="px-6 pt-4">
+            <VitalisFeedbackAlert
+              userId={userId}
+              formScore={currentFormScore}
+              exerciseType={exerciseType}
+            />
+          </div>
+        )}
 
         {/* Content */}
         <div className="p-6">

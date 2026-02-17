@@ -2,14 +2,46 @@ import { getDatabase } from '../database/databaseManager';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../utils/logger';
 
+export type ExerciseType = 'squat' | 'deadlift' | 'push_up' | 'overhead_press' | 'bench_press' | 'row' | 'pull_up' | 'lunge' | 'plank' | 'custom';
+
+export type ExercisePattern = 'squat' | 'hinge' | 'push' | 'pull' | 'lunge' | 'core';
+
+export interface PushUpMetrics {
+    depth: number;
+    backStraightness: number;
+    elbowAngle: number;
+    armExtension: number;
+}
+
+export interface PlankMetrics {
+    bodyAlignment: number;
+    coreEngagement: number;
+    hipPosition: number;
+    shoulderStability: number;
+    durationQuality: number;
+}
+
+export interface RowMetrics {
+    elbowRetraction: number;
+    backStraightness: number;
+    shoulderBladeMovement: number;
+    torsoAngle: number;
+    gripWidth: number;
+}
+
+export type ExerciseMetrics = PushUpMetrics | PlankMetrics | RowMetrics | Record<string, number | boolean | string>;
+
 export interface FormAnalysisData {
     id?: string;
     userId: string;
-    exerciseType: string;
+    exerciseType: ExerciseType;
     formScore: number;
-    metrics: any;
+    pattern?: ExercisePattern;
+    metrics: ExerciseMetrics;
+    angles?: Record<string, number>;
     warnings: string[];
     recommendations: string[];
+    repCount?: number;
     createdAt?: number;
 }
 

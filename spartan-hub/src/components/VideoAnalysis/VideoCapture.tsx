@@ -3,9 +3,10 @@ import { VideoCaptureState, PoseFrame, FormAnalysisResult } from '../../types/po
 import { getPoseDetectionService } from '../../services/poseDetection';
 import { analyzeSquatForm, analyzeDeadliftForm } from '../../utils/formAnalysis';
 import { useDevice } from '../../context/DeviceContext';
+import { ExerciseType } from '../../types/formAnalysis';
 
 interface VideoCaptureProps {
-  exerciseType: 'squat' | 'deadlift';
+  exerciseType: ExerciseType;
   onStateChange?: (state: VideoCaptureState) => void;
   onAnalysisComplete?: (result: FormAnalysisResult) => void;
 }

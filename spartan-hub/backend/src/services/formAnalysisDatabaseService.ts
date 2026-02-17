@@ -123,12 +123,138 @@ export class FormAnalysisDatabaseService {
       this.db.exec('CREATE INDEX IF NOT EXISTS idx_rep_analyses_score ON rep_analyses(score)');
       this.db.exec('CREATE INDEX IF NOT EXISTS idx_form_feedback_user ON form_feedback(user_id)');
 
+      // Seed exercise templates for push_up, plank, and row
+      this.seedExerciseTemplates();
+
       logger.info('Form analysis database tables initialized successfully');
     } catch (error) {
       logger.error('Failed to initialize form analysis tables', {
         error: error instanceof Error ? error.message : String(error)
       });
       throw error;
+    }
+  }
+
+  /**
+   * Seed default exercise templates for push_up, plank, and row
+   */
+  private seedExerciseTemplates(): void {
+    try {
+      const templates = [
+        {
+          name: 'Standard Push-up',
+          exerciseType: 'push_up',
+          targetAngles: JSON.stringify({
+            elbowAngle: { target: 45, tolerance: 15 },
+            bodyAngle: { target: 180, tolerance: 10 }
+          }),
+          targetPositions: JSON.stringify({
+            depth: { min: 0.3, optimal: 0.15 },
+            backStraightness: { min: 0.85, optimal: 0.95 }
+          }),
+          scoringWeights: JSON.stringify({
+            depth: 0.3,
+            backStraightness: 0.35,
+            elbowAngle: 0.2,
+            armExtension: 0.15
+          }),
+          difficulty: 'beginner',
+          description: 'Classic push-up focusing on chest, shoulders, and triceps engagement'
+        },
+        {
+          name: 'Standard Plank',
+          exerciseType: 'plank',
+          targetAngles: JSON.stringify({
+            bodyAlignment: { target: 180, tolerance: 5 },
+            shoulderAngle: { target: 90, tolerance: 10 }
+          }),
+          targetPositions: JSON.stringify({
+            bodyAlignment: { min: 0.8, optimal: 0.95 },
+            hipPosition: { min: 0.8, optimal: 0.95 }
+          }),
+          scoringWeights: JSON.stringify({
+            bodyAlignment: 0.35,
+            coreEngagement: 0.25,
+            hipPosition: 0.2,
+            shoulderStability: 0.2
+          }),
+          difficulty: 'beginner',
+          description: 'Isometric core exercise focusing on body alignment and stability'
+        },
+        {
+          name: 'Bent-over Row',
+          exerciseType: 'row',
+          targetAngles: JSON.stringify({
+            elbowRetraction: { target: 90, tolerance: 15 },
+            torsoAngle: { target: 45, tolerance: 10 }
+          }),
+          targetPositions: JSON.stringify({
+            backStraightness: { min: 0.8, optimal: 0.95 },
+            shoulderBladeMovement: { min: 0.7, optimal: 0.9 }
+          }),
+          scoringWeights: JSON.stringify({
+            elbowRetraction: 0.25,
+            backStraightness: 0.3,
+            shoulderBladeMovement: 0.25,
+            torsoAngle: 0.1,
+            gripWidth: 0.1
+          }),
+          difficulty: 'intermediate',
+          description: 'Compound pulling exercise targeting back muscles and biceps'
+        }
+      ];
+
+      const insertStmt = this.db.prepare(`
+        INSERT OR IGNORE INTO exercise_templates 
+        (name, exercise_type, target_angles, target_positions, scoring_weights, difficulty, description)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      for (const template of templates) {
+        insertStmt.run(
+          template.name,
+          template.exerciseType,
+          template.targetAngles,
+          template.targetPositions,
+          template.scoringWeights,
+          template.difficulty,
+          template.description
+        );
+      }
+
+      logger.info('Exercise templates seeded successfully', { metadata: { templateCount: templates.length } });
+    } catch (error) {
+      logger.warn('Failed to seed exercise templates, continuing without them', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  }
+
+  /**
+   * Get exercise template by type
+   */
+  async getExerciseTemplate(exerciseType: string): Promise<any> {
+    try {
+      const stmt = this.db.prepare(`
+        SELECT * FROM exercise_templates WHERE exercise_type = ? LIMIT 1
+      `);
+      const template = stmt.get(exerciseType) as any;
+
+      if (template) {
+        return {
+          ...template,
+          target_angles: JSON.parse(template.target_angles || '{}'),
+          target_positions: JSON.parse(template.target_positions || '{}'),
+          scoring_weights: JSON.parse(template.scoring_weights || '{}')
+        };
+      }
+      return null;
+    } catch (error) {
+      logger.error('Failed to get exercise template', {
+        error: error instanceof Error ? error.message : String(error),
+        metadata: { exerciseType }
+      });
+      return null;
     }
   }
 

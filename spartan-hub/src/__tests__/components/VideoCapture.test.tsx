@@ -1,8 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { VideoCapture } from '../../components/FormAnalysis/VideoCapture';
+import { VideoCapture } from '../../components/VideoAnalysis/VideoCapture';
 import { DeviceProvider } from '../../context/DeviceContext';
+import { ExerciseType } from '../../types/formAnalysis';
 
 // Note: @mediapipe modules are mocked globally via jest.config.components.js
 // The mocks are located at src/__mocks__/@mediapipe/
@@ -34,21 +35,36 @@ describe('VideoCapture Component', () => {
   });
 
   it('renders video capture component for squat exercise', () => {
-    renderWithProviders(<VideoCapture exerciseType="squat" />);
+    renderWithProviders(<VideoCapture exerciseType={'squat' as ExerciseType} />);
     // Component should render without errors
     expect(renderWithProviders).toBeDefined();
   });
 
   it('renders video capture component for deadlift exercise', () => {
-    renderWithProviders(<VideoCapture exerciseType="deadlift" />);
+    renderWithProviders(<VideoCapture exerciseType={'deadlift' as ExerciseType} />);
     // Component should render without errors
+    expect(renderWithProviders).toBeDefined();
+  });
+
+  it('renders video capture component for push_up exercise', () => {
+    renderWithProviders(<VideoCapture exerciseType={'push_up' as ExerciseType} />);
+    expect(renderWithProviders).toBeDefined();
+  });
+
+  it('renders video capture component for plank exercise', () => {
+    renderWithProviders(<VideoCapture exerciseType={'plank' as ExerciseType} />);
+    expect(renderWithProviders).toBeDefined();
+  });
+
+  it('renders video capture component for row exercise', () => {
+    renderWithProviders(<VideoCapture exerciseType={'row' as ExerciseType} />);
     expect(renderWithProviders).toBeDefined();
   });
 
   it('calls onAnalysisComplete callback when analysis is complete', async () => {
     renderWithProviders(
       <VideoCapture 
-        exerciseType="squat" 
+        exerciseType={'squat' as ExerciseType}
         onAnalysisComplete={mockOnAnalysisComplete}
       />
     );
@@ -61,7 +77,7 @@ describe('VideoCapture Component', () => {
   it('calls onStateChange callback when state changes', async () => {
     renderWithProviders(
       <VideoCapture 
-        exerciseType="deadlift" 
+        exerciseType={'deadlift' as ExerciseType}
         onStateChange={mockOnStateChange}
       />
     );
@@ -74,7 +90,7 @@ describe('VideoCapture Component', () => {
   it('displays video analysis UI for form analysis', () => {
     renderWithProviders(
       <VideoCapture 
-        exerciseType="squat"
+        exerciseType={'squat' as ExerciseType}
         onAnalysisComplete={mockOnAnalysisComplete}
         onStateChange={mockOnStateChange}
       />
@@ -92,7 +108,7 @@ describe('VideoCapture Component', () => {
       writable: true,
     });
 
-    renderWithProviders(<VideoCapture exerciseType="squat" />);
+    renderWithProviders(<VideoCapture exerciseType={'squat' as ExerciseType} />);
     
     await waitFor(() => {
       expect(navigator.mediaDevices.getUserMedia).toBeDefined();
@@ -112,7 +128,7 @@ describe('VideoCapture Component', () => {
     });
 
     const { unmount } = renderWithProviders(
-      <VideoCapture exerciseType="deadlift" />
+      <VideoCapture exerciseType={'deadlift' as ExerciseType} />
     );
     unmount();
     
