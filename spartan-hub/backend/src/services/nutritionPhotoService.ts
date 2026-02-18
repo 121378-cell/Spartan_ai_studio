@@ -85,7 +85,7 @@ export class NutritionPhotoService {
         },
       ]);
 
-      const response = result.response;
+      const {response} = result;
       const text = response.text();
 
       // 3. Parse the response

@@ -23,12 +23,12 @@ export class TerraWebhookHandler {
    * Main entry point for all Terra webhooks
    */
   async handleWebhook(payload: any, signature: string): Promise<any> {
-    const type = payload.type;
+    const {type} = payload;
     const userId = payload.user?.reference_id || payload.user?.user_id;
 
     logger.info(`Received Terra webhook: ${type}`, { 
       context: 'terra-webhook', 
-      metadata: { type, userId, hasSignature: !!signature } 
+      metadata: { type, userId, hasSignature: Boolean(signature) } 
     });
 
     // Signature verification (Placeholder logic for sandbox)
@@ -38,20 +38,20 @@ export class TerraWebhookHandler {
 
     try {
       switch (type) {
-        case 'body':
-          await this.processBiometrics(userId, payload.data);
-          break;
-        case 'daily':
-          await this.processDaily(userId, payload.data);
-          break;
-        case 'sleep':
-          await this.processSleep(userId, payload.data);
-          break;
-        case 'activity':
-          await this.processActivity(userId, payload.data);
-          break;
-        default:
-          logger.info(`Unhandled webhook type: ${type}`);
+      case 'body':
+        await this.processBiometrics(userId, payload.data);
+        break;
+      case 'daily':
+        await this.processDaily(userId, payload.data);
+        break;
+      case 'sleep':
+        await this.processSleep(userId, payload.data);
+        break;
+      case 'activity':
+        await this.processActivity(userId, payload.data);
+        break;
+      default:
+        logger.info(`Unhandled webhook type: ${type}`);
       }
 
       return { success: true, processed: true };

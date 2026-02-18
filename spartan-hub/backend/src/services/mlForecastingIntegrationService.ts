@@ -70,7 +70,7 @@ export class MLForecastingIntegrationService {
 
     // Angle-based features
     if (analysisData.repData?.angles) {
-      const angles = analysisData.repData.angles;
+      const {angles} = analysisData.repData;
       
       // Knee angle deviation from optimal (90 degrees)
       if (angles.knee_angle !== undefined) {
@@ -90,7 +90,7 @@ export class MLForecastingIntegrationService {
 
     // Movement quality metrics
     if (analysisData.repData?.metrics) {
-      const metrics = analysisData.repData.metrics;
+      const {metrics} = analysisData.repData;
       
       if (metrics.formScore !== undefined) {
         features.form_consistency = metrics.formScore;
@@ -232,7 +232,7 @@ export class MLForecastingIntegrationService {
     let additionalImpact = 0;
     
     if (analysisData.repData?.angles) {
-      const angles = analysisData.repData.angles;
+      const {angles} = analysisData.repData;
       
       // Excessive forward lean significantly increases CNS demand
       if (angles.back_angle !== undefined && angles.back_angle < 150) {
@@ -745,13 +745,13 @@ export class MLForecastingIntegrationService {
       description: fatigueLevel > 0.7 
         ? 'High CNS fatigue detected - nervous system may be overtaxed'
         : fatigueLevel > 0.4
-        ? 'Moderate CNS fatigue - consider lighter training sessions'
-        : 'CNS fatigue levels appear normal',
+          ? 'Moderate CNS fatigue - consider lighter training sessions'
+          : 'CNS fatigue levels appear normal',
       recommendation: fatigueLevel > 0.7
         ? 'Take complete rest day and prioritize sleep/recovery'
         : fatigueLevel > 0.4
-        ? 'Reduce training intensity and focus on technique work'
-        : 'Current training load appears sustainable',
+          ? 'Reduce training intensity and focus on technique work'
+          : 'Current training load appears sustainable',
       confidence: 0.75
     };
   }
@@ -774,14 +774,14 @@ export class MLForecastingIntegrationService {
     const trendDesc = improvement > 5 
       ? 'showing consistent improvement'
       : improvement < -5
-      ? 'experiencing a decline'
-      : 'maintaining stable performance';
+        ? 'experiencing a decline'
+        : 'maintaining stable performance';
     
     const consistencyDesc = consistency > 0.8
       ? 'with excellent consistency'
       : consistency > 0.6
-      ? 'with good consistency'
-      : 'with some variability';
+        ? 'with good consistency'
+        : 'with some variability';
     
     return `Your form quality is ${trendDesc} ${consistencyDesc} across recent sessions.`;
   }

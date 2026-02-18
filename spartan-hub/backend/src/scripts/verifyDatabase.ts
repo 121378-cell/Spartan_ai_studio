@@ -32,8 +32,8 @@ async function main(): Promise<void> {
 
     console.log('\n📊 Database Health Check\n');
     console.log(`Connected: ${health.connected ? '✅ Yes' : '❌ No'}`);
-  console.log(`Healthy: ${health.healthy ? '✅ Yes' : '⚠️ Warnings'}`);
-  console.log(`Tables: ${health.tables}`);
+    console.log(`Healthy: ${health.healthy ? '✅ Yes' : '⚠️ Warnings'}`);
+    console.log(`Tables: ${health.tables}`);
 
     // Verify integrity
     const integrity = await backupManager.verifyIntegrity();

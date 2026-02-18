@@ -360,41 +360,41 @@ class BrainOrchestrator {
       if (coachDecision.recommendedActions) {
         for (const action of coachDecision.recommendedActions) {
           switch (action.type) {
-            case 'intensity_adjustment':
-              adjustments.push({
-                type: 'intensity',
-                change: action.intensityChange,
-                reason: action.reason,
-                confidence: action.confidence
-              });
-              break;
+          case 'intensity_adjustment':
+            adjustments.push({
+              type: 'intensity',
+              change: action.intensityChange,
+              reason: action.reason,
+              confidence: action.confidence
+            });
+            break;
 
-            case 'session_type_change':
-              adjustments.push({
-                type: 'session_type',
-                from: action.currentType,
-                to: action.recommendedType,
-                reason: action.reason,
-                confidence: action.confidence
-              });
-              break;
+          case 'session_type_change':
+            adjustments.push({
+              type: 'session_type',
+              from: action.currentType,
+              to: action.recommendedType,
+              reason: action.reason,
+              confidence: action.confidence
+            });
+            break;
 
-            case 'duration_adjustment':
-              adjustments.push({
-                type: 'duration',
-                change: action.durationChange,
-                reason: action.reason,
-                confidence: action.confidence
-              });
-              break;
+          case 'duration_adjustment':
+            adjustments.push({
+              type: 'duration',
+              change: action.durationChange,
+              reason: action.reason,
+              confidence: action.confidence
+            });
+            break;
 
-            case 'recovery_day':
-              adjustments.push({
-                type: 'recovery_day',
-                reason: action.reason,
-                confidence: action.confidence
-              });
-              break;
+          case 'recovery_day':
+            adjustments.push({
+              type: 'recovery_day',
+              reason: action.reason,
+              confidence: action.confidence
+            });
+            break;
           }
         }
       }

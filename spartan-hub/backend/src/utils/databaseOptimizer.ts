@@ -80,14 +80,14 @@ class DatabaseOptimizer {
       } catch (error) {
         if ((error as Error).message.includes('already exists')) {
           skippedCount++;
-          console.log(`  ⚠️  Skipped existing index`);
+          console.log('  ⚠️  Skipped existing index');
         } else {
           console.error(`  ❌ Failed to create index: ${(error as Error).message}`);
         }
       }
     }
     
-    console.log(`\n📈 Index creation summary:`);
+    console.log('\n📈 Index creation summary:');
     console.log(`  Created: ${createdCount} indexes`);
     console.log(`  Skipped: ${skippedCount} existing indexes\n`);
   }
@@ -312,8 +312,8 @@ class DatabaseOptimizer {
   }
 
   private getDatabaseStats(): any {
-    const tableCount = this.db.prepare("SELECT COUNT(*) as count FROM sqlite_master WHERE type='table'").get() as {count: number};
-    const indexCount = this.db.prepare("SELECT COUNT(*) as count FROM sqlite_master WHERE type='index'").get() as {count: number};
+    const tableCount = this.db.prepare('SELECT COUNT(*) as count FROM sqlite_master WHERE type=\'table\'').get() as {count: number};
+    const indexCount = this.db.prepare('SELECT COUNT(*) as count FROM sqlite_master WHERE type=\'index\'').get() as {count: number};
     
     return {
       tableCount: tableCount.count,

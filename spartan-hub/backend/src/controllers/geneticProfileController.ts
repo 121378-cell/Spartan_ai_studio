@@ -16,7 +16,7 @@ import { ValidationError } from '../utils/errorHandler';
 export const uploadGeneticData = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, source } = req.body;
-    const file = req.file;
+    const {file} = req;
 
     if (!userId) {
       throw new ValidationError('User ID is required');

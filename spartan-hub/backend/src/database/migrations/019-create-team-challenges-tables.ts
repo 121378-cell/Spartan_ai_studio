@@ -85,15 +85,15 @@ export const up = async (db: Database): Promise<void> => {
                 reject(err);
               } else {
                 // Create indexes
-                db.run(`CREATE INDEX IF NOT EXISTS idx_challenges_creator ON challenges(creator_id)`, (err) => {
+                db.run('CREATE INDEX IF NOT EXISTS idx_challenges_creator ON challenges(creator_id)', (err) => {
                   if (err) reject(err);
-                  else db.run(`CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status)`, (err) => {
+                  else db.run('CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status)', (err) => {
                     if (err) reject(err);
-                    else db.run(`CREATE INDEX IF NOT EXISTS idx_teams_challenge ON challenge_teams(challenge_id)`, (err) => {
+                    else db.run('CREATE INDEX IF NOT EXISTS idx_teams_challenge ON challenge_teams(challenge_id)', (err) => {
                       if (err) reject(err);
-                      else db.run(`CREATE INDEX IF NOT EXISTS idx_participants_challenge ON challenge_participants(challenge_id)`, (err) => {
+                      else db.run('CREATE INDEX IF NOT EXISTS idx_participants_challenge ON challenge_participants(challenge_id)', (err) => {
                         if (err) reject(err);
-                        else db.run(`CREATE INDEX IF NOT EXISTS idx_participants_user ON challenge_participants(user_id)`, (err) => {
+                        else db.run('CREATE INDEX IF NOT EXISTS idx_participants_user ON challenge_participants(user_id)', (err) => {
                           if (err) reject(err);
                           else resolve();
                         });

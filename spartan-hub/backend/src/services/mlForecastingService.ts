@@ -1037,8 +1037,8 @@ export class MLForecastingService {
         currentProb.probabilityPercent = Math.min(95, currentProb.probabilityPercent + (data.riskFactor * 10));
         currentProb.riskScore = currentProb.probabilityPercent;
         currentProb.recommendation = `FORM ALERT: Your ${data.exerciseType} form score was low (${data.formScore}%). ` +
-          `Poor technique increases injury risk significantly. ` +
-          currentProb.recommendation;
+          `Poor technique increases injury risk significantly. ${ 
+            currentProb.recommendation}`;
 
         this.saveInjuryProbability(currentProb);
       }
@@ -1069,7 +1069,7 @@ export class MLForecastingService {
         return [];
       }
 
-              const stmt = (this.getDb() as any).prepare(`
+      const stmt = (this.getDb() as any).prepare(`
                 SELECT 
                   date,
                   recoveryScore,
@@ -1264,7 +1264,7 @@ export class MLForecastingService {
     try {
       if (typeof (this.getDb() as any)?.prepare !== 'function') return;
 
-              const stmt = (this.getDb() as any).prepare(`
+      const stmt = (this.getDb() as any).prepare(`
 
                 INSERT OR REPLACE INTO ml_forecasts 
 
@@ -1300,7 +1300,7 @@ export class MLForecastingService {
     try {
       if (typeof (this.getDb() as any)?.prepare !== 'function') return;
 
-              const stmt = (this.getDb() as any).prepare(`
+      const stmt = (this.getDb() as any).prepare(`
 
                 INSERT OR REPLACE INTO injury_probabilities
 

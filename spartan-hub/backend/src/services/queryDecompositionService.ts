@@ -212,29 +212,29 @@ export class QueryDecompositionService {
     let aggregated = Array.from(resultMap.values());
 
     switch (strategy) {
-      case 'rank':
-        // Sort by number of matching sub-queries, then by score
-        aggregated.sort((a, b) => {
-          if (b.subQueryMatches !== a.subQueryMatches) {
-            return b.subQueryMatches - a.subQueryMatches;
-          }
-          return b.relevanceScore - a.relevanceScore;
-        });
-        break;
+    case 'rank':
+      // Sort by number of matching sub-queries, then by score
+      aggregated.sort((a, b) => {
+        if (b.subQueryMatches !== a.subQueryMatches) {
+          return b.subQueryMatches - a.subQueryMatches;
+        }
+        return b.relevanceScore - a.relevanceScore;
+      });
+      break;
 
-      case 'weighted':
-        // Sort by weighted relevance score
-        aggregated.sort((a, b) => b.relevanceScore - a.relevanceScore);
-        break;
+    case 'weighted':
+      // Sort by weighted relevance score
+      aggregated.sort((a, b) => b.relevanceScore - a.relevanceScore);
+      break;
 
-      case 'combine':
-      default:
-        // Average the scores
-        aggregated = aggregated.map(r => ({
-          ...r,
-          relevanceScore: r.relevanceScore / r.subQueryMatches
-        }));
-        aggregated.sort((a, b) => b.relevanceScore - a.relevanceScore);
+    case 'combine':
+    default:
+      // Average the scores
+      aggregated = aggregated.map(r => ({
+        ...r,
+        relevanceScore: r.relevanceScore / r.subQueryMatches
+      }));
+      aggregated.sort((a, b) => b.relevanceScore - a.relevanceScore);
     }
 
     // Normalize scores to 0-1 range

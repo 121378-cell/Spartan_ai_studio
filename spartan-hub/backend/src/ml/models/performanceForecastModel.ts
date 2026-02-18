@@ -279,7 +279,7 @@ export class PerformanceForecastModel {
       projectedPeak: {
         week: predictions.reduce((max, p, i, arr) =>
           p.expectedPerformance > arr[max].expectedPerformance ? i : max,
-          0 // Initial index
+        0 // Initial index
         ) + 1, // Convert to 1-based week number
         value: Math.max(...predictions.map((p) => p.expectedPerformance)),
       },

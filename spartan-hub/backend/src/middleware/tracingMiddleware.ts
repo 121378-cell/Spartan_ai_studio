@@ -48,7 +48,7 @@ export const tracingMiddleware = (req: Request, res: Response, next: NextFunctio
  * Utility function to add attributes to the current request span
  */
 export const addSpanAttribute = (req: Request, key: string, value: string | number | boolean): void => {
-  const span = (req as any).span;
+  const {span} = (req as any);
   if (span) {
     span.setAttribute(key, value);
   } else {
@@ -61,7 +61,7 @@ export const addSpanAttribute = (req: Request, key: string, value: string | numb
  * Utility function to add an event to the current request span
  */
 export const addSpanEvent = (req: Request, eventName: string, attributes?: Record<string, string | number | boolean>): void => {
-  const span = (req as any).span;
+  const {span} = (req as any);
   if (span) {
     span.addEvent(eventName, attributes);
   } else {

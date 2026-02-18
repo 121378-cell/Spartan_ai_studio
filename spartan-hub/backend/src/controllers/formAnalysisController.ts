@@ -41,7 +41,7 @@ export const startFormAnalysisSession = async (req: Request, res: Response) => {
     logger.info('Form analysis session started', {
       metadata: {
         sessionId,
-        userId: userId,
+        userId,
         exerciseType: sanitizedExerciseType
       }
     });
@@ -187,7 +187,7 @@ export const getUserFormSessions = async (req: Request, res: Response) => {
 
     logger.info('User form sessions retrieved', {
       metadata: {
-        userId: userId,
+        userId,
         sessionCount: sessions.length
       }
     });
@@ -260,7 +260,7 @@ export const getUserExerciseStats = async (req: Request, res: Response) => {
 
     logger.info('User exercise stats retrieved', {
       metadata: {
-        userId: userId,
+        userId,
         exerciseType: exerciseType as string | undefined
       }
     });
@@ -313,7 +313,7 @@ export const addFormFeedback = async (req: Request, res: Response) => {
     const dbService = new FormAnalysisDatabaseService(db);
 
     const feedbackId = await dbService.addFeedback({
-      userId: userId,
+      userId,
       sessionId: Number(sessionId),
       repId: feedbackData.repId ? Number(feedbackData.repId) : undefined,
       feedbackType: feedbackData.feedbackType,
@@ -326,7 +326,7 @@ export const addFormFeedback = async (req: Request, res: Response) => {
     logger.info('Form feedback added', {
       metadata: {
         feedbackId,
-        userId: userId,
+        userId,
         sessionId: Number(sessionId)
       }
     });

@@ -520,7 +520,7 @@ export class ExpertMarketplaceService {
         contentId,
         rating,
         comment,
-        isVerifiedPurchase: !!hasSubscription || hasPurchased,
+        isVerifiedPurchase: Boolean(hasSubscription) || hasPurchased,
         helpfulCount: 0,
         createdAt: new Date()
       };

@@ -329,7 +329,7 @@ export class QueryCacheService {
    * Cleanup expired entries
    */
   async cleanup(): Promise<number> {
-    let deleted = 0;
+    const deleted = 0;
     const entries = this.cache.getAllEntries();
 
     // In-memory cache handles expiration automatically

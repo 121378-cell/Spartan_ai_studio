@@ -416,18 +416,18 @@ export class CriticalSignalMonitor {
       let intervention = '';
 
       switch (signal.signalType) {
-        case 'sleep_deprivation':
-          intervention = 'SKIP_TODAY_SESSION';
-          break;
-        case 'hrv_crash':
-          intervention = 'REDUCE_INTENSITY_TODAY';
-          break;
-        case 'resting_hr_spike':
-          intervention = 'LOW_INTENSITY_ONLY';
-          break;
-        case 'extreme_stress':
-          intervention = 'RECOVERY_MODE_TODAY';
-          break;
+      case 'sleep_deprivation':
+        intervention = 'SKIP_TODAY_SESSION';
+        break;
+      case 'hrv_crash':
+        intervention = 'REDUCE_INTENSITY_TODAY';
+        break;
+      case 'resting_hr_spike':
+        intervention = 'LOW_INTENSITY_ONLY';
+        break;
+      case 'extreme_stress':
+        intervention = 'RECOVERY_MODE_TODAY';
+        break;
       }
 
       if (intervention) {

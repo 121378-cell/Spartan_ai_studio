@@ -356,7 +356,7 @@ router.post('/search', verifyJWT, async (req: AuthenticatedRequest, res: Respons
         id: chunk.id,
         bookId: chunk.bookId,
         chapterTitle: chunk.chapterTitle,
-        content: chunk.content.substring(0, 200) + '...',
+        content: `${chunk.content.substring(0, 200)  }...`,
         keyTerms: chunk.keyTerms,
         relevance: 0.8 // Placeholder for relevance score
       }));

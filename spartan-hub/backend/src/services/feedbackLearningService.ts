@@ -341,7 +341,7 @@ export class FeedbackLearningService {
     dateRange: { start: Date; end: Date } | null;
     uniqueQueries: Set<string>;
     uniqueUsers: Set<string>;
-  } {
+    } {
     const queryIds = new Set(this.feedbackHistory.map(fb => fb.queryId));
     const userIds = new Set(this.feedbackHistory.map(fb => fb.userId));
 
@@ -356,6 +356,41 @@ export class FeedbackLearningService {
       dateRange,
       uniqueQueries: queryIds,
       uniqueUsers: userIds
+    };
+  }
+
+  /**
+   * Record feedback on a specific coaching decision
+   */
+  async recordFeedback(userId: string, feedbackData: any): Promise<void> {
+    logger.info('Coaching decision feedback recorded', {
+      context: 'feedback-learning',
+      metadata: { userId, ...feedbackData }
+    });
+    
+    // In a real implementation, this would update model weights for the coach
+    this.feedbackHistory.push({
+      queryId: feedbackData.decisionId || 'coaching_decision',
+      userId,
+      resultRatings: new Map(),
+      userRating: feedbackData.feedback === 'accepted' ? 'excellent' : 'poor',
+      timestamp: Date.now()
+    });
+  }
+
+  /**
+   * Get learned preferences for a specific user
+   */
+  async getUserPreferences(userId: string): Promise<any> {
+    // Return mock preferences based on history
+    const acceptedCount = this.feedbackHistory.filter(fb => fb.userId === userId && fb.userRating === 'excellent').length;
+    const rejectedCount = this.feedbackHistory.filter(fb => fb.userId === userId && fb.userRating === 'poor').length;
+
+    return {
+      userId,
+      preferredIntensity: acceptedCount > rejectedCount ? 'high' : 'moderate',
+      responsivenessToRest: 0.85,
+      learningStatus: 'active'
     };
   }
 

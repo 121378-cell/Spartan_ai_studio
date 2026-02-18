@@ -202,33 +202,33 @@ export class LargeActionModelService {
     const actions: Action[] = [];
 
     switch (trigger.type) {
-      case 'biometric_alert':
-        actions.push(...this.handleBiometricAlert(trigger, context));
-        break;
+    case 'biometric_alert':
+      actions.push(...this.handleBiometricAlert(trigger, context));
+      break;
 
-      case 'schedule_conflict':
-        actions.push(...this.handleScheduleConflict(trigger, context));
-        break;
+    case 'schedule_conflict':
+      actions.push(...this.handleScheduleConflict(trigger, context));
+      break;
 
-      case 'goal_milestone':
-        actions.push(...this.handleGoalMilestone(trigger, context));
-        break;
+    case 'goal_milestone':
+      actions.push(...this.handleGoalMilestone(trigger, context));
+      break;
 
-      case 'supplement_low':
-        actions.push(...this.handleSupplementLow(trigger, context));
-        break;
+    case 'supplement_low':
+      actions.push(...this.handleSupplementLow(trigger, context));
+      break;
 
-      case 'recovery_needed':
-        actions.push(...this.handleRecoveryNeeded(trigger, context));
-        break;
+    case 'recovery_needed':
+      actions.push(...this.handleRecoveryNeeded(trigger, context));
+      break;
 
-      case 'predictive':
-        actions.push(...this.handlePredictiveAction(trigger, context));
-        break;
+    case 'predictive':
+      actions.push(...this.handlePredictiveAction(trigger, context));
+      break;
 
-      case 'user_request':
-        actions.push(...this.handleUserRequest(trigger, context));
-        break;
+    case 'user_request':
+      actions.push(...this.handleUserRequest(trigger, context));
+      break;
     }
 
     // Add dependencies between actions
@@ -463,7 +463,7 @@ export class LargeActionModelService {
         params: {
           adjustment: 'deload_week',
           reason: 'ML model predicts 85% overtraining risk in next 7 days',
-          confidence: confidence
+          confidence
         },
         retryCount: 0,
         maxRetries: 3
@@ -479,7 +479,7 @@ export class LargeActionModelService {
           originalDate: new Date(),
           newDate: this.findNextAvailableSlot(context),
           reason: 'Predicted schedule conflict - proactively rescheduling',
-          confidence: confidence
+          confidence
         },
         retryCount: 0,
         maxRetries: 3
@@ -615,47 +615,47 @@ export class LargeActionModelService {
       let result: ActionResult;
 
       switch (action.type) {
-        case 'schedule_workout':
-        case 'reschedule_workout':
-        case 'cancel_workout':
-          result = await this.executeCalendarAction(action, userId);
-          break;
+      case 'schedule_workout':
+      case 'reschedule_workout':
+      case 'cancel_workout':
+        result = await this.executeCalendarAction(action, userId);
+        break;
 
-        case 'add_grocery_item':
-        case 'remove_grocery_item':
-          result = await this.executeShoppingAction(action, userId);
-          break;
+      case 'add_grocery_item':
+      case 'remove_grocery_item':
+        result = await this.executeShoppingAction(action, userId);
+        break;
 
-        case 'book_recovery_service':
-          result = await this.executeBookingAction(action, userId);
-          break;
+      case 'book_recovery_service':
+        result = await this.executeBookingAction(action, userId);
+        break;
 
-        case 'order_supplement':
-          result = await this.executeOrderAction(action, userId);
-          break;
+      case 'order_supplement':
+        result = await this.executeOrderAction(action, userId);
+        break;
 
-        case 'adjust_training_plan':
-          result = await this.executeTrainingAction(action, userId);
-          break;
+      case 'adjust_training_plan':
+        result = await this.executeTrainingAction(action, userId);
+        break;
 
-        case 'send_notification':
-          result = await this.executeNotificationAction(action, userId);
-          break;
+      case 'send_notification':
+        result = await this.executeNotificationAction(action, userId);
+        break;
 
-        case 'update_sleep_schedule':
-          result = await this.executeSleepAction(action, userId);
-          break;
+      case 'update_sleep_schedule':
+        result = await this.executeSleepAction(action, userId);
+        break;
 
-        case 'request_biometric_sync':
-          result = await this.executeSyncAction(action, userId);
-          break;
+      case 'request_biometric_sync':
+        result = await this.executeSyncAction(action, userId);
+        break;
 
-        case 'initiate_rest_day':
-          result = await this.executeRestAction(action, userId);
-          break;
+      case 'initiate_rest_day':
+        result = await this.executeRestAction(action, userId);
+        break;
 
-        default:
-          throw new Error(`Unknown action type: ${action.type}`);
+      default:
+        throw new Error(`Unknown action type: ${action.type}`);
       }
 
       action.result = result;

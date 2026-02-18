@@ -131,7 +131,7 @@ export class RAGIntegrationService {
       // Generate citations
       const citations = sources.slice(0, 5).map(source => ({
         sourceBook: source.bookTitle,
-        excerpt: source.content.substring(0, 150) + '...',
+        excerpt: `${source.content.substring(0, 150)  }...`,
         relevanceScore: source.relevanceScore
       }));
 
@@ -197,7 +197,7 @@ export class RAGIntegrationService {
     try {
       // Step 1: Check cache first
       let sources = await this.cacheService.getCachedResults(query);
-      let cacheHit = !!sources;
+      const cacheHit = Boolean(sources);
       
       if (!sources) {
         sources = [];
@@ -333,7 +333,7 @@ export class RAGIntegrationService {
       const answer = this.generateAnswerFromSources(sources);
       const citations = sources.slice(0, 5).map(source => ({
         sourceBook: source.bookTitle,
-        excerpt: source.content.substring(0, 150) + '...',
+        excerpt: `${source.content.substring(0, 150)  }...`,
         relevanceScore: source.relevanceScore
       }));
 
@@ -647,7 +647,7 @@ export class RAGIntegrationService {
     // Attempt to make a more natural synthesis
     const content = topSource.content.trim();
     const firstPeriod = content.indexOf('.');
-    const firstSentence = firstPeriod !== -1 ? content.substring(0, firstPeriod + 1) : content.substring(0, 200) + '...';
+    const firstSentence = firstPeriod !== -1 ? content.substring(0, firstPeriod + 1) : `${content.substring(0, 200)  }...`;
 
     answer += `${firstSentence}`;
 
@@ -655,7 +655,7 @@ export class RAGIntegrationService {
       answer += ` Además, se han encontrado referencias complementarias en "${otherSources[0].bookTitle}" que sugieren un enfoque integrado en ${otherSources[0].keyTerms.slice(0, 2).join(' y ')}.`;
     }
 
-    answer += ` Esta información se considera altamente relevante para tu consulta sobre el rendimiento y la salud bio-fisiológica.`;
+    answer += ' Esta información se considera altamente relevante para tu consulta sobre el rendimiento y la salud bio-fisiológica.';
 
     return answer;
   }

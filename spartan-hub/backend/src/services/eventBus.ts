@@ -152,7 +152,7 @@ export class EventBus extends EventEmitter {
     eventsByType: Record<string, number>;
     eventsByPriority: Record<string, number>;
     lastEventTime: number;
-  } {
+    } {
     const stats = {
       totalEvents: this.eventLog.length,
       eventsByType: {} as Record<string, number>,

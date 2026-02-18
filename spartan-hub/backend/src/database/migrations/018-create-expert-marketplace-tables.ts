@@ -128,17 +128,17 @@ export const up = async (db: Database): Promise<void> => {
                         reject(err);
                       } else {
                         // Create indexes
-                        db.run(`CREATE INDEX IF NOT EXISTS idx_experts_user ON experts(user_id)`, (err) => {
+                        db.run('CREATE INDEX IF NOT EXISTS idx_experts_user ON experts(user_id)', (err) => {
                           if (err) reject(err);
-                          else db.run(`CREATE INDEX IF NOT EXISTS idx_experts_status ON experts(status)`, (err) => {
+                          else db.run('CREATE INDEX IF NOT EXISTS idx_experts_status ON experts(status)', (err) => {
                             if (err) reject(err);
-                            else db.run(`CREATE INDEX IF NOT EXISTS idx_content_expert ON expert_content(expert_id)`, (err) => {
+                            else db.run('CREATE INDEX IF NOT EXISTS idx_content_expert ON expert_content(expert_id)', (err) => {
                               if (err) reject(err);
-                              else db.run(`CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON expert_subscriptions(user_id)`, (err) => {
+                              else db.run('CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON expert_subscriptions(user_id)', (err) => {
                                 if (err) reject(err);
-                                else db.run(`CREATE INDEX IF NOT EXISTS idx_subscriptions_expert ON expert_subscriptions(expert_id)`, (err) => {
+                                else db.run('CREATE INDEX IF NOT EXISTS idx_subscriptions_expert ON expert_subscriptions(expert_id)', (err) => {
                                   if (err) reject(err);
-                                  else db.run(`CREATE INDEX IF NOT EXISTS idx_reviews_expert ON expert_reviews(expert_id)`, (err) => {
+                                  else db.run('CREATE INDEX IF NOT EXISTS idx_reviews_expert ON expert_reviews(expert_id)', (err) => {
                                     if (err) reject(err);
                                     else resolve();
                                   });

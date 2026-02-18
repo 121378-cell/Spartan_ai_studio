@@ -256,7 +256,7 @@ export class EngagementEngineService {
         WHERE user_id = ? AND streak_type = ?
       `);
       
-      let streak = getStmt.get(userId, streakType) as {
+      const streak = getStmt.get(userId, streakType) as {
         current_streak: number;
         longest_streak: number;
         last_activity_date: string;
@@ -352,13 +352,13 @@ export class EngagementEngineService {
       await this.awardPoints(targetUserId, Math.floor(points * 0.5), `social_${interactionType}_received`);
 
       // Log engagement events
-      await this.logEngagementEvent(userId, `social_interaction_given`, {
+      await this.logEngagementEvent(userId, 'social_interaction_given', {
         interactionType,
         targetUserId,
         points
       }, points);
 
-      await this.logEngagementEvent(targetUserId, `social_interaction_received`, {
+      await this.logEngagementEvent(targetUserId, 'social_interaction_received', {
         interactionType,
         fromUserId: userId,
         points: Math.floor(points * 0.5)

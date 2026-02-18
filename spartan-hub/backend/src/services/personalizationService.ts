@@ -765,26 +765,26 @@ export class PersonalizationService {
 
   private calculateBaselineDeviation(baseline: UserBaseline, metric: string): number {
     switch (metric) {
-      case 'recovery':
-        // Higher RHR and lower HRV = worse recovery = lower score
-        const rhrDeviation = (baseline.restingHeartRate.percentileChange / 10) * -2;
-        const hrvDeviation = (baseline.heartRateVariability.percentileChange / 10) * 2;
-        return Math.round(rhrDeviation + hrvDeviation);
+    case 'recovery':
+      // Higher RHR and lower HRV = worse recovery = lower score
+      const rhrDeviation = (baseline.restingHeartRate.percentileChange / 10) * -2;
+      const hrvDeviation = (baseline.heartRateVariability.percentileChange / 10) * 2;
+      return Math.round(rhrDeviation + hrvDeviation);
 
-      case 'readiness':
-        // Sleep deficit and stress = worse readiness
-        const sleepDeviation = (baseline.sleepDuration.deficit * -5);
-        return Math.round(Math.min(0, sleepDeviation)); // Only penalize
+    case 'readiness':
+      // Sleep deficit and stress = worse readiness
+      const sleepDeviation = (baseline.sleepDuration.deficit * -5);
+      return Math.round(Math.min(0, sleepDeviation)); // Only penalize
 
-      case 'injury_risk':
-        // All elevated metrics increase injury risk
-        return Math.round(
-          baseline.restingHeartRate.percentileChange * 0.5 +
+    case 'injury_risk':
+      // All elevated metrics increase injury risk
+      return Math.round(
+        baseline.restingHeartRate.percentileChange * 0.5 +
             baseline.stressLevel.value - baseline.stressLevel.baseline
-        );
+      );
 
-      default:
-        return 0;
+    default:
+      return 0;
     }
   }
 
@@ -792,20 +792,20 @@ export class PersonalizationService {
     if (pattern.confidenceScore < 30) return 0; // Not confident enough
 
     switch (metric) {
-      case 'recovery':
-        // Delayed responders need more recovery time
-        return pattern.pattern === 'delayed_responder' ? -5 : pattern.pattern === 'responder' ? 5 : 0;
+    case 'recovery':
+      // Delayed responders need more recovery time
+      return pattern.pattern === 'delayed_responder' ? -5 : pattern.pattern === 'responder' ? 5 : 0;
 
-      case 'readiness':
-        // High responders to training load need more caution
-        return pattern.trainingLoad === 'high_responder' ? -5 : 0;
+    case 'readiness':
+      // High responders to training load need more caution
+      return pattern.trainingLoad === 'high_responder' ? -5 : 0;
 
-      case 'injury_risk':
-        // Stress-sensitive individuals have higher risk
-        return pattern.stressResponse === 'stress_sensitive' ? 5 : 0;
+    case 'injury_risk':
+      // Stress-sensitive individuals have higher risk
+      return pattern.stressResponse === 'stress_sensitive' ? 5 : 0;
 
-      default:
-        return 0;
+    default:
+      return 0;
     }
   }
 

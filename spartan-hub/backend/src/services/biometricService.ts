@@ -319,39 +319,39 @@ export class BiometricService {
       const normalized: Partial<DailyBiometrics> = {};
 
       switch (sourceType) {
-        case 'apple-health':
-          normalized.hrv = this.normalizeAppleHealthHRV(rawData);
-          normalized.restingHeartRate = this.normalizeAppleHealthRHR(rawData);
-          normalized.sleep = this.normalizeAppleHealthSleep(rawData);
-          break;
+      case 'apple-health':
+        normalized.hrv = this.normalizeAppleHealthHRV(rawData);
+        normalized.restingHeartRate = this.normalizeAppleHealthRHR(rawData);
+        normalized.sleep = this.normalizeAppleHealthSleep(rawData);
+        break;
 
-        case 'garmin':
-          normalized.hrv = this.normalizeGarminHRV(rawData);
-          normalized.restingHeartRate = this.normalizeGarminRHR(rawData);
-          normalized.sleep = this.normalizeGarminSleep(rawData);
-          normalized.activity = this.normalizeGarminActivity(rawData);
-          break;
+      case 'garmin':
+        normalized.hrv = this.normalizeGarminHRV(rawData);
+        normalized.restingHeartRate = this.normalizeGarminRHR(rawData);
+        normalized.sleep = this.normalizeGarminSleep(rawData);
+        normalized.activity = this.normalizeGarminActivity(rawData);
+        break;
 
-        case 'google-fit':
-          normalized.activity = this.normalizeGoogleFitActivity(rawData);
-          break;
+      case 'google-fit':
+        normalized.activity = this.normalizeGoogleFitActivity(rawData);
+        break;
 
-        case 'healthconnect':
-          normalized.hrv = this.normalizeHealthConnectHRV(rawData);
-          normalized.sleep = this.normalizeHealthConnectSleep(rawData);
-          normalized.activity = this.normalizeHealthConnectActivity(rawData);
-          break;
+      case 'healthconnect':
+        normalized.hrv = this.normalizeHealthConnectHRV(rawData);
+        normalized.sleep = this.normalizeHealthConnectSleep(rawData);
+        normalized.activity = this.normalizeHealthConnectActivity(rawData);
+        break;
 
-        case 'whoop':
-          normalized.hrv = this.normalizeWhoopHRV(rawData);
-          normalized.restingHeartRate = this.normalizeWhoopRHR(rawData);
-          normalized.sleep = this.normalizeWhoopSleep(rawData);
-          break;
+      case 'whoop':
+        normalized.hrv = this.normalizeWhoopHRV(rawData);
+        normalized.restingHeartRate = this.normalizeWhoopRHR(rawData);
+        normalized.sleep = this.normalizeWhoopSleep(rawData);
+        break;
 
-        case 'oura':
-          normalized.sleep = this.normalizeOuraSleep(rawData);
-          normalized.restingHeartRate = this.normalizeOuraRHR(rawData);
-          break;
+      case 'oura':
+        normalized.sleep = this.normalizeOuraSleep(rawData);
+        normalized.restingHeartRate = this.normalizeOuraRHR(rawData);
+        break;
       }
 
       logger.info('Source data normalized', {
@@ -568,6 +568,306 @@ export class BiometricService {
     if (hrv > 100) return 'good';
     if (hrv > 50) return 'fair';
     return 'poor';
+  }
+
+  // ============================================================================
+  // PHASE 2.5 - Enhanced Aggregation for Brain Orchestrator
+  // ============================================================================
+
+  /**
+   * Phase 2.5: Aggregate daily data with enhanced metrics for Brain Orchestrator
+   * Provides comprehensive daily summary with calculated derived metrics
+   */
+  async aggregateDailyDataV2(
+    userId: string,
+    date: string,
+    terraData?: {
+      hrv?: { value: number; baseline: number; percentile: number }[];
+      sleep?: { duration: number; quality: number; deep: number; rem: number }[];
+      activity?: { steps: number; calories: number; moderate: number; vigorous: number }[];
+      rhr?: { value: number }[];
+    }
+  ): Promise<{
+    date: string;
+    hrvAvg: number;
+    hrvBaseline: number;
+    rhrAvg: number;
+    sleepDuration: number;
+    sleepQuality: number;
+    stressLevel: number;
+    recoveryIndex: number;
+    activityCalories: number;
+    steps: number;
+    trainingLoad: number;
+    dataQuality: number;
+    sources: string[];
+  }> {
+    try {
+      // Default values
+      let hrvAvg = 50;
+      let hrvBaseline = 50;
+      let rhrAvg = 60;
+      let sleepDuration = 420;
+      let sleepQuality = 70;
+      let activityCalories = 400;
+      let steps = 8000;
+      let moderateMinutes = 30;
+      let vigorousMinutes = 0;
+      const sources: string[] = [];
+
+      // Process Terra data if available
+      if (terraData) {
+        if (terraData.hrv && terraData.hrv.length > 0) {
+          hrvAvg = terraData.hrv.reduce((sum, h) => sum + h.value, 0) / terraData.hrv.length;
+          hrvBaseline = terraData.hrv[0].baseline;
+          sources.push('wearable-hrv');
+        }
+
+        if (terraData.rhr && terraData.rhr.length > 0) {
+          rhrAvg = terraData.rhr.reduce((sum, r) => sum + r.value, 0) / terraData.rhr.length;
+          sources.push('wearable-rhr');
+        }
+
+        if (terraData.sleep && terraData.sleep.length > 0) {
+          sleepDuration = terraData.sleep.reduce((sum, s) => sum + s.duration, 0);
+          sleepQuality = terraData.sleep.reduce((sum, s) => sum + s.quality, 0) / terraData.sleep.length;
+          sources.push('wearable-sleep');
+        }
+
+        if (terraData.activity && terraData.activity.length > 0) {
+          activityCalories = terraData.activity.reduce((sum, a) => sum + a.calories, 0);
+          steps = terraData.activity.reduce((sum, a) => sum + a.steps, 0);
+          moderateMinutes = terraData.activity.reduce((sum, a) => sum + (a.moderate || 0), 0);
+          vigorousMinutes = terraData.activity.reduce((sum, a) => sum + (a.vigorous || 0), 0);
+          sources.push('wearable-activity');
+        }
+      }
+
+      // Calculate derived metrics
+      const recovery = this.calculateRecoveryIndex(hrvAvg, rhrAvg, sleepQuality, undefined, hrvBaseline, 60);
+
+      // Estimate stress level (inverse relationship with HRV percentile)
+      const stressLevel = Math.max(0, Math.min(100, 100 - (hrvAvg / hrvBaseline) * 50));
+
+      // Calculate training load (TSS-like metric)
+      const trainingLoad = this.calculateTrainingLoad(
+        activityCalories,
+        moderateMinutes,
+        vigorousMinutes,
+        recovery.score
+      );
+
+      // Calculate data quality
+      const dataQuality = this.calculateDataQualityV2(terraData);
+
+      logger.info('Daily data aggregated V2', {
+        context: 'biometric',
+        metadata: {
+          userId,
+          date,
+          hrvAvg,
+          recoveryScore: recovery.score,
+          trainingLoad,
+          dataQuality,
+          sourceCount: sources.length
+        }
+      });
+
+      return {
+        date,
+        hrvAvg: Math.round(hrvAvg),
+        hrvBaseline: Math.round(hrvBaseline),
+        rhrAvg: Math.round(rhrAvg),
+        sleepDuration: Math.round(sleepDuration),
+        sleepQuality: Math.round(sleepQuality),
+        stressLevel: Math.round(stressLevel),
+        recoveryIndex: recovery.score,
+        activityCalories: Math.round(activityCalories),
+        steps: Math.round(steps),
+        trainingLoad: Math.round(trainingLoad),
+        dataQuality,
+        sources: sources.length > 0 ? sources : ['estimated']
+      };
+    } catch (error) {
+      logger.error('Error in aggregateDailyDataV2', {
+        context: 'biometric',
+        metadata: { userId, date, error: String(error) }
+      });
+
+      // Return conservative defaults on error
+      return {
+        date,
+        hrvAvg: 50,
+        hrvBaseline: 50,
+        rhrAvg: 60,
+        sleepDuration: 420,
+        sleepQuality: 70,
+        stressLevel: 40,
+        recoveryIndex: 50,
+        activityCalories: 400,
+        steps: 8000,
+        trainingLoad: 100,
+        dataQuality: 0.5,
+        sources: ['fallback']
+      };
+    }
+  }
+
+  /**
+   * Calculate training load (TSS-like metric)
+   */
+  private calculateTrainingLoad(
+    calories: number,
+    moderateMinutes: number,
+    vigorousMinutes: number,
+    recoveryScore: number
+  ): number {
+    // Base load from calories
+    const calorieLoad = calories / 5;
+
+    // Intensity multiplier
+    const intensityLoad = moderateMinutes * 1.5 + vigorousMinutes * 2.5;
+
+    // Recovery adjustment (lower recovery = higher effective load)
+    const recoveryMultiplier = 1 + (100 - recoveryScore) / 100;
+
+    return Math.round((calorieLoad + intensityLoad) * recoveryMultiplier);
+  }
+
+  /**
+   * Calculate data quality score
+   */
+  private calculateDataQualityV2(terraData?: any): number {
+    if (!terraData) return 0.3;
+
+    let quality = 0;
+    let count = 0;
+
+    if (terraData.hrv?.length > 0) { quality += 0.25; count++; }
+    if (terraData.rhr?.length > 0) { quality += 0.20; count++; }
+    if (terraData.sleep?.length > 0) { quality += 0.25; count++; }
+    if (terraData.activity?.length > 0) { quality += 0.30; count++; }
+
+    // Bonus for having multiple sources
+    if (count >= 3) quality += 0.1;
+
+    return Math.min(1, quality);
+  }
+
+  /**
+   * Normalize Terra webhook payload to standard format
+   */
+  normalizeTerraPayload(
+    source: 'garmin' | 'apple' | 'whoop' | 'oura' | 'google_fit',
+    payload: Record<string, any>
+  ): {
+    hrv?: { value: number; baseline: number; percentile: number }[];
+    sleep?: { duration: number; quality: number; deep: number; rem: number }[];
+    activity?: { steps: number; calories: number; moderate: number; vigorous: number }[];
+    rhr?: { value: number }[];
+  } {
+    const result: any = {};
+
+    switch (source) {
+    case 'garmin':
+      if (payload.hrv_summary) {
+        result.hrv = [{
+          value: payload.hrv_summary.weekly_avg || payload.hrv_summary.daily_avg || 50,
+          baseline: payload.hrv_summary.baseline || 50,
+          percentile: payload.hrv_summary.percentile || 50
+        }];
+      }
+      if (payload.sleep_data) {
+        result.sleep = [{
+          duration: payload.sleep_data.duration_seconds / 60 || 420,
+          quality: payload.sleep_data.overall_score || 70,
+          deep: payload.sleep_data.deep_sleep_seconds / 60 || 90,
+          rem: payload.sleep_data.rem_sleep_seconds / 60 || 60
+        }];
+      }
+      if (payload.activity_data) {
+        result.activity = [{
+          steps: payload.activity_data.steps || 0,
+          calories: payload.activity_data.active_calories || 0,
+          moderate: payload.activity_data.moderate_intensity_minutes || 0,
+          vigorous: payload.activity_data.vigorous_intensity_minutes || 0
+        }];
+      }
+      if (payload.heart_rate_data?.resting_hr) {
+        result.rhr = [{ value: payload.heart_rate_data.resting_hr }];
+      }
+      break;
+
+    case 'apple':
+      if (payload.heart_rate_variability) {
+        result.hrv = [{
+          value: payload.heart_rate_variability.avg || 50,
+          baseline: 55,
+          percentile: 65
+        }];
+      }
+      if (payload.sleep) {
+        result.sleep = [{
+          duration: payload.sleep.duration / 60 || 420,
+          quality: payload.sleep.quality_score || 75,
+          deep: payload.sleep.deep_sleep / 60 || 100,
+          rem: payload.sleep.rem_sleep / 60 || 80
+        }];
+      }
+      break;
+
+    case 'whoop':
+      if (payload.recovery) {
+        result.hrv = [{
+          value: payload.recovery.hrv || 55,
+          baseline: 60,
+          percentile: payload.recovery.recovery_score || 70
+        }];
+      }
+      if (payload.sleep) {
+        result.sleep = [{
+          duration: payload.sleep.duration / 60 || 450,
+          quality: payload.sleep.sleep_performance || 80,
+          deep: payload.sleep.deep_sleep / 60 || 100,
+          rem: payload.sleep.rem_sleep / 60 || 70
+        }];
+      }
+      break;
+
+    case 'oura':
+      if (payload.hrv) {
+        result.hrv = [{
+          value: payload.hrv.average || 50,
+          baseline: 55,
+          percentile: payload.hrv.baseline_deviation || 50
+        }];
+      }
+      if (payload.sleep) {
+        result.sleep = [{
+          duration: payload.sleep.duration / 60 || 480,
+          quality: payload.sleep.score || 75,
+          deep: payload.sleep.deep / 60 || 100,
+          rem: payload.sleep.rem / 60 || 80
+        }];
+      }
+      break;
+
+    case 'google_fit':
+      if (payload.heart_rate) {
+        result.rhr = [{ value: payload.heart_rate.resting || 60 }];
+      }
+      if (payload.activity) {
+        result.activity = [{
+          steps: payload.activity.steps || 0,
+          calories: payload.activity.calories || 0,
+          moderate: payload.activity.moderate_minutes || 0,
+          vigorous: payload.activity.vigorous_minutes || 0
+        }];
+      }
+      break;
+    }
+
+    return result;
   }
 }
 

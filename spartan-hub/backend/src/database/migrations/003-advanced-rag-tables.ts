@@ -33,8 +33,8 @@ export function createAdvancedRAGTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_user_created ON advanced_rag_queries (userId, createdAt)`);
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_decomposed ON advanced_rag_queries (decomposed)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_user_created ON advanced_rag_queries (userId, createdAt)');
+    db.exec('CREATE INDEX IF NOT EXISTS idx_decomposed ON advanced_rag_queries (decomposed)');
 
     logger.info('Created table: advanced_rag_queries', { context: 'database-migration' });
 
@@ -52,8 +52,8 @@ export function createAdvancedRAGTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_query_chunk ON ranking_feedback (queryId, chunkId)`);
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_user_score ON ranking_feedback (userScore)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_query_chunk ON ranking_feedback (queryId, chunkId)');
+    db.exec('CREATE INDEX IF NOT EXISTS idx_user_score ON ranking_feedback (userScore)');
 
     logger.info('Created table: ranking_feedback', { context: 'database-migration' });
 
@@ -72,7 +72,7 @@ export function createAdvancedRAGTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_strategy ON query_decompositions (aggregationStrategy)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_strategy ON query_decompositions (aggregationStrategy)');
 
     logger.info('Created table: query_decompositions', { context: 'database-migration' });
 
@@ -91,7 +91,7 @@ export function createAdvancedRAGTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_factor ON ranking_weights (factor)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_factor ON ranking_weights (factor)');
 
     logger.info('Created table: ranking_weights', { context: 'database-migration' });
 
@@ -130,8 +130,8 @@ export function createAdvancedRAGTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_expires ON cache_metadata (expiresAt)`);
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_hash ON cache_metadata (queryHash)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_expires ON cache_metadata (expiresAt)');
+    db.exec('CREATE INDEX IF NOT EXISTS idx_hash ON cache_metadata (queryHash)');
 
     logger.info('Created table: cache_metadata', { context: 'database-migration' });
 

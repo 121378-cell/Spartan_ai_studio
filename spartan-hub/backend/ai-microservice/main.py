@@ -102,11 +102,23 @@ async def predict_alert(user_input: UserInput):
 @app.post("/generate_decision", response_model=DecisionOutput)
 async def generate_decision(context: DecisionContext):
     """Generate structured decision based on context data"""
-    # Mock response - in a real scenario, this would come from Ollama
+    biometrics = context.PartituraSemanal.get("biometrics", {})
+    rhr = biometrics.get("rhr")
+    
+    advice = "Tu estado es estable. Sigue con tu plan de entrenamiento programado."
+    is_alert = False
+    
+    if rhr:
+        if rhr > 90:
+            advice = f"Frecuencia cardíaca elevada detectada ({rhr} bpm). Tu sistema nervioso está bajo estrés. Recomendación: Sustituir sesión de alta intensidad por recuperación activa o descanso total."
+            is_alert = True
+        elif rhr < 50:
+            advice = f"Frecuencia cardíaca en reposo muy baja ({rhr} bpm). Si te sientes fatigado, considera reducir el volumen hoy. Si te sientes bien, ¡adelante!"
+    
     return DecisionOutput(
-        NewPartituraSemanal=context.PartituraSemanal,  # Echo back for testing
-        JustificacionTactica="Mock decision justification for testing purposes",
-        IsAlertaRoja=False
+        NewPartituraSemanal=context.PartituraSemanal,
+        JustificacionTactica=advice,
+        IsAlertaRoja=is_alert
     )
 
 @app.get("/health", response_model=HealthCheckResponse)

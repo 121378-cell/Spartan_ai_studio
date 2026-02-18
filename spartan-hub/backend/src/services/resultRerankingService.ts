@@ -77,7 +77,7 @@ export class ResultRerankingService {
    */
   calculateRelevance(result: SearchResult, query: string): number {
     // Use the semantic similarity score as base
-    let relevance = Math.min(1, result.score / 0.8); // Normalize assuming max score is ~0.8
+    const relevance = Math.min(1, result.score / 0.8); // Normalize assuming max score is ~0.8
 
     // Boost if query terms appear in content
     const queryTerms = query.toLowerCase().split(/\s+/);

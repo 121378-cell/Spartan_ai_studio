@@ -291,7 +291,7 @@ export class TerraHealthService {
       const dataFromDate = fromDate || defaultFromDate;
 
       for (const device of devices) {
-        const terraUserId = (device as { terraUserId: string }).terraUserId;
+        const {terraUserId} = (device as { terraUserId: string });
         totalDataPoints += await this.syncHeartRateData(userId, terraUserId, dataFromDate);
         totalDataPoints += await this.syncSleepData(userId, terraUserId, dataFromDate);
         totalDataPoints += await this.syncActivityData(userId, terraUserId, dataFromDate);

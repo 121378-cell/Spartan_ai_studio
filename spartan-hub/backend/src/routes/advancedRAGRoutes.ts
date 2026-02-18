@@ -110,7 +110,7 @@ router.post(
       const expandedQuery = await optimizationService.expandQuery(sanitizedQuery);
 
       // Extract key terms - We need to get them from expandedQuery since extractKeyTerms is private
-      const keyTerms = expandedQuery.keyTerms;
+      const {keyTerms} = expandedQuery;
 
       // Check service availability
       if (!optimizationService) {

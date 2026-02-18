@@ -164,7 +164,7 @@ export class FormAnalysisService {
     ];
     // Normalize legacy exercise type names for backward compatibility
     const normalizedType = data.exerciseType === 'pushup' ? 'push_up' :
-                          data.exerciseType === 'pullup' ? 'pull_up' : data.exerciseType;
+      data.exerciseType === 'pullup' ? 'pull_up' : data.exerciseType;
     if (!validExercises.includes(normalizedType)) {
       throw new Error(`Invalid exercise type: ${data.exerciseType}. Valid types: ${validExercises.join(', ')}`);
     }
@@ -321,7 +321,7 @@ export class FormAnalysisService {
       feedbackParts.push('Excellent push-up form!');
     }
 
-    return feedbackParts.join('. ') + '.';
+    return `${feedbackParts.join('. ')  }.`;
   }
 
   private generatePlankFeedback(angles: any, metrics: any): string {
@@ -344,7 +344,7 @@ export class FormAnalysisService {
       feedbackParts.push('Perfect plank position maintained!');
     }
 
-    return feedbackParts.join('. ') + '.';
+    return `${feedbackParts.join('. ')  }.`;
   }
 
   private generateRowFeedback(angles: any, metrics: any): string {
@@ -367,7 +367,7 @@ export class FormAnalysisService {
       feedbackParts.push('Excellent row technique with great scapular retraction!');
     }
 
-    return feedbackParts.join('. ') + '.';
+    return `${feedbackParts.join('. ')  }.`;
   }
 
   private generateGenericFeedback(angles: any, metrics: any): string {
@@ -406,7 +406,7 @@ export class FormAnalysisService {
     }
 
     return feedbackParts.length > 0
-      ? feedbackParts.join('. ') + '.'
+      ? `${feedbackParts.join('. ')  }.`
       : 'Good form overall!';
   }
 

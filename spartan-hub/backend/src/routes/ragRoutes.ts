@@ -316,7 +316,7 @@ router.get('/search/:topic', verifyJWT, async (req: AuthenticatedRequest, res: R
           chunkId: r.chunkId,
           documentTitle: r.documentTitle,
           similarity: r.similarity,
-          preview: r.content.substring(0, 200) + '...'
+          preview: `${r.content.substring(0, 200)  }...`
         }))
       }
     });
@@ -370,7 +370,7 @@ router.get('/document/:docId', verifyJWT, async (req: AuthenticatedRequest, res:
         chunks: chunks.slice(0, 10).map(c => ({
           id: c.id,
           index: c.chunkIndex,
-          preview: c.content.substring(0, 150) + '...',
+          preview: `${c.content.substring(0, 150)  }...`,
           wordCount: c.metadata.wordCount
         }))
       }
@@ -410,7 +410,7 @@ router.post('/feedback/:queryId', verifyJWT, async (req: AuthenticatedRequest, r
       metadata: {
         queryId,
         rating,
-        hasComment: !!comment
+        hasComment: Boolean(comment)
       }
     });
 

@@ -152,14 +152,14 @@ export class TracingService {
 // Create a no-op span for when tracing is not available
 const nullSpan: Span = {
   end: () => { },
-  setAttribute: function (key: string, value: AttributeValue) { return this; },
-  setAttributes: function (attributes: Attributes) { return this; },
-  addEvent: function (name: string, attributesOrStartTime?: Attributes | TimeInput, startTime?: TimeInput) { return this; },
-  setStatus: function (status: SpanStatus) { return this; },
-  updateName: function (name: string) { return this; },
-  addLink: function () { return this; },
-  addLinks: function () { return this; },
-  recordException: function () { return this; },
+  setAttribute (key: string, value: AttributeValue) { return this; },
+  setAttributes (attributes: Attributes) { return this; },
+  addEvent (name: string, attributesOrStartTime?: Attributes | TimeInput, startTime?: TimeInput) { return this; },
+  setStatus (status: SpanStatus) { return this; },
+  updateName (name: string) { return this; },
+  addLink () { return this; },
+  addLinks () { return this; },
+  recordException () { return this; },
   isRecording: () => false,
   spanContext: () => ({
     traceId: '00000000000000000000000000000000',

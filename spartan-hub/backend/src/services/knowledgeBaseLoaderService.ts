@@ -87,8 +87,8 @@ export class KnowledgeBaseLoaderService {
       `);
 
       // Create indices for books
-      this.db.exec(`CREATE INDEX IF NOT EXISTS idx_category ON kb_books(category)`);
-      this.db.exec(`CREATE INDEX IF NOT EXISTS idx_year ON kb_books(year)`);
+      this.db.exec('CREATE INDEX IF NOT EXISTS idx_category ON kb_books(category)');
+      this.db.exec('CREATE INDEX IF NOT EXISTS idx_year ON kb_books(year)');
 
       // Chunks table
       this.db.exec(`
@@ -107,8 +107,8 @@ export class KnowledgeBaseLoaderService {
       `);
 
       // Create indices for chunks
-      this.db.exec(`CREATE INDEX IF NOT EXISTS idx_bookId ON kb_chunks(bookId)`);
-      this.db.exec(`CREATE INDEX IF NOT EXISTS idx_chapter ON kb_chunks(bookId, chapterNumber)`);
+      this.db.exec('CREATE INDEX IF NOT EXISTS idx_bookId ON kb_chunks(bookId)');
+      this.db.exec('CREATE INDEX IF NOT EXISTS idx_chapter ON kb_chunks(bookId, chapterNumber)');
 
       logger.info('Knowledge base tables initialized', { context: 'KnowledgeBaseLoaderService' });
     } catch (error: any) {
@@ -249,7 +249,7 @@ export class KnowledgeBaseLoaderService {
         chunkOrder++;
       }
 
-      currentChunk += ' ' + sentence;
+      currentChunk += ` ${  sentence}`;
       currentTokenCount += sentenceTokens;
 
       // Force chunk if it gets too large

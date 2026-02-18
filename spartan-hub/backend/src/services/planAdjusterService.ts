@@ -550,7 +550,7 @@ export class PlanAdjusterService {
 
   private async insertSession(s: WorkoutSession): Promise<void> {
     if (!this.db) return;
-    this.db.prepare(`INSERT INTO workout_sessions (id, user_id, plan_id, scheduled_date, start_time, exercise_type, planned_intensity, planned_volume, status, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    this.db.prepare('INSERT INTO workout_sessions (id, user_id, plan_id, scheduled_date, start_time, exercise_type, planned_intensity, planned_volume, status, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
       .run(s.id, s.userId, s.planId, s.scheduledDate, s.startTime, s.exerciseType, s.plannedIntensity, s.plannedVolume, s.status, s.notes);
   }
 
@@ -615,57 +615,403 @@ export class PlanAdjusterService {
       metadata: { userId, adjustmentType: adjustment.type }
     });
 
-    // Map the incoming adjustment to existing methods if possible
-    const request: PlanAdjustmentRequest = {
-      userId,
-      sessionId: adjustment.sessionId || 'current', // Default or from context
-      adjustmentType: this.mapType(adjustment.type),
-      reason: adjustment.reason || 'Auto-adjustment from Brain Cycle',
-      timestamp: Date.now(),
-      parameters: {
-        reductionPercentage: adjustment.change ? Math.abs(adjustment.change) : undefined,
-        notes: adjustment.notes
-      }
-    };
-
     switch (adjustment.type) {
-      case 'intensity':
-        if (adjustment.change < 0) {
-          await this.reduceIntensity(request);
-        } else {
-          await this.increaseIntensity(request);
+    case 'intensity': {
+      const adjustmentType = adjustment.change < 0 ? 'REDUCE_INTENSITY' : 'INCREASE_INTENSITY';
+      const request: PlanAdjustmentRequest = {
+        userId,
+        sessionId: adjustment.sessionId || 'current',
+        adjustmentType,
+        reason: adjustment.reason || 'Auto-adjustment from Brain Cycle',
+        timestamp: Date.now(),
+        parameters: {
+          reductionPercentage: adjustment.change ? Math.abs(adjustment.change) : undefined,
+          notes: adjustment.notes
         }
-        break;
-      case 'recovery_day':
-        await this.addRecoveryDay(request);
-        break;
-      case 'session_type':
-        // Implementation for type change could go here
-        break;
-      default:
-        logger.warn('PlanAdjusterService: Unhandled adjustment type', {
-          metadata: { type: adjustment.type }
-        });
+      };
+      if (adjustment.change < 0) {
+        await this.reduceIntensity(request);
+      } else {
+        await this.increaseIntensity(request);
+      }
+      break;
+    }
+    case 'recovery_day': {
+      const request: PlanAdjustmentRequest = {
+        userId,
+        sessionId: adjustment.sessionId || 'current',
+        adjustmentType: 'ADD_RECOVERY_DAY',
+        reason: adjustment.reason || 'Auto-adjustment from Brain Cycle',
+        timestamp: Date.now(),
+        parameters: {
+          newDate: adjustment.newDate,
+          notes: adjustment.notes
+        }
+      };
+      await this.addRecoveryDay(request);
+      break;
+    }
+    case 'session_type':
+      break;
+    default:
+      logger.warn('PlanAdjusterService: Unhandled adjustment type', {
+        metadata: { type: adjustment.type }
+      });
     }
   }
 
   /**
    * Rebalance remaining days in the plan (BrainOrchestrator compatibility)
+   * 
+   * Analyzes trends and adjusts upcoming sessions to optimize training adaptation.
+   * Considers fatigue accumulation, recovery status, and performance trajectory.
    */
-  public async rebalanceRemainingDays(userId: string, trends: any): Promise<any> {
+  public async rebalanceRemainingDays(
+    userId: string,
+    trends: {
+      fatigueTrend?: 'increasing' | 'stable' | 'decreasing';
+      recoveryTrend?: 'improving' | 'stable' | 'declining';
+      performanceTrend?: 'improving' | 'stable' | 'declining';
+      hrvTrend?: number[];
+      rhrTrend?: number[];
+      currentLoad?: number;
+      optimalLoad?: number;
+      daysRemaining?: number;
+    }
+  ): Promise<{
+    success: boolean;
+    rebalanced: boolean;
+    userId: string;
+    adjustments: Array<{
+      sessionId: string;
+      date: string;
+      type: 'intensity_change' | 'volume_change' | 'recovery_inserted' | 'no_change';
+      oldValue: any;
+      newValue: any;
+      reason: string;
+    }>;
+    summary: {
+      intensityIncreases: number;
+      intensityDecreases: number;
+      volumeIncreases: number;
+      volumeDecreases: number;
+      recoveryDaysAdded: number;
+      unchangedSessions: number;
+    };
+    recommendation: string;
+    timestamp: number;
+  }> {
     logger.info('PlanAdjusterService: Rebalancing plan based on trends', {
       context: 'plan-adjuster',
       metadata: { userId, trends }
     });
 
-    // Simple implementation for compatibility
-    return {
-      success: true,
-      rebalanced: true,
-      userId,
-      appliedTrends: trends,
-      timestamp: Date.now()
+    const adjustments: Array<{
+      sessionId: string;
+      date: string;
+      type: 'intensity_change' | 'volume_change' | 'recovery_inserted' | 'no_change';
+      oldValue: any;
+      newValue: any;
+      reason: string;
+    }> = [];
+
+    const summary = {
+      intensityIncreases: 0,
+      intensityDecreases: 0,
+      volumeIncreases: 0,
+      volumeDecreases: 0,
+      recoveryDaysAdded: 0,
+      unchangedSessions: 0
     };
+
+    try {
+      const upcomingSessions = await this.getUpcomingSessions(userId);
+      
+      if (upcomingSessions.length === 0) {
+        return {
+          success: true,
+          rebalanced: false,
+          userId,
+          adjustments: [],
+          summary,
+          recommendation: 'No upcoming sessions to rebalance',
+          timestamp: Date.now()
+        };
+      }
+
+      const loadRatio = trends.currentLoad && trends.optimalLoad 
+        ? trends.currentLoad / trends.optimalLoad 
+        : 1;
+
+      for (let i = 0; i < upcomingSessions.length; i++) {
+        const session = upcomingSessions[i];
+        const daysOut = i;
+        
+        const decision = this.calculateSessionAdjustment(session, trends, loadRatio, daysOut);
+        
+        if (decision.needsChange) {
+          await this.applySessionAdjustment(session, decision);
+          
+          adjustments.push({
+            sessionId: session.id,
+            date: session.scheduledDate,
+            type: decision.type,
+            oldValue: decision.oldValue,
+            newValue: decision.newValue,
+            reason: decision.reason
+          });
+
+          if (decision.type === 'intensity_change') {
+            if (decision.newValue > decision.oldValue) summary.intensityIncreases++;
+            else summary.intensityDecreases++;
+          } else if (decision.type === 'volume_change') {
+            if (decision.newValue > decision.oldValue) summary.volumeIncreases++;
+            else summary.volumeDecreases++;
+          } else if (decision.type === 'recovery_inserted') {
+            summary.recoveryDaysAdded++;
+          }
+        } else {
+          summary.unchangedSessions++;
+        }
+
+        if (decision.insertRecoveryAfter) {
+          const recoverySession = await this.insertRecoverySession(session);
+          adjustments.push({
+            sessionId: recoverySession.id,
+            date: recoverySession.scheduledDate,
+            type: 'recovery_inserted',
+            oldValue: null,
+            newValue: 'recovery',
+            reason: 'Recovery day inserted due to accumulated fatigue'
+          });
+          summary.recoveryDaysAdded++;
+        }
+      }
+
+      const recommendation = this.generateRebalanceRecommendation(summary, trends);
+
+      logger.info('PlanAdjusterService: Rebalance complete', {
+        context: 'plan-adjuster',
+        metadata: { 
+          userId, 
+          totalAdjustments: adjustments.length,
+          summary
+        }
+      });
+
+      return {
+        success: true,
+        rebalanced: adjustments.length > 0,
+        userId,
+        adjustments,
+        summary,
+        recommendation,
+        timestamp: Date.now()
+      };
+
+    } catch (error) {
+      logger.error('PlanAdjusterService: Rebalance failed', {
+        context: 'plan-adjuster',
+        metadata: { userId, error: String(error) }
+      });
+
+      return {
+        success: false,
+        rebalanced: false,
+        userId,
+        adjustments: [],
+        summary,
+        recommendation: 'Unable to rebalance plan due to error',
+        timestamp: Date.now()
+      };
+    }
+  }
+
+  private calculateSessionAdjustment(
+    session: WorkoutSession,
+    trends: any,
+    loadRatio: number,
+    daysOut: number
+  ): {
+    needsChange: boolean;
+    type: 'intensity_change' | 'volume_change' | 'recovery_inserted' | 'no_change';
+    oldValue: any;
+    newValue: any;
+    reason: string;
+    insertRecoveryAfter: boolean;
+  } {
+    type ResultType = {
+      needsChange: boolean;
+      type: 'intensity_change' | 'volume_change' | 'recovery_inserted' | 'no_change';
+      oldValue: any;
+      newValue: any;
+      reason: string;
+      insertRecoveryAfter: boolean;
+    };
+
+    const result: ResultType = {
+      needsChange: false,
+      type: 'no_change',
+      oldValue: null,
+      newValue: null,
+      reason: '',
+      insertRecoveryAfter: false
+    };
+
+    if (session.status !== 'scheduled') return result;
+
+    const intensityLevels: IntensityLevel[] = ['very_light', 'light', 'moderate', 'hard', 'very_hard'];
+    const currentIntensityIdx = intensityLevels.indexOf(session.plannedIntensity);
+
+    if (trends.fatigueTrend === 'increasing' && loadRatio > 1.1) {
+      if (currentIntensityIdx > 0) {
+        result.needsChange = true;
+        result.type = 'intensity_change';
+        result.oldValue = session.plannedIntensity;
+        result.newValue = intensityLevels[currentIntensityIdx - 1];
+        result.reason = 'Reducing intensity due to increasing fatigue trend';
+      }
+      
+      if (loadRatio > 1.3 && daysOut > 0 && daysOut % 3 === 0) {
+        result.insertRecoveryAfter = true;
+      }
+    } 
+    else if (trends.recoveryTrend === 'improving' && trends.performanceTrend === 'improving' && loadRatio < 0.9) {
+      if (currentIntensityIdx < intensityLevels.length - 1) {
+        result.needsChange = true;
+        result.type = 'intensity_change';
+        result.oldValue = session.plannedIntensity;
+        result.newValue = intensityLevels[currentIntensityIdx + 1];
+        result.reason = 'Increasing intensity due to good recovery and performance';
+      }
+    }
+    else if (trends.recoveryTrend === 'declining') {
+      if (currentIntensityIdx > 1) {
+        result.needsChange = true;
+        result.type = 'intensity_change';
+        result.oldValue = session.plannedIntensity;
+        result.newValue = intensityLevels[currentIntensityIdx - 1];
+        result.reason = 'Reducing intensity due to declining recovery trend';
+      }
+    }
+    else if (trends.hrvTrend && trends.hrvTrend.length >= 3) {
+      const recentHrv = trends.hrvTrend.slice(-3);
+      const avgRecent = recentHrv.reduce((a: number, b: number) => a + b, 0) / recentHrv.length;
+      const baseline = trends.hrvTrend[0];
+      
+      if (avgRecent < baseline * 0.8 && currentIntensityIdx > 0) {
+        result.needsChange = true;
+        result.type = 'intensity_change';
+        result.oldValue = session.plannedIntensity;
+        result.newValue = intensityLevels[currentIntensityIdx - 1];
+        result.reason = 'HRV trending below baseline, reducing load';
+      }
+    }
+
+    return result;
+  }
+
+  private async applySessionAdjustment(
+    session: WorkoutSession,
+    decision: { type: string; newValue: any; reason: string }
+  ): Promise<void> {
+    if (decision.type === 'intensity_change') {
+      const updatedSession = {
+        ...session,
+        plannedIntensity: decision.newValue,
+        notes: `${session.notes || ''} | Auto-adjusted: ${decision.reason}`
+      };
+      await this.updateSession(updatedSession);
+    } else if (decision.type === 'volume_change') {
+      const updatedSession = {
+        ...session,
+        plannedVolume: decision.newValue,
+        notes: `${session.notes || ''} | Volume adjusted: ${decision.reason}`
+      };
+      await this.updateSession(updatedSession);
+    }
+  }
+
+  private async getUpcomingSessions(userId: string): Promise<WorkoutSession[]> {
+    if (!this.db) return [];
+    
+    const today = new Date().toISOString().split('T')[0];
+    const rows = this.db.prepare(`
+      SELECT * FROM workout_sessions 
+      WHERE user_id = ? AND scheduled_date >= ? AND status = 'scheduled'
+      ORDER BY scheduled_date ASC
+      LIMIT 14
+    `).all(userId, today);
+
+    return rows.map((row: any) => ({
+      id: row.id,
+      userId: row.user_id,
+      planId: row.plan_id,
+      scheduledDate: row.scheduled_date,
+      startTime: row.start_time,
+      exerciseType: row.exercise_type,
+      plannedIntensity: row.planned_intensity,
+      plannedVolume: row.planned_volume,
+      status: row.status
+    }));
+  }
+
+  private async insertRecoverySession(afterSession: WorkoutSession): Promise<WorkoutSession> {
+    const nextDate = this.calculateNextRecoveryDate(afterSession.scheduledDate);
+    
+    const recoverySession: WorkoutSession = {
+      id: this.generateSessionId(),
+      userId: afterSession.userId,
+      planId: afterSession.planId,
+      scheduledDate: nextDate,
+      startTime: '09:00',
+      exerciseType: 'active_recovery',
+      plannedIntensity: 'very_light',
+      plannedVolume: 30,
+      status: 'scheduled',
+      notes: 'Auto-inserted recovery session'
+    };
+
+    await this.insertSession(recoverySession);
+    return recoverySession;
+  }
+
+  private generateRebalanceRecommendation(
+    summary: {
+      intensityIncreases: number;
+      intensityDecreases: number;
+      volumeIncreases: number;
+      volumeDecreases: number;
+      recoveryDaysAdded: number;
+      unchangedSessions: number;
+    },
+    trends: any
+  ): string {
+    const parts: string[] = [];
+
+    if (summary.intensityDecreases > summary.intensityIncreases) {
+      parts.push('Overall plan intensity reduced to manage fatigue');
+    } else if (summary.intensityIncreases > summary.intensityDecreases) {
+      parts.push('Plan intensity increased to capitalize on good recovery');
+    }
+
+    if (summary.recoveryDaysAdded > 0) {
+      parts.push(`${summary.recoveryDaysAdded} recovery day(s) added`);
+    }
+
+    if (summary.unchangedSessions > 0 && parts.length === 0) {
+      parts.push('Plan remains appropriate - no significant changes needed');
+    }
+
+    if (trends.fatigueTrend === 'increasing') {
+      parts.push('Monitor fatigue closely over the next few days');
+    }
+
+    if (trends.recoveryTrend === 'improving') {
+      parts.push('Recovery trending well - maintain current approach');
+    }
+
+    return parts.join('. ') || 'No specific recommendations';
   }
 
   private mapType(type: string): AdjustmentType {

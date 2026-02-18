@@ -510,10 +510,10 @@ export class AdvancedAnalysisService {
     const current = last7[last7.length - 1].hrv?.[0]?.value ?? 50;
     const inflammationMarkers = current < baseline * 0.8;
 
-     // Check for sleep deprivation
-     const sleepDeprivation = last7.filter(
-       (b) => (b.sleep?.duration ?? 0) < 360
-     ).length >= 2;
+    // Check for sleep deprivation
+    const sleepDeprivation = last7.filter(
+      (b) => (b.sleep?.duration ?? 0) < 360
+    ).length >= 2;
 
     // Check for rapid intensity increase
     const rapidIntensityIncrease = trainingLoad
@@ -1068,9 +1068,9 @@ export class AdvancedAnalysisService {
 
       const chronicLoad = last28Days.length >= 21
         ? last28Days.slice(-21).reduce((sum, day) => {
-            const activity = day.activity?.activeCalories || 0;
-            return sum + activity;
-          }, 0) / 21
+          const activity = day.activity?.activeCalories || 0;
+          return sum + activity;
+        }, 0) / 21
         : acuteLoad;
 
       const acuteToChronic = chronicLoad > 0 ? acuteLoad / chronicLoad : 1.0;
@@ -1169,9 +1169,9 @@ export class AdvancedAnalysisService {
       // Calculate baseline from first 10 days of last 30
       const baselineHRV = last30Days.length >= 10
         ? last30Days.slice(0, 10).reduce((sum, day) => {
-            const hrv = day.hrv?.[0]?.value;
-            return sum + (hrv || 50);
-          }, 0) / 10
+          const hrv = day.hrv?.[0]?.value;
+          return sum + (hrv || 50);
+        }, 0) / 10
         : currentHRV;
 
       const hrvDeviation = baselineHRV > 0

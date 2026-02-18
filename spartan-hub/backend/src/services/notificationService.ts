@@ -405,12 +405,12 @@ export class NotificationService {
 
   private isTypeEnabled(type: NotificationType, prefs: NotificationPreferences): boolean {
     switch (type) {
-      case 'high-injury-risk': return prefs.injuryRiskAlerts;
-      case 'poor-recovery': return prefs.poorRecoveryAlerts;
-      case 'training-recommendation': return prefs.trainingRecommendations;
-      case 'motivational': return prefs.motivationalMessages;
-      case 'weekly-digest': return prefs.weeklyDigest;
-      default: return true;
+    case 'high-injury-risk': return prefs.injuryRiskAlerts;
+    case 'poor-recovery': return prefs.poorRecoveryAlerts;
+    case 'training-recommendation': return prefs.trainingRecommendations;
+    case 'motivational': return prefs.motivationalMessages;
+    case 'weekly-digest': return prefs.weeklyDigest;
+    default: return true;
     }
   }
 

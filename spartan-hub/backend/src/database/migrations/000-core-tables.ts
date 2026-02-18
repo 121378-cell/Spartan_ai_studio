@@ -22,17 +22,17 @@ export interface MigrationResult {
  * Execute migration to create core tables
  */
 export const migrate_000_core_tables = (db: any): MigrationResult => {
-    const result: MigrationResult = {
-        success: true,
-        tablesCreated: [],
-        errors: []
-    };
+  const result: MigrationResult = {
+    success: true,
+    tablesCreated: [],
+    errors: []
+  };
 
-    try {
-        logger.info('Starting migration 000: Create core tables', { context: 'database.migration' });
+  try {
+    logger.info('Starting migration 000: Create core tables', { context: 'database.migration' });
 
-        // Create users table
-        db.exec(`
+    // Create users table
+    db.exec(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -55,10 +55,10 @@ export const migrate_000_core_tables = (db: any): MigrationResult => {
         updatedAt TEXT
       )
     `);
-        result.tablesCreated.push('users');
+    result.tablesCreated.push('users');
 
-        // Create sessions table
-        db.exec(`
+    // Create sessions table
+    db.exec(`
       CREATE TABLE IF NOT EXISTS sessions (
         id TEXT PRIMARY KEY,
         userId TEXT NOT NULL,
@@ -72,10 +72,10 @@ export const migrate_000_core_tables = (db: any): MigrationResult => {
         FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
       )
     `);
-        result.tablesCreated.push('sessions');
+    result.tablesCreated.push('sessions');
 
-        // Create routines table
-        db.exec(`
+    // Create routines table
+    db.exec(`
       CREATE TABLE IF NOT EXISTS routines (
         id TEXT PRIMARY KEY,
         userId TEXT NOT NULL,
@@ -89,10 +89,10 @@ export const migrate_000_core_tables = (db: any): MigrationResult => {
         FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
       )
     `);
-        result.tablesCreated.push('routines');
+    result.tablesCreated.push('routines');
 
-        // Create exercises table
-        db.exec(`
+    // Create exercises table
+    db.exec(`
       CREATE TABLE IF NOT EXISTS exercises (
         id TEXT PRIMARY KEY,
         userId TEXT NOT NULL,
@@ -108,10 +108,10 @@ export const migrate_000_core_tables = (db: any): MigrationResult => {
         FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
       )
     `);
-        result.tablesCreated.push('exercises');
+    result.tablesCreated.push('exercises');
 
-        // Create plan_assignments table
-        db.exec(`
+    // Create plan_assignments table
+    db.exec(`
       CREATE TABLE IF NOT EXISTS plan_assignments (
         id TEXT PRIMARY KEY,
         userId TEXT NOT NULL,
@@ -122,10 +122,10 @@ export const migrate_000_core_tables = (db: any): MigrationResult => {
         FOREIGN KEY (routineId) REFERENCES routines (id) ON DELETE CASCADE
       )
     `);
-        result.tablesCreated.push('plan_assignments');
+    result.tablesCreated.push('plan_assignments');
 
-        // Create commitments table
-        db.exec(`
+    // Create commitments table
+    db.exec(`
       CREATE TABLE IF NOT EXISTS commitments (
         id TEXT PRIMARY KEY,
         userId TEXT NOT NULL,
@@ -137,10 +137,10 @@ export const migrate_000_core_tables = (db: any): MigrationResult => {
         FOREIGN KEY (routineId) REFERENCES routines (id) ON DELETE CASCADE
       )
     `);
-        result.tablesCreated.push('commitments');
+    result.tablesCreated.push('commitments');
 
-        // Create activities table (needed by sqliteDatabaseService)
-        db.exec(`
+    // Create activities table (needed by sqliteDatabaseService)
+    db.exec(`
       CREATE TABLE IF NOT EXISTS activities (
         id TEXT PRIMARY KEY,
         userId TEXT NOT NULL,
@@ -151,24 +151,24 @@ export const migrate_000_core_tables = (db: any): MigrationResult => {
         FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
       )
     `);
-        result.tablesCreated.push('activities');
+    result.tablesCreated.push('activities');
 
-        logger.info('Migration 000 completed successfully', {
-            context: 'database.migration',
-            metadata: { tablesCreated: result.tablesCreated }
-        });
+    logger.info('Migration 000 completed successfully', {
+      context: 'database.migration',
+      metadata: { tablesCreated: result.tablesCreated }
+    });
 
-        return result;
-    } catch (error) {
-        result.success = false;
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        result.errors.push(errorMessage);
-        logger.error('Migration 000 failed', {
-            context: 'database.migration',
-            metadata: { error: errorMessage }
-        });
-        return result;
-    }
+    return result;
+  } catch (error) {
+    result.success = false;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    result.errors.push(errorMessage);
+    logger.error('Migration 000 failed', {
+      context: 'database.migration',
+      metadata: { error: errorMessage }
+    });
+    return result;
+  }
 };
 
 export default migrate_000_core_tables;

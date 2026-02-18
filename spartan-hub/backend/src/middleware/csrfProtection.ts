@@ -38,7 +38,7 @@ export const csrfErrorHandler = (
 export const setupCsrfProtection = (app: Express): void => {
   // Exclude safe/technical routes
   app.use((req, res, next) => {
-    const path = req.path;
+    const {path} = req;
     if (
       path.startsWith('/api/webhooks') ||
       path.startsWith('/auth/') ||

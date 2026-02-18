@@ -327,37 +327,37 @@ function applyScenarioAdjustments(baseForecast: any, scenario: string, adjustmen
   const scenarioForecast = JSON.parse(JSON.stringify(baseForecast)); // Deep copy
 
   switch (scenario) {
-    case 'increased-volume':
-      // More training = faster improvement but higher injury risk
-      scenarioForecast.predictions.forEach((p: any) => {
-        p.expectedPerformance *= 1.08; // +8% performance
-      });
-      scenarioForecast.anomalies.score *= 1.2; // Higher injury risk
-      break;
+  case 'increased-volume':
+    // More training = faster improvement but higher injury risk
+    scenarioForecast.predictions.forEach((p: any) => {
+      p.expectedPerformance *= 1.08; // +8% performance
+    });
+    scenarioForecast.anomalies.score *= 1.2; // Higher injury risk
+    break;
 
-    case 'reduced-intensity':
-      // Less intense = slower improvement but better recovery
-      scenarioForecast.predictions.forEach((p: any) => {
-        p.expectedPerformance *= 0.95; // -5% performance
-      });
-      scenarioForecast.anomalies.severity = 'low';
-      break;
+  case 'reduced-intensity':
+    // Less intense = slower improvement but better recovery
+    scenarioForecast.predictions.forEach((p: any) => {
+      p.expectedPerformance *= 0.95; // -5% performance
+    });
+    scenarioForecast.anomalies.severity = 'low';
+    break;
 
-    case 'recovery-focus':
-      // Recovery focus = faster recovery, moderate improvements
-      scenarioForecast.predictions.forEach((p: any) => {
-        p.expectedPerformance *= 0.98; // -2% performance short-term
-      });
-      scenarioForecast.anomalies.detected = false;
-      break;
+  case 'recovery-focus':
+    // Recovery focus = faster recovery, moderate improvements
+    scenarioForecast.predictions.forEach((p: any) => {
+      p.expectedPerformance *= 0.98; // -2% performance short-term
+    });
+    scenarioForecast.anomalies.detected = false;
+    break;
 
-    case 'peak-prep':
-      // Peak prep = maximum performance push
-      scenarioForecast.predictions.forEach((p: any) => {
-        p.expectedPerformance *= 1.12; // +12% performance
-      });
-      scenarioForecast.anomalies.score *= 1.5; // Much higher injury risk
-      break;
+  case 'peak-prep':
+    // Peak prep = maximum performance push
+    scenarioForecast.predictions.forEach((p: any) => {
+      p.expectedPerformance *= 1.12; // +12% performance
+    });
+    scenarioForecast.anomalies.score *= 1.5; // Much higher injury risk
+    break;
   }
 
   // Apply custom adjustments if provided

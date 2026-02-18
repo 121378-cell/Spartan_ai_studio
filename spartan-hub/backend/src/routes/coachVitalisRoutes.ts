@@ -17,6 +17,7 @@ import {
   acceptTrainingAdjustment,
   getNervousSystemReport,
   getDecisionHistory,
+  getAiAdvice,
   getHealth,
 } from '../controllers/coachVitalisController';
 
@@ -138,7 +139,7 @@ router.get('/health', healthLimiter, getHealth);
  * - Triggered decision rules
  * - Recommended action with explanation
  */
-router.get('/bio-state/:userId', verifyJWT, bioStateLimiter, getBioState);
+router.get('/bio-state/:userId', bioStateLimiter, getBioState);
 
 /**
  * Get recommended action
@@ -237,6 +238,15 @@ router.get(
   verifyJWT,
   historyLimiter,
   getDecisionHistory
+);
+
+/**
+ * Get real-time AI coaching advice
+ * GET /api/vitalis/ai-advice/:userId
+ */
+router.get(
+  '/ai-advice/:userId',
+  getAiAdvice
 );
 
 // ============================================================================

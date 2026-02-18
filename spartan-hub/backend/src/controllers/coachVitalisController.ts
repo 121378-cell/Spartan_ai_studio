@@ -510,6 +510,32 @@ export const getDecisionHistory = async (req: AuthenticatedRequest, res: Respons
 };
 
 /**
+ * GET /api/vitalis/ai-advice/:userId
+ * Get real-time AI coaching advice
+ */
+export const getAiAdvice = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    const sanitizedUserId = sanitizeInput(userId);
+    
+    if (!sanitizedUserId) {
+      res.status(400).json({ success: false, message: 'Invalid user ID' });
+      return;
+    }
+
+    const service = getCoachVitalisService();
+    const advice = await service.generateCoachingAdvice(sanitizedUserId);
+
+    res.status(200).json({
+      success: true,
+      data: advice
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to generate AI advice' });
+  }
+};
+
+/**
  * GET /api/vitalis/health
  * Health check endpoint
  */

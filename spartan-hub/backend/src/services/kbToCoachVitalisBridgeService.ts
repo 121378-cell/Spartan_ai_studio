@@ -372,7 +372,7 @@ export class KBToCoachVitalisBridgeService {
         metadata: {
           query: query.substring(0, 50),
           resultsCount: results.length,
-          hasFilters: !!filters
+          hasFilters: Boolean(filters)
         }
       });
 

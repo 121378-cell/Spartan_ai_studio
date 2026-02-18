@@ -365,7 +365,7 @@ export class RealtimeNotificationService extends EventEmitter {
     }
   ): Promise<boolean> {
     const emoji = update.trend === 'improving' ? '📈' : 
-                  update.trend === 'declining' ? '📉' : '➡️';
+      update.trend === 'declining' ? '📉' : '➡️';
     
     const message: NotificationMessage = {
       id: this.generateNotificationId(),
@@ -395,7 +395,7 @@ export class RealtimeNotificationService extends EventEmitter {
     }
   ): Promise<boolean> {
     const priority: PriorityLevel = alert.severity === 'error' ? 'high' : 
-                                   alert.severity === 'warning' ? 'normal' : 'low';
+      alert.severity === 'warning' ? 'normal' : 'low';
     
     const message: NotificationMessage = {
       id: this.generateNotificationId(),
@@ -563,23 +563,23 @@ export class RealtimeNotificationService extends EventEmitter {
    */
   private handleIncomingMessage(userId: string, message: any): void {
     switch (message.type) {
-      case 'subscribe':
-        this.handleSubscription(userId, message.payload);
-        break;
-      case 'unsubscribe':
-        this.handleUnsubscription(userId, message.payload);
-        break;
-      case 'markRead':
-        this.handleMarkRead(userId, message.payload);
-        break;
-      case 'getHistory':
-        this.handleGetHistory(userId, message.payload);
-        break;
-      default:
-        logger.debug('RealtimeNotificationService: Unknown message type', {
-          context: 'notification-service',
-          metadata: { type: message.type, userId }
-        });
+    case 'subscribe':
+      this.handleSubscription(userId, message.payload);
+      break;
+    case 'unsubscribe':
+      this.handleUnsubscription(userId, message.payload);
+      break;
+    case 'markRead':
+      this.handleMarkRead(userId, message.payload);
+      break;
+    case 'getHistory':
+      this.handleGetHistory(userId, message.payload);
+      break;
+    default:
+      logger.debug('RealtimeNotificationService: Unknown message type', {
+        context: 'notification-service',
+        metadata: { type: message.type, userId }
+      });
     }
   }
 
@@ -819,7 +819,7 @@ export class RealtimeNotificationService extends EventEmitter {
     totalNotificationsSent: number;
     notificationsByType: Record<NotificationType, number>;
     averageResponseTime: number;
-  } {
+    } {
     const notificationsByType: Record<NotificationType, number> = {
       PLAN_ADJUSTMENT: 0,
       FEEDBACK_ACKNOWLEDGED: 0,

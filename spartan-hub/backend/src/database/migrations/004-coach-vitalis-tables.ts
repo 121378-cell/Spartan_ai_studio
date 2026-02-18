@@ -52,7 +52,7 @@ export function createCoachVitalisTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_coach_decisions_user_time ON vital_coach_decisions(userId, timestamp)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_decisions_user_time ON vital_coach_decisions(userId, timestamp)');
 
     logger.info('Created table: vital_coach_decisions', { context: 'database-migration' });
 
@@ -78,7 +78,7 @@ export function createCoachVitalisTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_coach_alerts_user_time ON vital_coach_alerts(userId, timestamp)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_alerts_user_time ON vital_coach_alerts(userId, timestamp)');
 
     logger.info('Created table: vital_coach_alerts', { context: 'database-migration' });
 
@@ -109,7 +109,7 @@ export function createCoachVitalisTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_coach_adjustments_user_date ON vital_coach_training_adjustments(userId, plannedDate)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_adjustments_user_date ON vital_coach_training_adjustments(userId, plannedDate)');
 
     logger.info('Created table: vital_coach_training_adjustments', { context: 'database-migration' });
 
@@ -132,7 +132,7 @@ export function createCoachVitalisTables(db: DatabaseType): void {
       )
     `);
 
-    db.exec(`CREATE INDEX IF NOT EXISTS idx_coach_baselines_user_metric ON vital_coach_bio_baselines(userId, metricType)`);
+    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_baselines_user_metric ON vital_coach_bio_baselines(userId, metricType)');
 
     logger.info('Created table: vital_coach_bio_baselines', { context: 'database-migration' });
 

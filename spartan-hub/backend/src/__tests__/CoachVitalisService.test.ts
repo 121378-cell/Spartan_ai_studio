@@ -24,6 +24,7 @@ describe('CoachVitalisService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    CoachVitalisService.resetInstance();
 
     // Setup database mock
     mockDb = {
@@ -249,10 +250,11 @@ describe('CoachVitalisService', () => {
 
       expect(notificationService.sendNotification).toHaveBeenCalledWith(
         userId,
-        expect.objectContaining({
-          title: expect.any(String),
-          body: expect.any(String),
-        })
+        expect.any(String),
+        expect.any(String),
+        expect.any(String),
+        expect.any(String),
+        expect.any(String)
       );
     });
 
@@ -273,7 +275,7 @@ describe('CoachVitalisService', () => {
       await coachVitalisService.notifyDecision(userId, decision);
 
       const notificationCall = (notificationService.sendNotification as jest.Mock).mock.calls[0];
-      expect(notificationCall[1].body).toContain('John');
+      expect(notificationCall[3]).toContain('John');
     });
 
     test('should handle user preference settings', async () => {

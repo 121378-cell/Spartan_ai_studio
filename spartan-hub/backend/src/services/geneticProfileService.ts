@@ -382,14 +382,14 @@ export class GeneticProfileService {
     const recommendedSports = type === 'power' 
       ? ['Sprint', 'Powerlifting', 'Weightlifting', 'Fútbol', 'Baloncesto']
       : type === 'endurance'
-      ? ['Maratón', 'Ciclismo', 'Natación de fondo', 'Triatlón', 'Trail running']
-      : ['CrossFit', 'Fútbol', 'Natación', 'Tenis', 'Deportes de equipo'];
+        ? ['Maratón', 'Ciclismo', 'Natación de fondo', 'Triatlón', 'Trail running']
+        : ['CrossFit', 'Fútbol', 'Natación', 'Tenis', 'Deportes de equipo'];
 
     const trainingFocus = type === 'power'
       ? ['Entrenamiento de fuerza máxima', 'Sprints cortos', 'Plyometrics', 'Descansos largos entre sets']
       : type === 'endurance'
-      ? ['Cardio de larga duración', 'Entrenamiento en zona 2', 'Series de resistencia', 'Descansos cortos']
-      : ['Combinación de fuerza y cardio', 'HIIT', 'Circuit training', 'Periodización mixta'];
+        ? ['Cardio de larga duración', 'Entrenamiento en zona 2', 'Series de resistencia', 'Descansos cortos']
+        : ['Combinación de fuerza y cardio', 'HIIT', 'Circuit training', 'Periodización mixta'];
 
     return {
       type,
@@ -412,7 +412,7 @@ export class GeneticProfileService {
 
     const recoverySpeed: 'fast' | 'normal' | 'slow' = 
       mct1Genotype === 'AA' ? 'fast' :
-      mct1Genotype === 'TT' ? 'slow' : 'normal';
+        mct1Genotype === 'TT' ? 'slow' : 'normal';
 
     const lactateClearanceRate = mct1Config.score;
     const recommendedRestDays = recoverySpeed === 'fast' ? 1 : recoverySpeed === 'slow' ? 3 : 2;
@@ -445,29 +445,29 @@ export class GeneticProfileService {
 
     const overallRisk: 'low' | 'moderate' | 'high' =
       genotype === 'CC' ? 'low' :
-      genotype === 'TT' ? 'high' : 'moderate';
+        genotype === 'TT' ? 'high' : 'moderate';
 
     const susceptibleAreas = genotype === 'TT' 
       ? ['Tendones (tendinopatías)', 'Ligamentos (esguinces)', 'Fascia plantar', 'Cadera y articulaciones']
       : genotype === 'CC'
-      ? ['Músculos (tirones)', 'Espalda baja', 'Hombros']
-      : ['Rodillas', 'Tobillos', 'Zona lumbar'];
+        ? ['Músculos (tirones)', 'Espalda baja', 'Hombros']
+        : ['Rodillas', 'Tobillos', 'Zona lumbar'];
 
     const preventiveMeasures = genotype === 'TT'
       ? [
-          'Calentamiento exhaustivo (15-20 min)',
-          'Trabajo de estabilización articular',
-          'Fortalecimiento del core',
-          'Evitar sobreentrenamiento',
-          'Masajes regulares',
-          'Dormir 8+ horas para recuperación del colágeno'
-        ]
+        'Calentamiento exhaustivo (15-20 min)',
+        'Trabajo de estabilización articular',
+        'Fortalecimiento del core',
+        'Evitar sobreentrenamiento',
+        'Masajes regulares',
+        'Dormir 8+ horas para recuperación del colágeno'
+      ]
       : [
-          'Estiramientos dinámicos antes del entreno',
-          'Movilidad articular diaria',
-          'Fortalecimiento muscular balanceado',
-          'Progresión gradual de carga'
-        ];
+        'Estiramientos dinámicos antes del entreno',
+        'Movilidad articular diaria',
+        'Fortalecimiento muscular balanceado',
+        'Progresión gradual de carga'
+      ];
 
     const recommendedSupplements = [
       'Colágeno hidrolizado (10g/día)',
@@ -495,21 +495,21 @@ export class GeneticProfileService {
 
     const type: 'fast' | 'slow' | 'normal' =
       genotype === 'AA' ? 'fast' :
-      genotype === 'CC' ? 'slow' : 'normal';
+        genotype === 'CC' ? 'slow' : 'normal';
 
     const optimalTiming = type === 'fast' 
       ? '60-90 minutos antes del entrenamiento' 
       : type === 'slow' 
-      ? '2-3 horas antes del entrenamiento (o evitar)'
-      : '45-60 minutos antes del entrenamiento';
+        ? '2-3 horas antes del entrenamiento (o evitar)'
+        : '45-60 minutos antes del entrenamiento';
 
     const maxDailyIntake = type === 'fast' ? 400 : type === 'slow' ? 200 : 300;
 
     const performanceImpact = type === 'fast'
       ? 'La cafeína mejora significativamente tu rendimiento sin afectar el sueño'
       : type === 'slow'
-      ? 'Considera reducir o eliminar la cafeína. Puede causar ansiedad y afectar el sueño'
-      : 'Moderación recomendada. La cafeína puede ayudar pero no abuse';
+        ? 'Considera reducir o eliminar la cafeína. Puede causar ansiedad y afectar el sueño'
+        : 'Moderación recomendada. La cafeína puede ayudar pero no abuse';
 
     return {
       type,
@@ -535,23 +535,23 @@ export class GeneticProfileService {
     const metabolicType = ftoGenotype === 'AA' 
       ? 'Metabolismo lento - requiere mayor vigilancia'
       : ftoGenotype === 'TT'
-      ? 'Metabolismo rápido - mayor flexibilidad dietética'
-      : 'Metabolismo moderado';
+        ? 'Metabolismo rápido - mayor flexibilidad dietética'
+        : 'Metabolismo moderado';
 
     const dietRecommendations = ftoGenotype === 'AA'
       ? [
-          'Prioriza proteína en cada comida (saciedad)',
-          'Controla porciones estrictamente',
-          'Evita azúcares refinados',
-          'Come fibra abundante',
-          'Hidratación constante'
-        ]
+        'Prioriza proteína en cada comida (saciedad)',
+        'Controla porciones estrictamente',
+        'Evita azúcares refinados',
+        'Come fibra abundante',
+        'Hidratación constante'
+      ]
       : [
-          'Dieta balanceada con moderación',
-          'Proteína adecuada (1.6-2g/kg)',
-          'Carbohidratos complejos',
-          'Grasas saludables'
-        ];
+        'Dieta balanceada con moderación',
+        'Proteína adecuada (1.6-2g/kg)',
+        'Carbohidratos complejos',
+        'Grasas saludables'
+      ];
 
     const exerciseIntensity = ppargc1aGenotype === 'GG'
       ? 'Entrenamientos intensos de mayor duración son muy efectivos'
@@ -580,25 +580,25 @@ export class GeneticProfileService {
 
     const type: 'morning' | 'evening' | 'intermediate' =
       clockGenotype === 'TT' ? 'morning' :
-      clockGenotype === 'CC' ? 'evening' : 'intermediate';
+        clockGenotype === 'CC' ? 'evening' : 'intermediate';
 
     const optimalWorkoutTime = type === 'morning'
       ? '6:00 - 9:00 AM (picos de cortisol natural)'
       : type === 'evening'
-      ? '5:00 - 8:00 PM (temperatura corporal óptima)'
-      : 'Flexible: Mañana o tarde según conveniencia';
+        ? '5:00 - 8:00 PM (temperatura corporal óptima)'
+        : 'Flexible: Mañana o tarde según conveniencia';
 
     const peakPerformanceWindow = type === 'morning'
       ? '8:00 - 11:00 AM'
       : type === 'evening'
-      ? '6:00 - 9:00 PM'
-      : '10:00 AM - 12:00 PM o 4:00 - 6:00 PM';
+        ? '6:00 - 9:00 PM'
+        : '10:00 AM - 12:00 PM o 4:00 - 6:00 PM';
 
     const sleepRecommendations = per3Genotype === 'GG'
       ? ['6-7 horas pueden ser suficientes', 'Levántate a la misma hora siempre', 'Evita siestas largas']
       : per3Genotype === 'TT'
-      ? ['Prioriza 8-9 horas de sueño', 'Rutina de sueño estricta', 'Evita pantallas 2h antes de dormir']
-      : ['7-8 horas de sueño', 'Horario regular', 'Ambiente oscuro y fresco'];
+        ? ['Prioriza 8-9 horas de sueño', 'Rutina de sueño estricta', 'Evita pantallas 2h antes de dormir']
+        : ['7-8 horas de sueño', 'Horario regular', 'Ambiente oscuro y fresco'];
 
     return {
       type,

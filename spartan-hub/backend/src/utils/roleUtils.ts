@@ -9,7 +9,7 @@ export { ROLES, Role };
  */
 export const requireRole = (requiredRole: string | string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user;
+    const {user} = (req as any);
     
     if (!user || !user.role) {
       return res.status(401).json({ error: 'Authentication required' });

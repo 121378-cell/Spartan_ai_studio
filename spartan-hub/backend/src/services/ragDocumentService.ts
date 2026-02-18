@@ -200,14 +200,14 @@ class RAGDocumentService {
     const chunks: DocumentChunk[] = [];
 
     switch (strategy) {
-      case 'paragraph':
-        return this.chunkByParagraph(content);
-      case 'sentence':
-        return this.chunkBySentence(content);
-      case 'token':
-        return this.chunkByTokens(content, 300, 50);
-      default:
-        return this.chunkByParagraph(content);
+    case 'paragraph':
+      return this.chunkByParagraph(content);
+    case 'sentence':
+      return this.chunkBySentence(content);
+    case 'token':
+      return this.chunkByTokens(content, 300, 50);
+    default:
+      return this.chunkByParagraph(content);
     }
   }
 

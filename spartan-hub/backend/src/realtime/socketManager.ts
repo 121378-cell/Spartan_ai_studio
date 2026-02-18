@@ -95,7 +95,7 @@ export class SocketManager {
    */
   private authenticateSocket(socket: Socket, next: (err?: Error) => void): void {
     try {
-      const token = socket.handshake.auth.token;
+      const {token} = socket.handshake.auth;
 
       if (!token) {
         return next(new Error('No authentication token provided'));
@@ -119,7 +119,7 @@ export class SocketManager {
    * Handle new socket connection
    */
   private handleNewConnection(socket: Socket): void {
-    const userId = socket.data.userId;
+    const {userId} = socket.data;
 
     const socketUser: SocketUser = {
       userId,

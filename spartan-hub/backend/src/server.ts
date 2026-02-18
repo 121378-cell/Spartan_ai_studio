@@ -899,24 +899,24 @@ export const startServer = async () => {
     const { getDatabase } = await import('./database/databaseManager');
     const db = getDatabase();
 
-          await ragDocumentService.initialize(db);
-          await citationService.initialize(db);
+    await ragDocumentService.initialize(db);
+    await citationService.initialize(db);
     
-          // Initialize vector store (OpenAI removed)
-          await vectorStoreService.initialize({
-            qdrantHost: process.env.QDRANT_HOST || 'localhost',
-            qdrantPort: parseInt(process.env.QDRANT_PORT || '6333', 10),
-            qdrantApiKey: process.env.QDRANT_API_KEY
-          });
+    // Initialize vector store (OpenAI removed)
+    await vectorStoreService.initialize({
+      qdrantHost: process.env.QDRANT_HOST || 'localhost',
+      qdrantPort: parseInt(process.env.QDRANT_PORT || '6333', 10),
+      qdrantApiKey: process.env.QDRANT_API_KEY
+    });
     
-          logger.info('RAG Services initialized successfully', {
-            context: 'ragInit',
-            metadata: {
-              services: ['DocumentService', 'VectorStore', 'CitationService'],
-              vectorDimension: 1536,
-              embeddingModel: 'local-deterministic-mock'
-            }
-          });
+    logger.info('RAG Services initialized successfully', {
+      context: 'ragInit',
+      metadata: {
+        services: ['DocumentService', 'VectorStore', 'CitationService'],
+        vectorDimension: 1536,
+        embeddingModel: 'local-deterministic-mock'
+      }
+    });
     logger.info('ML Forecasting service initialized', {
       context: 'serverStart',
       metadata: {

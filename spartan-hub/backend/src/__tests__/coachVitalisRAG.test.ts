@@ -15,6 +15,23 @@ import { KBToCoachVitalisBridgeService } from '../services/kbToCoachVitalisBridg
 import { RAGIntegrationService } from '../services/ragIntegrationService';
 import { logger } from '../utils/logger';
 
+jest.mock('../middleware/auth', () => ({
+  verifyJWT: (_req: any, _res: any, next: any) => {
+    _req.user = {
+      userId: 'test-user-123',
+      email: 'test@example.com',
+      role: 'user'
+    };
+    next();
+  },
+  requireRole: () => (_req: any, _res: any, next: any) => next(),
+  ROLES: { ADMIN: 'admin', REVIEWER: 'reviewer', USER: 'user' }
+}));
+
+jest.mock('../middleware/rateLimitMiddleware', () => ({
+  heavyApiRateLimit: (_req: any, _res: any, next: any) => next()
+}));
+
 describe('SemanticSearchService', () => {
   let service: SemanticSearchService;
 
@@ -150,30 +167,11 @@ describe('Coach Vitalis RAG API Routes', () => {
   let authToken: string = 'test-jwt-token';
 
   beforeAll(() => {
-    // Create a minimal Express app for testing routes
     app = express();
     app.use(express.json());
-    
-    // Mock JWT middleware - in real tests this would verify tokens
-    app.use((req, res, next) => {
-      req.user = {
-        userId: 'test-user-123',
-        email: 'test@example.com',
-        role: 'user'
-      };
-      next();
-    });
 
-    // Import and mount the routes
-    try {
-      const coachVitalisRAGRoutes = require('../routes/coachVitalisRAGRoutes').default;
-      app.use('/api/vitalis/rag', coachVitalisRAGRoutes);
-    } catch (error) {
-      logger.warn('Failed to mount RAG routes for testing', {
-        context: 'rag-routes-tests',
-        metadata: { error: error instanceof Error ? error.message : String(error) }
-      });
-    }
+    const coachVitalisRAGRoutes = require('../routes/coachVitalisRAGRoutes').default;
+    app.use('/api/vitalis/rag', coachVitalisRAGRoutes);
   });
 
   test('POST /query endpoint exists', async () => {

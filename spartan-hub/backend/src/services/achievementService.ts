@@ -24,7 +24,7 @@ export class AchievementService {
     try {
       this.db.pragma('foreign_keys = ON');
       const stmts = ENGAGEMENT_TABLES_SQL.split(';').filter(s => s.trim());
-      for (const s of stmts) if (s.trim()) this.db.exec(s.trim() + ';');
+      for (const s of stmts) if (s.trim()) this.db.exec(`${s.trim()  };`);
       logger.info('Engagement tables initialized', { context: 'achievementService', metadata: { operation: 'initializeTables' } });
     } catch (error) {
       logger.error('Failed to initialize tables', { context: 'achievementService', metadata: { error: error instanceof Error ? error.message : String(error) } });
@@ -62,7 +62,7 @@ export class AchievementService {
   getUserAchievements(userId: string, includeCompleted = true): Array<Achievement & { progress: number; isCompleted: boolean; completedAt: string | null }> {
     if (!this.db) return [];
     try {
-      let q = `SELECT a.*, ua.progress, ua.is_completed, ua.completed_at FROM achievements a LEFT JOIN user_achievements ua ON a.id = ua.achievement_id AND ua.user_id = ? WHERE a.is_active = 1`;
+      let q = 'SELECT a.*, ua.progress, ua.is_completed, ua.completed_at FROM achievements a LEFT JOIN user_achievements ua ON a.id = ua.achievement_id AND ua.user_id = ? WHERE a.is_active = 1';
       if (!includeCompleted) q += ' AND (ua.is_completed IS NULL OR ua.is_completed = 0)';
       q += ' ORDER BY a.points ASC';
       const r = this.db.prepare(q).all(userId) as Record<string, unknown>[];
@@ -166,7 +166,7 @@ export class AchievementService {
   getActiveChallenges(): Challenge[] {
     if (!this.db) return [];
     try {
-      const r = this.db.prepare("SELECT * FROM challenges WHERE is_active = 1 AND status = 'active' AND datetime(start_date) <= datetime('now') AND datetime(end_date) >= datetime('now') ORDER BY end_date ASC").all() as Record<string, unknown>[];
+      const r = this.db.prepare('SELECT * FROM challenges WHERE is_active = 1 AND status = \'active\' AND datetime(start_date) <= datetime(\'now\') AND datetime(end_date) >= datetime(\'now\') ORDER BY end_date ASC').all() as Record<string, unknown>[];
       return r.map((row: Record<string, unknown>) => this.parseChallenge(row));
     } catch (error) {
       logger.error('getActiveChallenges failed', { context: 'achievementService', metadata: { error: error instanceof Error ? error.message : String(error) } });

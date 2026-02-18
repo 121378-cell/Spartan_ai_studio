@@ -92,16 +92,16 @@ class CitationService {
     const authorList = this.formatAuthors(authors);
 
     switch (style) {
-      case 'APA':
-        return this.formatAPA(authorList, publicationYear, documentTitle, pageNumber);
-      case 'Chicago':
-        return this.formatChicago(authorList, publicationYear, documentTitle, pageNumber);
-      case 'Harvard':
-        return this.formatHarvard(authorList, publicationYear, documentTitle, pageNumber);
-      case 'MLA':
-        return this.formatMLA(authorList, publicationYear, documentTitle, pageNumber);
-      default:
-        return this.formatAPA(authorList, publicationYear, documentTitle, pageNumber);
+    case 'APA':
+      return this.formatAPA(authorList, publicationYear, documentTitle, pageNumber);
+    case 'Chicago':
+      return this.formatChicago(authorList, publicationYear, documentTitle, pageNumber);
+    case 'Harvard':
+      return this.formatHarvard(authorList, publicationYear, documentTitle, pageNumber);
+    case 'MLA':
+      return this.formatMLA(authorList, publicationYear, documentTitle, pageNumber);
+    default:
+      return this.formatAPA(authorList, publicationYear, documentTitle, pageNumber);
     }
   }
 
@@ -300,14 +300,14 @@ class CitationService {
 
       const citationTexts = citations.map(c => {
         switch (style) {
-          case 'APA':
-            return c.formattedText.APA;
-          case 'Chicago':
-            return c.formattedText.Chicago;
-          case 'Harvard':
-            return c.formattedText.Harvard;
-          default:
-            return c.formattedText.APA;
+        case 'APA':
+          return c.formattedText.APA;
+        case 'Chicago':
+          return c.formattedText.Chicago;
+        case 'Harvard':
+          return c.formattedText.Harvard;
+        default:
+          return c.formattedText.APA;
         }
       });
 

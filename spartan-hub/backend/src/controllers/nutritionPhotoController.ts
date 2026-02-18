@@ -18,7 +18,7 @@ const nutritionService = new NutritionPhotoService();
 export const analyzePhoto = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.body;
-    const file = req.file;
+    const {file} = req;
 
     if (!userId) {
       throw new ValidationError('User ID is required');

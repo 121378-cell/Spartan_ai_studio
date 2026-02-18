@@ -55,7 +55,7 @@ services:
     container_name: sandbox_backend
     environment:
       - NODE_ENV=development
-      - DATABASE_TYPE=postgres
+      - DATABASE_TYPE=sqlite
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
       - POSTGRES_PRIMARY_HOST=db

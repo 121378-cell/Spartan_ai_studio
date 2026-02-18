@@ -311,7 +311,7 @@ export const userDb = {
     console.log('[DEBUG] findSessionByToken ALL SESSIONS:', allSessions);
     const stmt = db?.prepare('SELECT * FROM sessions WHERE token = ?');
     const row = stmt?.get(token) as SessionRow | undefined;
-    console.log(`[DEBUG] findSessionByToken result for token ${token.substring(0, 10)}...:`, !!row);
+    console.log(`[DEBUG] findSessionByToken result for token ${token.substring(0, 10)}...:`, Boolean(row));
     if (!row) return null;
 
     return {
