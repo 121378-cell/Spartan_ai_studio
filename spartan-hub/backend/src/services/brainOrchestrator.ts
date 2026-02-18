@@ -152,7 +152,7 @@ class BrainOrchestrator {
       });
 
       // Step 7: Generate notifications
-      const notifications = await this.generateNotifications(userId, planAdjustments, analyses);
+      const notifications = await this.generateNotifications(userId, appliedChanges, analyses);
       logger.info('Step 6 complete: Notifications generated', {
         context: 'brain-orchestrator',
         metadata: { userId, notificationCount: notifications.length }
@@ -167,7 +167,7 @@ class BrainOrchestrator {
         aggregatedData,
         analyses,
         coachDecision,
-        planAdjustments,
+        planAdjustments: appliedChanges,
         notifications
       };
 

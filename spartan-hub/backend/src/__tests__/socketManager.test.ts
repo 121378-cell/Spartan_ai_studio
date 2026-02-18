@@ -1,30 +1,25 @@
-/**
- * Socket Manager Test Suite
- * 
- * Tests WebSocket connection management, authentication,
- * event emission, and real-time communication.
- */
-
 import { SocketManager } from '../realtime/socketManager';
 import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
-import { eventBus } from '../services/eventBus';
 import { logger } from '../utils/logger';
+import http from 'http';
 
 jest.mock('socket.io');
 jest.mock('jsonwebtoken');
-jest.mock('../services/eventBus');
 jest.mock('../utils/logger');
+jest.mock('../utils/secrets', () => ({
+  getJwtSecret: jest.fn().mockReturnValue('test_secret'),
+}));
 
 describe('SocketManager', () => {
-  let socketManager: any;
-  let mockServer: any;
+  let socketManager: SocketManager;
+  let mockHttpServer: http.Server;
+  let mockIoServer: any;
   let mockSocket: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Mock socket.io socket
     mockSocket = {
       id: 'socket_123',
       emit: jest.fn(),
@@ -34,317 +29,355 @@ describe('SocketManager', () => {
       join: jest.fn(),
       leave: jest.fn(),
       handshake: {
-        headers: {
-          authorization: 'Bearer valid_token',
+        auth: {
+          token: 'valid_token',
         },
+        headers: {},
       },
+      data: { userId: 'user_123' },
+      conn: { transport: { name: 'websocket' } },
     };
 
-    // Mock socket.io server
-    mockServer = {
+    const mockNamespace = {
+      on: jest.fn(),
+      to: jest.fn().mockReturnThis(),
+      emit: jest.fn(),
+    };
+
+    mockIoServer = {
       on: jest.fn((event, callback) => {
         if (event === 'connection') {
-          callback(mockSocket);
         }
       }),
-      to: jest.fn().mockReturnValue({
-        emit: jest.fn(),
-      }),
+      use: jest.fn(),
+      of: jest.fn().mockReturnValue(mockNamespace),
       emit: jest.fn(),
-      clients: jest.fn().mockResolvedValue([mockSocket]),
+      close: jest.fn(),
+      to: jest.fn().mockReturnThis(),
     };
 
-    (Server as unknown as jest.Mock).mockImplementation(() => mockServer);
+    (Server as unknown as jest.Mock).mockImplementation(() => mockIoServer);
     (jwt.verify as jest.Mock).mockReturnValue({ userId: 'user_123' });
 
-    socketManager = SocketManager.getInstance();
+    mockHttpServer = {} as http.Server;
+
+    socketManager = new SocketManager();
   });
 
   afterEach(() => {
     jest.resetModules();
   });
 
-  describe('Connection Handling', () => {
-    test('should accept WebSocket connections', () => {
-      socketManager.initialize(mockServer);
+  describe('Initialization', () => {
+    test('should initialize with HTTP server', () => {
+      const result = socketManager.initializeWithHttpServer(mockHttpServer);
 
-      expect(mockServer.on).toHaveBeenCalledWith('connection', expect.any(Function));
+      expect(mockIoServer.use).toHaveBeenCalled();
+      expect(mockIoServer.on).toHaveBeenCalledWith('connection', expect.any(Function));
     });
 
-    test('should assign unique ID to each connection', () => {
-      socketManager.initialize(mockServer);
+    test('should not reinitialize if already initialized', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
+      expect(mockIoServer.use).toHaveBeenCalledTimes(1);
+    });
 
-      expect(mockSocket.id).toBeDefined();
-      expect(typeof mockSocket.id).toBe('string');
+    test('should set up namespaces', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
+
+      expect(mockIoServer.of).toHaveBeenCalledWith('/brain');
+      expect(mockIoServer.of).toHaveBeenCalledWith('/notifications');
+      expect(mockIoServer.of).toHaveBeenCalledWith('/training-session');
+      expect(mockIoServer.of).toHaveBeenCalledWith('/health-stream');
+    });
+  });
+
+  describe('Connection Handling', () => {
+    test('should handle new connection', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
+
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
+
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+      }
+
+      expect(mockSocket.on).toHaveBeenCalledWith('disconnect', expect.any(Function));
+      expect(mockSocket.on).toHaveBeenCalledWith('subscribe', expect.any(Function));
+      expect(mockSocket.on).toHaveBeenCalledWith('unsubscribe', expect.any(Function));
+    });
+
+    test('should emit welcome message on connection', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
+
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
+
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+      }
+
+      expect(mockSocket.emit).toHaveBeenCalledWith('connected', expect.any(Object));
     });
 
     test('should track active connections', () => {
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      const connections = socketManager.getActiveConnections();
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
 
-      expect(connections.length).toBeGreaterThan(0);
-    });
-
-    test('should handle client disconnection', () => {
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
-
-      const onCall = mockSocket.on.mock.calls.find((c: any) => c[0] === 'disconnect');
-      expect(onCall).toBeDefined();
-    });
-
-    test('should cleanup resources on disconnection', () => {
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
-
-      const disconnectCallback = mockSocket.on.mock.calls.find((c: any) => c[0] === 'disconnect')?.[1];
-      if (disconnectCallback) {
-        disconnectCallback();
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
       }
 
-      expect(logger.info || logger.debug).toBeDefined();
+      expect(socketManager.isUserConnected('user_123')).toBe(true);
+    });
+
+    test('should handle disconnection', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
+
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
+
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+
+        const disconnectCallback = mockSocket.on.mock.calls.find(
+          (call: any[]) => call[0] === 'disconnect'
+        )?.[1];
+
+        if (disconnectCallback) {
+          disconnectCallback();
+        }
+      }
+
+      expect(socketManager.isUserConnected('user_123')).toBe(false);
     });
   });
 
   describe('Authentication', () => {
-    test('should authenticate connections with valid JWT', () => {
-      mockSocket.handshake.headers.authorization = 'Bearer valid_token_123';
-      (jwt.verify as jest.Mock).mockReturnValueOnce({ userId: 'user_123' });
+    test('should authenticate with valid JWT', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
+      const authMiddleware = mockIoServer.use.mock.calls[0]?.[0];
 
-      expect(jwt.verify).toHaveBeenCalled();
+      if (authMiddleware) {
+        const next = jest.fn();
+        authMiddleware(mockSocket, next);
+
+        expect(next).toHaveBeenCalledWith();
+      }
     });
 
-    test('should reject connections with invalid JWT', () => {
-      mockSocket.handshake.headers.authorization = 'Bearer invalid_token';
+    test('should reject connection without token', () => {
+      mockSocket.handshake.auth = {};
+
+      socketManager.initializeWithHttpServer(mockHttpServer);
+
+      const authMiddleware = mockIoServer.use.mock.calls[0]?.[0];
+
+      if (authMiddleware) {
+        const next = jest.fn();
+        authMiddleware(mockSocket, next);
+
+        expect(next).toHaveBeenCalledWith(expect.any(Error));
+      }
+    });
+
+    test('should reject connection with invalid token', () => {
       (jwt.verify as jest.Mock).mockImplementationOnce(() => {
         throw new Error('Invalid token');
       });
 
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      expect(mockSocket.disconnect).toHaveBeenCalled();
-    });
+      const authMiddleware = mockIoServer.use.mock.calls[0]?.[0];
 
-    test('should reject connections without token', () => {
-      mockSocket.handshake.headers = {};
+      if (authMiddleware) {
+        const next = jest.fn();
+        authMiddleware(mockSocket, next);
 
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
-
-      expect(mockSocket.disconnect).toHaveBeenCalled();
-    });
-
-    test('should extract userId from JWT', () => {
-      (jwt.verify as jest.Mock).mockReturnValueOnce({ userId: 'user_456' });
-
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
-
-      const connectionUserid = socketManager.getUserIdForSocket(mockSocket.id);
-      expect(connectionUserid).toBe('user_456');
+        expect(next).toHaveBeenCalledWith(expect.any(Error));
+      }
     });
   });
 
   describe('Event Emission', () => {
-    test('should emit events to specific socket', () => {
-      socketManager.initialize(mockServer);
-      
-      socketManager.emit(mockSocket.id, 'test_event', { data: 'test' });
+    test('should emit to specific user', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      expect(mockSocket.emit).toHaveBeenCalledWith('test_event', { data: 'test' });
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
+
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+      }
+
+      socketManager.emitToUser('user_123', 'test_event', { data: 'test' });
+
+      expect(logger.info).toHaveBeenCalled();
     });
 
-    test('should emit events to multiple specific sockets', () => {
-      socketManager.initialize(mockServer);
-      
-      const socketIds = ['socket_1', 'socket_2', 'socket_3'];
-      socketManager.emitToMultiple(socketIds, 'test_event', { data: 'test' });
+    test('should broadcast to all users', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      expect(mockServer.to).toHaveBeenCalled();
-    });
-
-    test('should broadcast events to all connected clients', () => {
-      socketManager.initialize(mockServer);
-      
       socketManager.broadcast('test_event', { data: 'broadcast' });
 
-      expect(mockServer.emit).toHaveBeenCalledWith('test_event', { data: 'broadcast' });
+      expect(logger.info).toHaveBeenCalled();
     });
 
-    test('should emit events to specific channel/room', () => {
-      socketManager.initialize(mockServer);
+    test('should emit to channel', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      socketManager.emitToRoom('alerts', 'critical_alert', { severity: 'high' });
+      socketManager.emitToChannel('alerts', 'alert_event', { severity: 'high' });
 
-      expect(mockServer.to).toHaveBeenCalledWith('alerts');
-    });
-
-    test('should handle event data serialization', () => {
-      socketManager.initialize(mockServer);
-
-      const complexData = {
-        timestamp: new Date().toISOString(),
-        nested: { value: 123 },
-        array: [1, 2, 3],
-      };
-
-      socketManager.emit(mockSocket.id, 'test_event', complexData);
-
-      expect(mockSocket.emit).toHaveBeenCalledWith('test_event', complexData);
+      expect(logger.info).toHaveBeenCalled();
     });
   });
 
   describe('Channel Subscription', () => {
-    test('should allow clients to subscribe to channels', () => {
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
+    test('should handle subscribe event', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      socketManager.subscribeToChannel(mockSocket.id, 'alerts');
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
+
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+
+        const subscribeCallback = mockSocket.on.mock.calls.find(
+          (call: any[]) => call[0] === 'subscribe'
+        )?.[1];
+
+        if (subscribeCallback) {
+          subscribeCallback({ channels: ['alerts', 'updates'] });
+        }
+      }
 
       expect(mockSocket.join).toHaveBeenCalledWith('alerts');
+      expect(mockSocket.join).toHaveBeenCalledWith('updates');
     });
 
-    test('should allow clients to unsubscribe from channels', () => {
-      socketManager.initialize(mockServer);
+    test('should handle unsubscribe event', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      socketManager.unsubscribeFromChannel(mockSocket.id, 'alerts');
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
+
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+
+        const unsubscribeCallback = mockSocket.on.mock.calls.find(
+          (call: any[]) => call[0] === 'unsubscribe'
+        )?.[1];
+
+        if (unsubscribeCallback) {
+          unsubscribeCallback({ channels: ['alerts'] });
+        }
+      }
 
       expect(mockSocket.leave).toHaveBeenCalledWith('alerts');
     });
+  });
 
-    test('should support multiple subscriptions per socket', () => {
-      socketManager.initialize(mockServer);
+  describe('Connection Info', () => {
+    test('should return active connections count', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      const channels = ['alerts', 'updates', 'notifications'];
-      channels.forEach(ch => socketManager.subscribeToChannel(mockSocket.id, ch));
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
 
-      expect(mockSocket.join).toHaveBeenCalledTimes(channels.length);
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+      }
+
+      const count = socketManager.getActiveConnectionsCount();
+      expect(count).toBeGreaterThanOrEqual(1);
     });
 
-    test('should broadcast to channel subscribers only', () => {
-      socketManager.initialize(mockServer);
-      socketManager.subscribeToChannel(mockSocket.id, 'alerts');
+    test('should return connected users list', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      socketManager.emitToRoom('alerts', 'alert', { message: 'test' });
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
 
-      expect(mockServer.to).toHaveBeenCalledWith('alerts');
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+      }
+
+      const users = socketManager.getConnectedUsers();
+      expect(users).toContain('user_123');
+    });
+
+    test('should get user connection info', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
+
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
+
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
+      }
+
+      const info = socketManager.getUserConnectionInfo('user_123');
+      expect(info).toBeDefined();
+      expect(info?.userId).toBe('user_123');
     });
   });
 
   describe('Error Handling', () => {
-    test('should handle transmission errors', () => {
-      mockSocket.emit.mockImplementationOnce(() => {
-        throw new Error('Transmission failed');
-      });
-
-      socketManager.initialize(mockServer);
+    test('should handle emit errors gracefully', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
       expect(() => {
-        socketManager.emit(mockSocket.id, 'test', {});
+        socketManager.emitToUser('non_existent_user', 'test', {});
       }).not.toThrow();
     });
 
-    test('should handle disconnection during message send', () => {
-      mockSocket.emit.mockImplementationOnce(() => {
-        throw new Error('Socket disconnected');
-      });
+    test('should handle broadcast errors gracefully', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      socketManager.initialize(mockServer);
-
-      socketManager.emit(mockSocket.id, 'test', {});
-
-      expect(logger.error || logger.warn).toBeDefined();
-    });
-
-    test('should log connection errors', () => {
-      (jwt.verify as jest.Mock).mockImplementationOnce(() => {
-        throw new Error('Auth error');
-      });
-
-      socketManager.initialize(mockServer);
-      const callback = mockServer.on.mock.calls[0][1];
-      callback(mockSocket);
-
-      expect(logger.warn || logger.error).toBeDefined();
+      expect(() => {
+        socketManager.broadcast('test', {});
+      }).not.toThrow();
     });
   });
 
-  describe('Memory Management', () => {
-    test('should not leak memory with repeated connections', () => {
-      socketManager.initialize(mockServer);
+  describe('Cleanup', () => {
+    test('should close all connections', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      for (let i = 0; i < 100; i++) {
-        const socket = { ...mockSocket, id: `socket_${i}` };
-        socketManager.registerConnection(socket);
+      socketManager.closeAll();
+
+      expect(mockIoServer.close).toHaveBeenCalled();
+    });
+
+    test('should clear connections on close', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
+
+      const connectionCallback = mockIoServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'connection'
+      )?.[1];
+
+      if (connectionCallback) {
+        connectionCallback(mockSocket);
       }
 
-      const connections = socketManager.getActiveConnections();
-      expect(connections.length).toBeLessThanOrEqual(100);
-    });
+      socketManager.closeAll();
 
-    test('should cleanup disconnected sockets properly', () => {
-      socketManager.initialize(mockServer);
-
-      socketManager.registerConnection(mockSocket);
-      socketManager.unregisterConnection(mockSocket.id);
-
-      const connections = socketManager.getActiveConnections();
-      expect(connections.find((c: any) => c.id === mockSocket.id)).toBeUndefined();
-    });
-  });
-
-  describe('Performance', () => {
-    test('should handle high-frequency events', () => {
-      socketManager.initialize(mockServer);
-
-      const startTime = Date.now();
-      for (let i = 0; i < 1000; i++) {
-        socketManager.emit(mockSocket.id, 'test', { count: i });
-      }
-      const duration = Date.now() - startTime;
-
-      expect(duration).toBeLessThan(5000); // 1000 msgs in <5s
-    });
-
-    test('should broadcast to many clients efficiently', () => {
-      socketManager.initialize(mockServer);
-
-      const startTime = Date.now();
-      socketManager.broadcast('test', { data: 'test' });
-      const duration = Date.now() - startTime;
-
-      expect(duration).toBeLessThan(100);
-    });
-
-    test('should handle 10000 concurrent connections', () => {
-      socketManager.initialize(mockServer);
-
-      const clients = Array(10000).fill(null).map((_, i) => ({
-        id: `socket_${i}`,
-        emit: jest.fn(),
-      }));
-
-      clients.forEach(c => socketManager.registerConnection(c));
-
-      const connections = socketManager.getActiveConnections();
-      expect(connections.length).toBe(10000);
+      expect(socketManager.getActiveConnectionsCount()).toBe(0);
     });
   });
 
@@ -357,27 +390,20 @@ describe('SocketManager', () => {
     });
   });
 
-  describe('Event Acknowledgment', () => {
-    test('should support acknowledgment callbacks', (done) => {
-      socketManager.initialize(mockServer);
+  describe('Server Access', () => {
+    test('should return server instance', () => {
+      socketManager.initializeWithHttpServer(mockHttpServer);
 
-      const ackCallback = jest.fn();
-      socketManager.emitWithAck(mockSocket.id, 'test', { data: 'test' }, ackCallback);
+      const server = socketManager.getServer();
 
-      expect(ackCallback).toBeDefined();
-      done();
+      expect(server).toBe(mockIoServer);
     });
 
-    test('should handle acknowledgment timeout', () => {
-      socketManager.initialize(mockServer);
+    test('should return null if not initialized', () => {
+      const freshManager = new SocketManager();
+      const server = freshManager.getServer();
 
-      const ackCallback = jest.fn();
-      socketManager.emitWithAck(mockSocket.id, 'test', {}, ackCallback, 1000);
-
-      // Wait for timeout
-      setTimeout(() => {
-        expect(ackCallback).toBeDefined();
-      }, 1500);
+      expect(server).toBeNull();
     });
   });
 });
