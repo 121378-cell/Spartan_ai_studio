@@ -13,6 +13,7 @@
     "migrate-to-postgres": "ts-node src/scripts/migrateToPostgres.ts",
     "migrate-preferences": "ts-node src/scripts/migratePreferences.ts",
     "test": "jest",
+    "test:fast": "jest --testPathIgnorePatterns=\"(e2e|performance|timeout-optimization)\"",
     "test:coverage": "jest --coverage",
     "test:security": "jest --testPathPattern='(auth|token)' --collectCoverageFrom='src/**/*.{ts,tsx}' --coverageReporters='text' --coverageReporters='lcov' --coverageDirectory='coverage'",
     "test:coverage:security": "jest --coverage --testPathPattern='(auth|token)' --collectCoverageFrom='src/routes/authRoutes.ts' --collectCoverageFrom='src/routes/tokenRoutes.ts' --collectCoverageFrom='src/middleware/auth.ts' --collectCoverageFrom='src/services/tokenService.ts' --collectCoverageFrom='src/controllers/tokenController.ts'",
@@ -43,6 +44,9 @@
   ],
   "author": "Spartan Fitness",
   "license": "ISC",
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.975.0",
     "@google-cloud/aiplatform": "^6.4.0",

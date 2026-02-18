@@ -10,11 +10,11 @@ describe('NPM Scripts Optimization', () => {
   });
 
   test('docker:up script exists', () => {
-    expect(packageJson.scripts['docker:up']).toBe('docker-compose up -d --build');
+    expect(packageJson.scripts['docker:up']).toBe('docker-compose -f scripts/docker/docker-compose.yml up -d --build');
   });
 
   test('docker:down script exists', () => {
-    expect(packageJson.scripts['docker:down']).toBe('docker-compose down');
+    expect(packageJson.scripts['docker:down']).toBe('docker-compose -f scripts/docker/docker-compose.yml down');
   });
 
   test('test:backend-suite script exists', () => {
@@ -22,7 +22,7 @@ describe('NPM Scripts Optimization', () => {
   });
 
   test('dist script exists', () => {
-    expect(packageJson.scripts['dist']).toBe('node scripts/createDist.js');
+    expect(packageJson.scripts['dist']).toBe('node scripts/create-dist.js');
   });
 
   test('Legacy batch files are removed', () => {

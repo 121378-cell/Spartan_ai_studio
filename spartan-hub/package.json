@@ -18,11 +18,13 @@
     "test:env": "node -r ts-node/register scripts/test-env-config.js",
     "test:fitness": "node -r ts-node/register scripts/test-fitness-nutrition-service.js",
     "test": "npm run test:node && npm run test:components",
-    "test:node": "jest --config scripts/config/jest.config.js --testMatch=\"**/__tests__/**/?(*.)(spec|test).[jt]s?(x)\" --testPathIgnorePatterns=\"src/__tests__/components/\" --testPathIgnorePatterns=\"src/__tests__/services/poseDetection.test.ts\" --testPathIgnorePatterns=\"src/__tests__/AiChat.test.js\" --testPathIgnorePatterns=\"src/__tests__/AiErrorScreen.test.tsx\" --testPathIgnorePatterns=\"src/__tests__/FormAnalysisModal.test.tsx\"",
+    "test:node": "jest --config scripts/config/jest.config.js",
     "test:components": "jest --config scripts/config/jest.config.components.js",
-    "test:all": "npm run test:node && npm run test:components",
+    "test:frontend": "npm run test:node && npm run test:components",
+    "test:backend": "cd backend && npm test",
+    "test:all": "npm run test:frontend && npm run test:backend",
     "test:coverage": "npm run test:node -- --coverage && npm run test:components -- --coverage",
-    "lint": "eslint . --ext .ts,.tsx --config scripts/config/.eslintrc.mjs",
+    "lint": "eslint src scripts vite.config.ts --ext .ts,.tsx --config scripts/config/.eslintrc.mjs",
     "type-check": "tsc --noEmit",
     "security-audit": "npm audit --audit-level=high",
     "backup:run": "node scripts/backupDatabase.js",
@@ -63,6 +65,9 @@
   },
   "author": "Spartan Hub Team",
   "license": "MIT",
+  "engines": {
+    "node": "18.x"
+  },
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.28.5",

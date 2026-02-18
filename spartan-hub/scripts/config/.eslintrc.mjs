@@ -7,7 +7,17 @@ import importPlugin from 'eslint-plugin-import';
 export default [
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    ignores: ['node_modules', 'dist', 'coverage', '**/*.test.ts', '**/*.test.tsx'],
+    ignores: [
+      'node_modules',
+      'dist',
+      'coverage',
+      'backend',
+      'backend/**',
+      '**/dist/**',
+      '**/coverage/**',
+      '**/*.test.ts',
+      '**/*.test.tsx'
+    ],
     languageOptions: {
       ecmaVersion: 2021,
       sourceType: 'module',
