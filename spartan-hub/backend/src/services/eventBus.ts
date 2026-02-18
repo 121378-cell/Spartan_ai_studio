@@ -28,6 +28,7 @@ export class EventBus extends EventEmitter {
   private static instance: EventBus;
   private eventLog: BrainEvent[] = [];
   private maxLogSize: number = 10000; // Keep last 10k events in memory
+  private wildcardListeners: Map<string, Array<{ pattern: string; handler: (data: any) => void }>> = new Map();
 
   private constructor() {
     super();
@@ -41,6 +42,17 @@ export class EventBus extends EventEmitter {
       EventBus.instance = new EventBus();
     }
     return EventBus.instance;
+  }
+
+  /**
+   * Match event type against pattern (supports * wildcard)
+   */
+  private matchesPattern(eventType: string, pattern: string): boolean {
+    if (!pattern.includes('*')) {
+      return eventType === pattern;
+    }
+    const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
+    return regex.test(eventType);
   }
 
   /**
@@ -74,11 +86,34 @@ export class EventBus extends EventEmitter {
       this.eventLog.shift();
     }
 
-    return super.emit(eventType, data);
+    // Emit to direct listeners
+    const result = super.emit(eventType, data);
+
+    // Emit to wildcard listeners
+    this.wildcardListeners.forEach((listeners, pattern) => {
+      if (this.matchesPattern(eventType, pattern)) {
+        listeners.forEach(({ handler }) => {
+          try {
+            handler(data);
+          } catch (error) {
+            logger.error(`Error in wildcard handler for ${pattern}`, {
+              context: 'event-bus',
+              metadata: {
+                pattern,
+                eventType,
+                errorMessage: error instanceof Error ? error.message : String(error)
+              }
+            });
+          }
+        });
+      }
+    });
+
+    return result;
   }
 
   /**
-   * On event listener with error handling
+   * On event listener with error handling (supports wildcards)
    */
   on(eventType: string, handler: (data: any) => void | Promise<void>): this {
     const wrappedHandler = async (data: any) => {
@@ -98,6 +133,15 @@ export class EventBus extends EventEmitter {
         });
       }
     };
+
+    // Handle wildcard patterns
+    if (eventType.includes('*')) {
+      if (!this.wildcardListeners.has(eventType)) {
+        this.wildcardListeners.set(eventType, []);
+      }
+      this.wildcardListeners.get(eventType)!.push({ pattern: eventType, handler: wrappedHandler });
+      return this;
+    }
 
     return super.on(eventType, wrappedHandler);
   }
@@ -125,6 +169,30 @@ export class EventBus extends EventEmitter {
     };
 
     return super.once(eventType, wrappedHandler);
+  }
+
+  /**
+   * Subscribe alias for 'on'
+   */
+  subscribe(eventType: string, handler: (data: any) => void | Promise<void>): this {
+    return this.on(eventType, handler);
+  }
+
+  /**
+   * Subscribe once alias for 'once'
+   */
+  subscribeOnce(eventType: string, handler: (data: any) => void | Promise<void>): this {
+    return this.once(eventType, handler);
+  }
+
+  /**
+   * Unsubscribe alias for 'off'
+   */
+  unsubscribe(eventType: string, handler?: (data: any) => void | Promise<void>): this {
+    if (handler) {
+      return this.off(eventType, handler);
+    }
+    return this.removeAllListeners(eventType);
   }
 
   /**
@@ -175,6 +243,27 @@ export class EventBus extends EventEmitter {
   clearLog(): void {
     this.eventLog = [];
     logger.info('Event log cleared', { context: 'event-bus' });
+  }
+
+  /**
+   * Clear all subscribers (for testing)
+   */
+  clearAllSubscribers(): void {
+    this.removeAllListeners();
+    this.wildcardListeners.clear();
+    this.eventLog = [];
+    logger.info('All subscribers cleared', { context: 'event-bus' });
+  }
+
+  /**
+   * Reset instance (for testing)
+   */
+  static resetInstance(): void {
+    if (EventBus.instance) {
+      EventBus.instance.removeAllListeners();
+      EventBus.instance.eventLog = [];
+    }
+    EventBus.instance = undefined as any;
   }
 }
 

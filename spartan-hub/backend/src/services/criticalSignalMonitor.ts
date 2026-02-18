@@ -473,6 +473,81 @@ export class CriticalSignalMonitor {
   }
 
   /**
+   * Detect critical signals from biometric data (synchronous for testing)
+   */
+  detectCriticalSignals(userId: string, biometricData: Record<string, number>): {
+    critical: boolean;
+    signals: string[];
+    warnings: string[];
+    recommendations: string[];
+  } {
+    const result = {
+      critical: false,
+      signals: [] as string[],
+      warnings: [] as string[],
+      recommendations: [] as string[]
+    };
+
+    if (!biometricData) {
+      return result;
+    }
+
+    if (biometricData.avgHR !== undefined && biometricData.avgHR > 120) {
+      result.critical = true;
+      result.signals.push('hr_spike');
+      result.warnings.push(`Elevated heart rate: ${biometricData.avgHR} bpm`);
+      result.recommendations.push('Consider reducing intensity or resting');
+    }
+
+    if (biometricData.maxHR !== undefined && biometricData.maxHR > 150) {
+      result.critical = true;
+      result.signals.push('hr_spike');
+      result.warnings.push(`High max heart rate: ${biometricData.maxHR} bpm`);
+    }
+
+    if (biometricData.rmssd !== undefined && biometricData.rmssd < 20) {
+      result.signals.push('hrv_low');
+      result.warnings.push(`Low HRV: ${biometricData.rmssd} ms`);
+      result.recommendations.push('Focus on recovery');
+    }
+
+    if (biometricData.sleepDuration !== undefined && biometricData.sleepDuration < 240) {
+      result.critical = true;
+      result.signals.push('sleep_deprivation');
+      result.warnings.push(`Insufficient sleep: ${biometricData.sleepDuration} minutes`);
+      result.recommendations.push('Prioritize rest, consider canceling intense training');
+    }
+
+    if (biometricData.stress !== undefined && biometricData.stress > 80) {
+      result.signals.push('high_stress');
+      result.warnings.push(`High stress level: ${biometricData.stress}`);
+      result.recommendations.push('Focus on recovery activities');
+    }
+
+    return result;
+  }
+
+  /**
+   * Calculate effectiveness of intervention (for testing)
+   */
+  calculateEffectiveness(initialSignal: { severity: string; value: number }, followUpSignal: { severity: string; value: number }): number {
+    const severityMap: Record<string, number> = {
+      'low': 1,
+      'medium': 2,
+      'high': 3,
+      'critical': 4
+    };
+
+    const initialSeverity = severityMap[initialSignal.severity] || 2;
+    const followUpSeverity = severityMap[followUpSignal.severity] || 2;
+
+    const severityImprovement = Math.max(0, (initialSeverity - followUpSeverity) / initialSeverity);
+    const valueImprovement = Math.max(0, (initialSignal.value - followUpSignal.value) / initialSignal.value);
+
+    return (severityImprovement + valueImprovement) / 2;
+  }
+
+  /**
    * Stop all monitoring (graceful shutdown)
    */
   stopAll(): void {
