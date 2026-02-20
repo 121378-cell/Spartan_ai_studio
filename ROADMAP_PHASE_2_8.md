@@ -1,7 +1,11 @@
 # Spartan Hub - Roadmap Phase 2-8
 ## Terra Integration & Brain Orchestration Completion
 
+<<<<<<< HEAD
 **Project Status:** Phase 2 Complete ✅ | Total Duration: ~8-10 weeks | Last Updated: February 18, 2026
+=======
+**Project Status:** Phase 0-1 Complete ✅ | Total Duration: ~8-10 weeks | Last Updated: February 7, 2026
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 ---
 
@@ -10,8 +14,13 @@
 | Phase | Focus | Duration | Status | Dependencies |
 |-------|-------|----------|--------|--------------|
 | **Phase 0-1** | Terra Integration Foundation | 2 weeks | ✅ DONE | - |
+<<<<<<< HEAD
 | **Phase 2** | Service Method Implementations | 1.5 weeks | ✅ DONE | Phase 0-1 |
 | **Phase 3** | Testing & Validation | 2 weeks | ⏳ IN PROGRESS | Phase 2 |
+=======
+| **Phase 2** | Service Method Implementations | 1.5 weeks | ⏳ NEXT | Phase 0-1 |
+| **Phase 3** | Testing & Validation | 2 weeks | 🔲 PENDING | Phase 2 |
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 | **Phase 4** | Frontend Components | 2 weeks | 🔲 PENDING | Phase 2, 3 |
 | **Phase 5** | Performance & Optimization | 1 week | 🔲 PENDING | Phase 4 |
 | **Phase 6** | Documentation & Training | 1 week | 🔲 PENDING | Phase 5 |
@@ -23,35 +32,65 @@
 ---
 
 ## 🎯 Phase 2: Service Method Implementations (1.5 weeks)
+<<<<<<< HEAD
 **Goal:** Implement missing methods in existing services + fix type issues
 **Start Date:** February 10, 2026
 **Completion Date:** February 18, 2026
 **Status:** ✅ COMPLETED
+=======
+**Goal:** Implement missing methods in existing services + fix type issues  
+**Start Date:** February 10, 2026  
+**Target Completion:** February 21, 2026
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 ### 2.1 CoachVitalisService Enhancements (3-4 days)
 **Purpose:** Add core decision-making methods for brain orchestrator
 
 #### Tasks:
+<<<<<<< HEAD
 - [x] **2.1.1** Implement `evaluateDailyComprehensive(userId, aggregatedData)`
+=======
+- [ ] **2.1.1** Implement `evaluateDailyComprehensive(userId, aggregatedData)`
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
   - Input: Aggregated 24h biometric data
   - Output: Readiness score (0-100), recovery needs, recommendations
   - Logic: Integrate with AdvancedAnalysisService for composite scoring
   - Duration: 1 day
+<<<<<<< HEAD
   - Tests: ✅ 163 tests passing in CoachVitalis suite
   
 - [x] **2.1.2** Implement `decidePlanAdjustments(userId, { readiness, trainingLoad, injuryRisk })`
+=======
+  - Tests: Unit test with sample data
+  
+- [ ] **2.1.2** Implement `decidePlanAdjustments(userId, { readiness, trainingLoad, injuryRisk })`
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
   - Input: Analysis results from daily cycle
   - Output: Array of PlanModification objects with confidence scores
   - Logic: Rule-based decision engine (fatigue→reduce, recovery→extend, etc)
   - Duration: 1.5 days
+<<<<<<< HEAD
   - Tests: ✅ Decision logic tests passing
   
 - [x] **2.1.3** Implement `executeAutoApproval(modifications[], autonomyRules)`
+=======
+  - Tests: Unit test scenarios (high fatigue, overtraining, etc)
+  
+- [ ] **2.1.3** Implement `executeAutoApproval(modifications[], autonomyRules)`
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
   - Input: Array of modifications + user autonomy settings
   - Output: Approved modifications + pending for user review
   - Logic: Apply ±10% rule, filter major changes
   - Duration: 0.5 day
+<<<<<<< HEAD
   - Tests: ✅ Auto-approval tests passing
+=======
+  - Tests: Unit test approval logic
+
+#### Dependencies:
+- Phase 0-1 brainOrchestrator (calling service)
+- AdvancedAnalysisService (for composite analysis)
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 #### Success Criteria:
 - ✅ All 3 methods implemented and callable
@@ -65,6 +104,7 @@
 **Purpose:** Provide analysis pipeline for daily cycle
 
 #### Tasks:
+<<<<<<< HEAD
 - [x] **2.2.1** Implement `analyzeTrainingLoad(biometricData[], previousLoad)`
   - Input: Daily biometric points, previous training load
   - Output: TrainingLoadAnalysis { current, trend, riskFactors }
@@ -76,6 +116,25 @@
   - Output: InjuryRiskAssessment { score, redFlags, recommendations }
   - Logic: HRV monitoring, overuse detection
   - Tests: ✅ Injury risk evaluation tests passing
+=======
+- [ ] **2.2.1** Implement `analyzeTrainingLoad(biometricData[], previousLoad)`
+  - Input: Daily biometric points, previous training load
+  - Output: TrainingLoadAnalysis { current, trend, riskFactors }
+  - Logic: TSS (Training Stress Score) calculation
+  - Duration: 1 day
+  - Tests: Unit test with known TSS values
+
+- [ ] **2.2.2** Implement `evaluateInjuryRisk(biometricData[], history)`
+  - Input: Recent biometrics, injury history
+  - Output: InjuryRiskAssessment { score, redFlags, recommendations }
+  - Logic: HRV monitoring, overuse detection
+  - Duration: 1.5 days
+  - Tests: Unit test risk scoring
+
+#### Dependencies:
+- BiometricService for data aggregation
+- Historical injury data
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 #### Success Criteria:
 - ✅ Both methods fully functional
@@ -88,6 +147,7 @@
 **Purpose:** Predictive analytics for planning
 
 #### Tasks:
+<<<<<<< HEAD
 - [x] **2.3.1** Implement `predictInjuryRisk(userId)`
   - Input: User ID (fetches 30-day history)
   - Output: InjuryPrediction { probability, factors, timeframe }
@@ -97,6 +157,25 @@
   - Input: User ID, forecast window (1-7 days)
   - Output: ReadinessForecast[ { day, predictedScore, confidence } ]
   - Tests: ✅ Forecast tests passing
+=======
+- [ ] **2.3.1** Implement `predictInjuryRisk(userId)`
+  - Input: User ID (fetches 30-day history)
+  - Output: InjuryPrediction { probability, factors, timeframe }
+  - Model: Linear regression or logistic regression
+  - Duration: 1 day
+  - Tests: Unit test with synthetic data
+  
+- [ ] **2.3.2** Implement `forecastReadiness(userId, days)`
+  - Input: User ID, forecast window (1-7 days)
+  - Output: ReadinessForecast[ { day, predictedScore, confidence } ]
+  - Model: Time series forecasting (ARIMA or similar)
+  - Duration: 1 day
+  - Tests: Unit test forecast accuracy
+
+#### Dependencies:
+- Historical biometric data
+- MLModeling library (if not present, add lightweight implementation)
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 #### Success Criteria:
 - ✅ Predictions generating without errors
@@ -109,6 +188,7 @@
 **Purpose:** Generate and apply plan modifications
 
 #### Tasks:
+<<<<<<< HEAD
 - [x] **2.4.1** Implement `applyAdjustment(modification, currentPlan)`
   - Input: PlanModification object + current plan
   - Output: ModifiedPlan with changes applied
@@ -118,6 +198,25 @@
   - Input: Weekly plan, applied changes, days left in week
   - Output: Rebalanced plan for remaining days
   - Tests: ✅ Rebalancing tests passing
+=======
+- [ ] **2.4.1** Implement `applyAdjustment(modification, currentPlan)`
+  - Input: PlanModification object + current plan
+  - Output: ModifiedPlan with changes applied
+  - Logic: Update intensity, duration, type, recovery
+  - Duration: 0.5 day
+  - Tests: Unit test plan mutation
+
+- [ ] **2.4.2** Implement `rebalanceRemainingDays(weeklyPlan, changes, remainingDays)`
+  - Input: Weekly plan, applied changes, days left in week
+  - Output: Rebalanced plan for remaining days
+  - Logic: Redistribute intensity across week
+  - Duration: 1 day
+  - Tests: Unit test distribution algorithm
+
+#### Dependencies:
+- PlanModificationService (if exists)
+- Weekly plan schema
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 #### Success Criteria:
 - ✅ Plans successfully modified
@@ -130,6 +229,7 @@
 **Purpose:** Connect BiometricService to Terra data
 
 #### Tasks:
+<<<<<<< HEAD
 - [x] **2.5.1** Implement `aggregateDailyDataV2(userId, date)` override
   - Input: User ID, date
   - Output: AggregatedBiometrics { hr, hrv, sleep, activity, body }
@@ -139,6 +239,25 @@
   - Input: Raw Terra data formats
   - Output: Standardized BiometricDataPoint objects
   - Tests: ✅ Normalization tests passing (Garmin, Apple, WHOOP, Oura, Google Fit)
+=======
+- [ ] **2.5.1** Implement `aggregateDailyData(userId, date)` override
+  - Input: User ID, date
+  - Output: AggregatedBiometrics { hr, hrv, sleep, activity, body }
+  - Logic: Query biometric_data_points for Terra data
+  - Duration: 0.5 day
+  - Tests: Unit test aggregation
+
+- [ ] **2.5.2** Add Terra data normalization
+  - Input: Raw Terra data formats
+  - Output: Standardized BiometricDataPoint objects
+  - Logic: Map Terra field names to Spartan schema
+  - Duration: 1 day
+  - Tests: Unit test Terra data samples
+
+#### Dependencies:
+- terraHealthService (data source)
+- biometric_data_points table
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 #### Success Criteria:
 - ✅ Terra data aggregates correctly
@@ -151,6 +270,7 @@
 **Purpose:** Resolve TypeScript compilation warnings
 
 #### Tasks:
+<<<<<<< HEAD
 - [x] **2.6.1** Add WearableDevice.id generator
 - [x] **2.6.2** Fix service exports
 - [x] **2.6.3** Add missing return type annotations
@@ -159,14 +279,41 @@
 - ✅ Compilation warnings minimal
 - ✅ All critical errors resolved
 - ✅ Build passes with no blockers (tsc --noEmit clean)
+=======
+- [ ] **2.6.1** Add WearableDevice.id generator
+  - File: terraHealthService.ts line 222
+  - Fix: Generate unique ID on device creation
+  
+- [ ] **2.6.2** Fix service exports
+  - Files: advancedAnalysisService.ts, mlForecastingService.ts, etc
+  - Fix: Export singleton factories
+
+- [ ] **2.6.3** Add missing return type annotations
+  - Files: brainOrchestrationRoutes.ts
+  - Fix: Wrap all async handlers with return
+
+#### Dependencies:
+- None (isolated fixes)
+
+#### Success Criteria:
+- ✅ Compilation warnings <5
+- ✅ All critical errors resolved
+- ✅ Build passes with no blockers
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 ---
 
 ## 🧪 Phase 3: Testing & Validation (2 weeks)
+<<<<<<< HEAD
 **Goal:** Comprehensive test coverage + integration validation
 **Start Date:** February 18, 2026
 **Target Completion:** March 7, 2026
 **Status:** ⏳ IN PROGRESS
+=======
+**Goal:** Comprehensive test coverage + integration validation  
+**Start Date:** February 22, 2026  
+**Target Completion:** March 7, 2026
+>>>>>>> 5ef74c1fd13261899915e69b6c3f84338d45e5ea
 
 ### 3.1 Unit Test Suite (4-5 days)
 **Framework:** Jest (already configured)
