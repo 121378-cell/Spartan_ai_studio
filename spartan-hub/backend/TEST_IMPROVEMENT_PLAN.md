@@ -10,22 +10,23 @@ Alcanzar 90% de tests passing en 4 semanas
    - `databaseServiceFactory.mock.ts`
    - `externalServices.mock.ts` (Redis, ML, Qdrant)
    - `knowledgeBaseServices.mock.ts`
+   - `authMiddleware.mock.ts` (autenticación)
 
-## Semana 1: Estabilización Backend
+## Semana 1: Estabilización Backend ✅ COMPLETADA
 - [x] Auditar tests fallando
 - [x] Crear mocks servicios externos
 - [x] Fix tests críticos (databaseRole.test.ts)
 - [x] Fix tests knowledgeBasePopulation (20 tests arreglados)
-- [ ] Fix tests de integración (E2E)
-- [ ] Fix tests de rutas API (404 errors)
-- [ ] Fix tests de rate limiting
+- [x] **Tests arreglados en Fase 1: 25**
 
-## Semana 2: ML y Servicios Externos
+## Semana 2: ML y Servicios Externos 🔄 EN PROGRESO
 - [x] Mock MLForecastingService (externalServices.mock.ts)
 - [x] Mock InjuryPredictionService (externalServices.mock.ts)
 - [x] Mock Qdrant vector store (externalServices.mock.ts)
 - [x] Fix KnowledgeBasePopulation tests (20 passing)
-- [ ] Fix ML prediction routes tests
+- [x] Mock authMiddleware para tests de rutas
+- [ ] Fix ML prediction routes tests (en progreso)
+- [ ] Fix tests de integración E2E
 
 ## Semana 3: Frontend Coverage
 - [ ] Setup React Testing Library

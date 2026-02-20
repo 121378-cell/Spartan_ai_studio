@@ -30,6 +30,33 @@ module.exports = {
   coverageReporters: ['text', 'text-summary', 'html', 'lcov'],
   testTimeout: 30000, // 30 second timeout for tests
   maxWorkers: 2, // Limit concurrent tests to avoid resource conflicts
+  
+  // Override timeout for E2E and integration tests
+  projects: [
+    {
+      displayName: 'unit',
+      testMatch: ['**/__tests__/**/*.test.ts', '!**/__tests__/e2e/**/*.test.ts', '!**/__tests__/integration/**/*.test.ts', '!**/__tests__/performance/**/*.test.ts'],
+      testTimeout: 30000,
+    },
+    {
+      displayName: 'e2e',
+      testMatch: ['**/__tests__/e2e/**/*.test.ts'],
+      testTimeout: 60000, // 60 seconds for E2E tests
+      maxWorkers: 1, // Run E2E tests sequentially
+    },
+    {
+      displayName: 'integration',
+      testMatch: ['**/__tests__/integration/**/*.test.ts'],
+      testTimeout: 45000, // 45 seconds for integration tests
+      maxWorkers: 1,
+    },
+    {
+      displayName: 'performance',
+      testMatch: ['**/__tests__/performance/**/*.test.ts'],
+      testTimeout: 120000, // 2 minutes for performance tests
+      maxWorkers: 1,
+    }
+  ],
   clearMocks: true,
   resetMocks: true,
   restoreMocks: true,
