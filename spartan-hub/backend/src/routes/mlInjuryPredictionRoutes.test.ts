@@ -5,6 +5,31 @@
 
 import request from 'supertest';
 import express, { Express } from 'express';
+
+// Mock auth middleware BEFORE importing routes
+jest.mock('../middleware/auth', () => ({
+  authenticate: jest.fn((req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+    const token = authHeader.substring(7);
+    if (token === 'valid-token' || token.startsWith('valid')) {
+      (req as any).user = { id: 'user-test-123', email: 'test@example.com', role: 'user' };
+      (req as any).userId = 'user-test-123';
+      return next();
+    }
+    return res.status(401).json({ success: false, message: 'Invalid token' });
+  }),
+  optionalAuthMiddleware: jest.fn((req, res, next) => next())
+}));
+
+// Mock rate limiter
+jest.mock('../middleware/rateLimiter', () => ({
+  rateLimiter: jest.fn(() => (req: any, res: any, next: any) => next())
+}));
+
+// Import routes after mocking auth
 import mlInjuryPredictionRoutes from '../routes/mlInjuryPredictionRoutes';
 import { InjuryPredictionModel } from '../ml/models/injuryPredictionModel';
 import { MLInferenceService } from '../ml/services/mlInferenceService';
