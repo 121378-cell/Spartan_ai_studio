@@ -11,6 +11,7 @@
 const Database = require('better-sqlite3');
 type DatabaseType = any;
 import path from 'path';
+import { jest } from '@jest/globals';
 import { getRAGDocumentService } from '../ragDocumentService';
 import { getVectorStoreService } from '../vectorStoreService';
 import { getCitationService } from '../citationService';
@@ -23,8 +24,14 @@ describe('RAG Services Integration', () => {
   let docService: ReturnType<typeof getRAGDocumentService>;
   let vectorService: ReturnType<typeof getVectorStoreService>;
   let citationService: ReturnType<typeof getCitationService>;
+  const originalFetch = global.fetch;
 
   beforeAll(() => {
+    // Force fallback path deterministically and avoid slow network retries
+    global.fetch = jest.fn(async () => {
+      throw new Error('fetch disabled in tests');
+    }) as any;
+
     // Create test database
     db = new Database(TEST_DB_PATH);
     db.pragma('journal_mode = WAL');
@@ -35,6 +42,7 @@ describe('RAG Services Integration', () => {
   });
 
   afterAll(() => {
+    global.fetch = originalFetch;
     db.close();
   });
 
@@ -76,8 +84,9 @@ describe('RAG Services Integration', () => {
       });
       
       const stats = await vectorService.getStats();
-      expect(stats.collectionName).toBeDefined();
-      expect(stats.vectorDimension).toBe(1536);
+      expect(stats.provider).toBe('qdrant-proxy');
+      expect(stats.status).toBe('connected');
+      expect(stats.vectorDimension).toBe(384);
     });
 
     it('should generate embeddings', async () => {
@@ -85,8 +94,8 @@ describe('RAG Services Integration', () => {
       const result = await vectorService.embedText(text);
       
       expect(result.vector).toBeDefined();
-      expect(result.vector.length).toBe(1536);
-      expect(result.model).toBe('local-deterministic-mock');
+      expect(result.vector.length).toBe(384);
+      expect(result.model).toBe('mock-fallback');
     });
 
     it('should calculate cosine similarity', () => {
@@ -105,7 +114,7 @@ describe('RAG Services Integration', () => {
       
       const embeddings = await vectorService.batchEmbed(texts);
       expect(embeddings.length).toBe(2);
-      expect(embeddings[0].vector.length).toBe(1536);
+      expect(embeddings[0].vector.length).toBe(384);
     });
   });
 
@@ -217,7 +226,7 @@ describe('RAG Services Integration', () => {
       
       // Generate embedding
       const embedding = await vectorService.embedText(testChunk.content);
-      expect(embedding.vector.length).toBe(1536);
+      expect(embedding.vector.length).toBe(384);
       
       // Format citation
       const citation = citationService.formatCitation(

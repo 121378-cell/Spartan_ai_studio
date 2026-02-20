@@ -9,9 +9,16 @@ Spartan Hub: Fitness coaching app with AI integration
 - Backend: Express + TypeScript
 - Database: SQLite (default) with PostgreSQL support
 - Testing: Jest with ts-jest
+- Security: Helmet, csurf, rate limiting, input sanitization
 
 ## Working Directories
 
+```
+Root: C:\Proyectos\Spartan hub 2.0 - codex - ollama
+Frontend: spartan-hub/
+Backend: spartan-hub/backend/
+AI Service: spartan-hub/backend/ai-microservice/
+Documentation: docs/, spartan-hub/docs/, spartan-hub/backend/docs/
 ```
 Root: C:\Proyectos\Spartan hub 2.0 - codex - ollama
 Frontend: spartan-hub/
@@ -25,29 +32,43 @@ Backend: spartan-hub/backend/
 npm run build:all           # Build all components
 npm run build:frontend      # Vite build
 npm run build:backend       # TypeScript compilation
+npm run build:services      # Build fitness nutrition service
 npm run dev                 # Start frontend + backend dev mode
 npm start                   # Start production app
+npm run build:exe           # Build executable for distribution
+npm run build:full          # Full build including distribution package
 
 # From spartan-hub/backend/
 npm run build               # Compile TypeScript to dist/
 npm run start               # Run compiled server
 npm run dev                 # ts-node dev mode
+npm run watch               # Watch mode for development
 ```
 
 ## Test Commands
 
 ```bash
 # Backend (from spartan-hub/backend/)
-npm test                           # Run all tests
-npm run test:coverage              # Coverage report
-npm test -- --testPathPattern=auth # Run tests matching pattern
-npm test -- auth.test.ts           # Run specific test file
-npm test -- --testNamePattern="should validate"  # Run specific test
+npm test                                    # Run all tests
+npm run test:fast                          # Run tests excluding slow e2e/performance tests
+npm run test:coverage                      # Coverage report
+npm run test:security                      # Run security-related tests only
+npm test -- --testPathPattern=auth        # Run tests matching pattern
+npm test -- auth.test.ts                  # Run specific test file
+npm test -- --testNamePattern="should validate"  # Run specific test by name
+npm run test:e2e                          # Run end-to-end tests
+npm run test:database                     # Run database-related tests only
 
 # Frontend (from spartan-hub/)
-npm test                           # All Jest tests
-npm run test:coverage              # Coverage report
-npm run test:components            # Component tests only
+npm test                                  # All Jest tests (node + components)
+npm run test:node                         # Node environment tests only
+npm run test:components                   # Component tests only (jsdom environment)
+npm run test:frontend                     # Frontend tests (node + components)
+npm run test:backend                      # Run backend tests from frontend directory
+npm run test:all                          # Run all frontend and backend tests
+npm run test:coverage                     # Coverage report for frontend tests
+npm run test:env                          # Test environment configuration
+npm run test:fitness                      # Test fitness nutrition service
 ```
 
 ## Linting & Type Checking
@@ -84,6 +105,8 @@ tsc --noEmit               # TypeScript check
 - Prefer arrow functions for callbacks
 - Use template literals over concatenation
 - Prefer async/await over raw promises
+- Strict TypeScript rules enforced (noImplicitAny, strictNullChecks)
+- Floating promises must be handled
 
 ### Naming Conventions
 - Files: `kebab-case.ts` / `kebab-case.tsx`
@@ -102,6 +125,8 @@ tsc --noEmit               # TypeScript check
 - Path alias: `@/*` maps to `./src/*`
 - No circular dependencies
 - No unused imports
+- No duplicate imports
+- Prefer destructuring for imports when possible
 
 ## Security Requirements (BLOCKING)
 
@@ -113,6 +138,12 @@ tsc --noEmit               # TypeScript check
 - SQL injection prevention: parameterized queries only
 - XSS prevention: DOMPurify (frontend), helmet (backend)
 - CSRF protection with csurf middleware
+- Input validation using Zod schemas where applicable
+- Secure headers with Helmet middleware
+- CORS configuration restricted to trusted origins only
+- Password hashing with bcrypt (minimum 12 rounds)
+- Session management with secure cookies
+- API rate limiting with exponential backoff for abuse detection
 
 ## Error Handling
 
@@ -125,6 +156,42 @@ Use custom error classes from `utils/errorHandler.ts`:
 - `ServiceUnavailableError` (503)
 
 Never swallow errors - always re-throw or handle appropriately.
+
+## Logging Pattern
+
+Use structured logger from `utils/logger.ts`:
+```typescript
+import { logger } from '../utils/logger';
+
+logger.info('Operation completed', { context: 'serviceName', metadata: { userId } });
+logger.error('Operation failed', { context: 'serviceName', error: error.message });
+```
+
+## Common Patterns
+
+### API Controller
+```typescript
+export const handler = async (req: AuthenticatedRequest, res: Response) => {
+  const { userId } = req.params;
+  if (!userId) throw new ValidationError('User ID required');
+  
+  const data = await service.getData(sanitizeInput(userId));
+  return res.json({ success: true, data });
+};
+```
+
+### Database Query
+```typescript
+const result = await db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+logger.info('User fetched', { context: 'database', metadata: { userId } });
+```
+
+### Input Sanitization
+```typescript
+import { sanitizeInput, validateAndSanitizeString } from '../utils/sanitization';
+const sanitized = sanitizeInput(userInput);
+const { isValid, value, error } = validateAndSanitizeString(input, 1, 100);
+```
 
 ## Logging Pattern
 

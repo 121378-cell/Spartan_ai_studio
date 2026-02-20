@@ -1,0 +1,132 @@
+backend\dist\__tests__\database.service.comprehensive.test.js ::   ● Database Service Comprehensive Tests › User Database Operations › should find all users |  |     SqliteError: UNIQUE constraint failed: users.id
+backend\src\__tests__\services\planAdjusterService.test.ts ::   ● Database Migration › should create required tables successfully |  |     expect(received).toBe(expected) // Object.is equality
+backend\dist\__tests__\e2e\aiServices.e2e.test.js ::   ● AI Services Integration Tests › AI Workout Planning Integration › POST /api/ai/workout-plan should generate personalized workout |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\security\rateLimiting.security.test.ts ::   ● Rate Limiting & DDoS Protection Security - Phase 3.4 › Token Bucket Algorithm › block requests exceeding rate limit |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\__tests__\performance\performance-regression.test.ts ::   ● Performance Regression Tests › Performance: User registration should meet threshold |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\e2e\aiServices.e2e.test.ts ::   ● AI Services Integration Tests › AI Workout Planning Integration › POST /api/ai/workout-plan should generate personalized workout |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\e2e\workout.e2e.test.ts ::   ● E2E Workout Management › Workout Creation › POST /api/workouts should create new workout with valid data |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\e2e\workout.e2e.test.js ::   ● E2E Workout Management › Workout Creation › POST /api/workouts should create new workout with valid data |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\redis-configuration.test.js ::   ● Redis Configuration Tests › Redis Configuration › should have default Redis configuration |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\integration\dailyBrainCycle.e2e.test.js ::   ● Daily Brain Cycle - E2E Integration › Full Daily Cycle Workflow › should complete full daily cycle with 1000 concurrent users |  |     TypeError: advancedAnalysisService_1.AdvancedAnalysisService.analyzeTrainingLoadV2.mockReturnValue is not a function
+backend\src\__tests__\integration\modules-integration.test.ts ::   ● Integration Tests Between All Modules › Integration: User Profile + Workouts + Routines + Analytics |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\security\rateLimiting.security.test.js ::   ● Rate Limiting & DDoS Protection Security - Phase 3.4 › Token Bucket Algorithm › block requests exceeding rate limit |  |     expect(received).toBe(expected) // Object.is equality
+backend\dist\__tests__\brainOrchestrator.test.js ::   ● BrainOrchestrator › executeDailyBrainCycle › should complete successfully (Happy Path) |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\src\__tests__\integration\terraWebhook.e2e.test.ts ::   ● Terra Webhook - E2E Integration › Webhook Processing Flow › should process valid webhook and store data |  |     expect(jest.fn()).toHaveBeenCalled()
+backend\src\__tests__\e2e\auth.e2e.test.ts ::   ● E2E Authentication Flow › User Registration › POST /api/auth/register should create new user with valid data |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\services\__tests__\knowledgeBasePopulation.test.js ::   ● Phase 7.2: Knowledge Base Population › VectorStorePopulationService › should get population statistics |  |     expect(received).toBeGreaterThanOrEqual(expected)
+backend\dist\__tests__\e2e\auth.e2e.test.js ::   ● E2E Authentication Flow › User Registration › POST /api/auth/register should create new user with valid data |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\integration\criticalSignalFlow.e2e.test.js ::   ● Critical Signal Alert Flow - E2E Integration › Complete Alert Workflow › should detect critical HR anomaly and alert user |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\src\__tests__\performance\dailyCycleThroughput.perf.test.ts ::   ● Daily Cycle Throughput Performance - Phase 3.3 › Single User Cycle Performance › single user daily cycle completes in <100ms |  |     TypeError: orchestrator.executeDailyCycle is not a function
+backend\src\__tests__\redis-configuration.test.ts ::   ● Redis Configuration Tests › Redis Configuration › should have default Redis configuration |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\performance\dailyCycleThroughput.perf.test.js ::   ● Daily Cycle Throughput Performance - Phase 3.3 › Single User Cycle Performance › single user daily cycle completes in <100ms |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\src\__tests__\security\dataEncryption.security.test.ts ::   ● Data Encryption Security - Phase 3.4 › Encryption Algorithm › use AES-256-GCM for encryption |  |     expect(received).toBeDefined()
+backend\dist\__tests__\security\hmacSignatureVerification.security.test.js ::   ● HMAC Signature Verification Security - Phase 3.4 › Signature Verification › verify valid signature successfully |  |     TypeError: terraService.validateSignature is not a function
+backend\dist\__tests__\security\dataEncryption.security.test.js ::   ● Data Encryption Security - Phase 3.4 › Encryption Algorithm › use AES-256-GCM for encryption |  |     expect(received).toBeDefined()
+backend\dist\__tests__\e2e\mlForecasting.e2e.test.js ::   ● E2E ML Forecasting › GET /readiness-forecast/:userId requires authentication |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\performance\performance-regression.test.js ::   ● Performance Regression Tests › Performance: User registration should meet threshold |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\integration\end-to-end-integration.test.js ::   ● End-to-End Integration Tests › Error Handling and Edge Cases › should handle invalid biometric data gracefully |  |     expected 500 "Internal Server Error", got 200 "OK"
+backend\src\__tests__\security\hmacSignatureVerification.security.test.ts ::   ● HMAC Signature Verification Security - Phase 3.4 › Signature Verification › verify valid signature successfully |  |     TypeError: terraService.validateSignature is not a function
+backend\dist\services\__tests__\notification.test.js ::   ● NotificationService › Notification Sending › should send a notification with default parameters |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\__tests__\e2e\mlForecasting.e2e.test.ts ::   ● E2E ML Forecasting › GET /readiness-forecast/:userId requires authentication |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\criticalSignalMonitor.test.js ::   ● CriticalSignalMonitor › Signal Detection - Normal Ranges › should not flag normal heart rate |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\src\services\__tests__\knowledgeBasePopulation.test.ts ::   ● Phase 7.2: Knowledge Base Population › VectorStorePopulationService › should get population statistics |  |     expect(received).toBeGreaterThanOrEqual(expected)
+backend\src\__tests__\security\penetration-testing.test.ts ::   ● Security Penetration Testing › Security: SQL Injection Prevention |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\integration\modules-integration.test.js ::   ● Integration Tests Between All Modules › Integration: User Profile + Workouts + Routines + Analytics |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\e2e\complete-user-flow.e2e.test.ts ::   ● Complete User Flow E2E Test › Complete user flow: Register -> Login -> Create workout -> Complete -> View analytics |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\services\engagementEngineService.test.ts ::   ● EngagementEngineService › Initialization › should create indexes for performance |  |     expect(jest.fn()).toHaveBeenCalledWith(...expected)
+backend\src\database\__tests__\database.test.ts ::   ● Database Initialization › Backup & Recovery › should verify database integrity |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\__tests__\integration\feedbackLearningLoop.e2e.test.ts ::   ● Feedback Learning Loop - E2E Integration › Feedback Collection Flow › should collect user feedback on coaching decision |  |     TypeError: feedbackService.collectFeedback is not a function
+backend\dist\__tests__\rateLimitMiddleware.test.js ::   ● Rate Limiting Middleware › Auth Rate Limit Middleware › should allow requests within auth limit |  |     expect(received).toBe(expected) // Object.is equality
+backend\dist\__tests__\test-configuration-validation.test.js ::   ● Test Configuration Validation › Test Isolation › should maintain test isolation - test 2 |  |     expect(received).toBe(expected) // Object.is equality
+backend\dist\__tests__\eventBus.test.js ::   ● EventBus › Priority Handling › should respect subscriber priority levels |  |     expect(received).toBe(expected) // Object.is equality
+backend\dist\services\__tests__\personalization.test.js ::   ● PersonalizationService › Personalized Thresholds › should get default threshold for readiness |  |     expect(received).toBeLessThan(expected)
+backend\dist\__tests__\e2e\complete-user-flow.e2e.test.js ::   ● Complete User Flow E2E Test › Complete user flow: Register -> Login -> Create workout -> Complete -> View analytics |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\services\__tests__\ragIntegration.test.js ::   ● RAG Services Integration › VectorStoreService › should initialize vector store |  |     expect(received).toBeDefined()
+backend\src\services\__tests__\ragIntegration.test.ts ::   ● RAG Services Integration › VectorStoreService › should initialize vector store |  |     expect(received).toBeDefined()
+backend\dist\__tests__\security\penetration-testing.test.js ::   ● Security Penetration Testing › Security: SQL Injection Prevention |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\services\__tests__\personalization.test.ts ::   ● PersonalizationService › Personalized Thresholds › should get default threshold for readiness |  |     expect(received).toBeLessThan(expected)
+backend\dist\__tests__\services\planAdjusterService.test.js ::   ● Database Migration › should create required tables successfully |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\services\__tests__\notification.test.ts ::   ● NotificationService › Notification Sending › should send a notification with default parameters |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\__tests__\test-configuration-validation.test.ts ::   ● Test Configuration Validation › Test Isolation › should maintain test isolation - test 2 |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\__tests__\rateLimitMiddleware.test.ts ::   ● Rate Limiting Middleware › Auth Rate Limit Middleware › should allow requests within auth limit |  |     expect(received).toBe(expected) // Object.is equality
+backend\dist\__tests__\services\engagementEngineService.test.js ::   ● EngagementEngineService › Initialization › should create indexes for performance |  |     expect(jest.fn()).toHaveBeenCalledWith(...expected)
+backend\src\__tests__\database.service.comprehensive.test.ts ::   ● Database Service Comprehensive Tests › User Database Operations › should find all users |  |     UNIQUE constraint failed: users.id
+backend\src\__tests__\performance\websocketBroadcast.perf.test.ts ::   ● WebSocket Broadcast Performance - Phase 3.3 › Single Message Broadcast › broadcast to 1000 clients in <50ms |  |     TypeError: socketManager.subscribeToChannel is not a function
+backend\dist\__tests__\terraHealthService.test.js ::   ● TerraHealthService › OAuth Flow › should initiate OAuth flow correctly |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\dist\__tests__\CoachVitalisService.test.js ::   ● CoachVitalisService › Comprehensive Evaluation › should evaluate training readiness comprehensively |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\src\__tests__\integration\end-to-end-integration.test.ts ::   ● End-to-End Integration Tests › Error Handling and Edge Cases › should handle invalid biometric data gracefully |  |     expected 500 "Internal Server Error", got 200 "OK"
+backend\dist\__tests__\socketManager.test.js ::   ● SocketManager › Connection Handling › should accept WebSocket connections |  |     TypeError: socket_io_1.Server.mockImplementation is not a function
+backend\dist\__tests__\integration\feedbackLearningLoop.e2e.test.js ::   ● Feedback Learning Loop - E2E Integration › Feedback Collection Flow › should collect user feedback on coaching decision |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\src\__tests__\security.simple.test.ts ::   ● Security Simple Tests › Input Validation Middleware › should reject invalid email format in request body |  |     expect(jest.fn()).toHaveBeenCalled()
+backend\dist\__tests__\performance\webhookIngestionRate.perf.test.js ::   ● Webhook Ingestion Rate Performance - Phase 3.3 › Single Webhook Processing › process single webhook in <50ms |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\dist\__tests__\validation-error-messages.test.js ::   ● Improved Validation Error Messages › Error Message Optimization › should provide clear error responses for string validation |  |     expect(jest.fn()).toHaveBeenCalledWith(...expected)
+backend\dist\__tests__\transaction-management.test.js ::   ● Transaction Management for Foreign Key Constraints › Error Handling in Transactions › should maintain data consistency on partial failures |  |     UNIQUE constraint failed: sessions.id
+backend\src\__tests__\uuid-mock-validation.test.ts ::   ● UUID Mock Validation › should generate real UUIDs when unmocked |  |     expect(received).toMatch(expected)
+backend\src\__tests__\transaction-management.test.ts ::   ● Transaction Management for Foreign Key Constraints › Error Handling in Transactions › should maintain data consistency on partial failures |  |     UNIQUE constraint failed: sessions.id
+backend\dist\__tests__\performance\websocketBroadcast.perf.test.js ::   ● WebSocket Broadcast Performance - Phase 3.3 › Single Message Broadcast › broadcast to 1000 clients in <50ms |  |     TypeError: socketManager.subscribeToChannel is not a function
+backend\dist\__tests__\detailedProfile.test.js ::   ● Detailed Profile Tests › should find user by ID with detailed profile |  |     UNIQUE constraint failed: users.id
+backend\src\__tests__\ai\providers\GroqProvider.test.ts ::   ● GroqProvider › predictAlert › should call Groq API and return alert prediction |  |     expect(jest.fn()).toHaveBeenCalledWith(...expected)
+backend\dist\__tests__\alertMiddleware.test.js ::   ● Alert Middleware › rateLimitAlertMiddleware › should create an alert when rate limit is exceeded (429 status) |  |     TypeError: alertService_1.alertService.createAlert.mockClear is not a function
+backend\dist\__tests__\preferences.test.js ::   ● User Preferences Tests › should create a user with preferences |  |     UNIQUE constraint failed: users.id
+backend\dist\__tests__\integration\terraWebhook.e2e.test.js ::   ● Terra Webhook - E2E Integration › Webhook Processing Flow › should process valid webhook and store data |  |     TypeError: databaseManager_1.getDatabase.mockReturnValue is not a function
+backend\src\__tests__\validation-error-messages.test.ts ::   ● Improved Validation Error Messages › Error Message Optimization › should provide clear error responses for string validation |  |     expect(jest.fn()).toHaveBeenCalledWith(...expected)
+backend\dist\__tests__\ai\providers\GroqProvider.test.js ::   ● GroqProvider › predictAlert › should call Groq API and return alert prediction |  |     TypeError: mockedAxios.post.mockResolvedValueOnce is not a function
+src\__tests__\entrypoint.test.js ::   ● Entry Point Validation › index.html references src/index.tsx or src/main.tsx |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\__tests__\preferences.test.ts ::   ● User Preferences Tests › should find user by ID with preferences |  |     UNIQUE constraint failed: users.id
+backend\dist\__tests__\uuid-mock-validation.test.js ::   ● UUID Mock Validation › should generate real UUIDs when unmocked |  |     expect(received).toMatch(expected)
+src\__tests__\scripts.test.js ::   ● NPM Scripts Optimization › docker:up script exists |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\__tests__\detailedProfile.test.ts ::   ● Detailed Profile Tests › should find user by ID with detailed profile |  |     UNIQUE constraint failed: users.id
+backend\src\__tests__\databaseRole.test.ts ::   ● Database Role Field Tests › should create a user with role field |  |     UNIQUE constraint failed: users.id
+backend\dist\database\__tests__\database.test.js ::   ● Database Initialization › Backup & Recovery › should verify database integrity |  |     expect(received).toBe(expected) // Object.is equality
+backend\dist\__tests__\alertService.test.js ::   ● AlertService › getUnresolvedAlerts › should return only unresolved alerts |  |     expect(received).toBe(expected) // Object.is equality
+backend\src\__tests__\security\jwtAuthentication.security.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\services\__tests__\tokenService.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\security\jwtAuthentication.security.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\services\__tests__\tokenService.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\services\__tests__\garmin.test.js ::   ● Test suite failed to run |  |     TypeError: mockedAxios.create.mockReturnValue is not a function
+backend\src\__tests__\tokenService.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\security.unit.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\__tests__\integration\phase2-integration.test.ts ::   ● Test suite failed to run |  |     Cannot find module '../../src/services/phase2/coachVitalisService' from 'backend/__tests__/integration/phase2-integration.test.ts'
+backend\src\__tests__\tokenController.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\timeout-optimization.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\roleUtils.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\security.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\permissionMiddleware.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\input-validation.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\load.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\integration.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\security.middleware.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\i18n.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\googleFitE2E.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\end-to-end.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\formAnalysis.monolithic.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\csrf.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\biometricRoutes.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\auth.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\tokenService.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\auth.security.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\auth.middleware.comprehensive.test.ts ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\tokenController.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\security.unit.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\timeout-optimization.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\security.simple.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\security.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\roleUtils.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\security.middleware.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\permissionMiddleware.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\integration.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\load.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\input-validation.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\i18n.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\googleFitE2E.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\end-to-end.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\formAnalysis.monolithic.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\csrf.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\auth.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\biometricRoutes.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\auth.security.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\dist\__tests__\auth.middleware.comprehensive.test.js ::   ● Test suite failed to run |  |     JWT_SECRET must be at least 32 characters long for security
+backend\src\__tests__\performance\webhookIngestionRate.perf.test.ts ::   ● Test suite failed to run |  |     Jest worker encountered 4 child process exceptions, exceeding retry limit
+backend\dist\__tests__\integration\websocketRealtimeFlow.e2e.test.js ::   ● Test suite failed to run |  |     Jest worker encountered 4 child process exceptions, exceeding retry limit
+backend\src\__tests__\integration\websocketRealtimeFlow.e2e.test.ts ::   ● Test suite failed to run |  |     Jest worker encountered 4 child process exceptions, exceeding retry limit
+backend\src\__tests__\integration\criticalSignalFlow.e2e.test.ts ::   ● Test suite failed to run |  |     Jest worker encountered 4 child process exceptions, exceeding retry limit

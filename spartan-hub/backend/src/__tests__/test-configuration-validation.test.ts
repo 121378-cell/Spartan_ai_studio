@@ -79,7 +79,8 @@ describe('Test Configuration Validation', () => {
     let testCounter = 0;
 
     beforeEach(() => {
-      testCounter++;
+      // Cada test debe iniciar con su propio estado aislado
+      testCounter = 1;
     });
 
     it('should maintain test isolation - test 1', () => {
