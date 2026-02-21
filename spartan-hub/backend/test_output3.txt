@@ -1,0 +1,44 @@
+
+> backend@1.0.0 test
+> jest
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ­ƒøá´©Å  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  suppress all logs with { quiet: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒôí add observability to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    Added column stressLevel to daily_biometric_summaries
+
+      at addStressLevelColumn (src/database/migrations/005-add-stress-level.ts:16:15)
+
+  console.log
+    Added column stressLevel to daily_biometric_summaries
+
+      at addStressLevelColumn (src/database/migrations/005-add-stress-level.ts:16:15)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+

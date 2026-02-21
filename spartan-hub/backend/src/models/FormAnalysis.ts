@@ -7,42 +7,96 @@ export type ExerciseType = 'squat' | 'deadlift' | 'push_up' | 'overhead_press' |
 export type ExercisePattern = 'squat' | 'hinge' | 'push' | 'pull' | 'lunge' | 'core';
 
 export interface PushUpMetrics {
-    depth: number;
-    backStraightness: number;
-    elbowAngle: number;
-    armExtension: number;
+  depth: number;
+  backStraightness: number;
+  elbowAngle: number;
+  armExtension: number;
 }
 
 export interface PlankMetrics {
-    bodyAlignment: number;
-    coreEngagement: number;
-    hipPosition: number;
-    shoulderStability: number;
-    durationQuality: number;
+  bodyAlignment: number;
+  coreEngagement: number;
+  hipPosition: number;
+  shoulderStability: number;
+  durationQuality: number;
 }
 
 export interface RowMetrics {
-    elbowRetraction: number;
-    backStraightness: number;
-    shoulderBladeMovement: number;
-    torsoAngle: number;
-    gripWidth: number;
+  elbowRetraction: number;
+  backStraightness: number;
+  shoulderBladeMovement: number;
+  torsoAngle: number;
+  gripWidth: number;
 }
 
-export type ExerciseMetrics = PushUpMetrics | PlankMetrics | RowMetrics | Record<string, number | boolean | string>;
+export interface SquatMetrics {
+  depth: number;
+  kneeTracking: number;
+  torsoAngle: number;
+  backStraightness: number;
+  weightDistribution: number;
+}
+
+export interface DeadliftMetrics {
+  backStraightness: number;
+  hipHinge: number;
+  barPath: number;
+  lockout: number;
+}
+
+export interface OverheadPressMetrics {
+  elbowPath: number;
+  torsoStability: number;
+  barPath: number;
+  lockout: number;
+}
+
+export interface BenchPressMetrics {
+  barPath: number;
+  chestTouch: number;
+  elbowAngle: number;
+  lockout: number;
+  shoulderStability: number;
+}
+
+export interface PullUpMetrics {
+  chinOverBar: number;
+  bodySwing: number;
+  armExtension: number;
+  scapularRetraction: number;
+}
+
+export interface LungeMetrics {
+  kneeTracking: number;
+  torsoAngle: number;
+  stepLength: number;
+  depth: number;
+}
+
+export type ExerciseMetrics =
+  | PushUpMetrics
+  | PlankMetrics
+  | RowMetrics
+  | SquatMetrics
+  | DeadliftMetrics
+  | OverheadPressMetrics
+  | BenchPressMetrics
+  | PullUpMetrics
+  | LungeMetrics
+  | Record<string, number | boolean | string>;
 
 export interface FormAnalysisData {
-    id?: string;
-    userId: string;
-    exerciseType: ExerciseType;
-    formScore: number;
-    pattern?: ExercisePattern;
-    metrics: ExerciseMetrics;
-    angles?: Record<string, number>;
-    warnings: string[];
-    recommendations: string[];
-    repCount?: number;
-    createdAt?: number;
+  id?: string;
+  userId: string;
+  exerciseType: ExerciseType;
+  formScore: number;
+  pattern?: ExercisePattern;
+  metrics: ExerciseMetrics;
+  angles?: Record<string, number>;
+  warnings: string[];
+  recommendations: string[];
+  repCount?: number;
+  createdAt?: number;
 }
 
 export class FormAnalysis {

@@ -21,11 +21,11 @@ export function getSecret(
   try {
     // First, try to get the path to the secret file from environment
     const secretFilePath = process.env[secretFileEnvVar];
-    
+
     if (secretFilePath && fs.existsSync(secretFilePath)) {
       // Read the secret from the file
       const secretValue = fs.readFileSync(secretFilePath, 'utf8').trim();
-      
+
       if (secretValue) {
         logger.info(`✅ Secret loaded from file: ${secretFileEnvVar}`, {
           context: 'secrets',
@@ -34,7 +34,7 @@ export function getSecret(
         return secretValue;
       }
     }
-    
+
     // If file is not available or empty, try fallback environment variable
     if (fallbackEnvVar && process.env[fallbackEnvVar]) {
       logger.info(`✅ Secret loaded from environment: ${fallbackEnvVar}`, {
@@ -43,7 +43,7 @@ export function getSecret(
       });
       return process.env[fallbackEnvVar] as string;
     }
-    
+
     const isProduction = process.env.NODE_ENV === 'production';
 
     // If no secret file or environment variable, decide based on environment
@@ -97,7 +97,7 @@ export function isSecretFileAccessible(secretFilePath: string): boolean {
     if (!fs.existsSync(secretFilePath)) {
       return false;
     }
-    
+
     // Check if we can read the file
     fs.accessSync(secretFilePath, fs.constants.R_OK);
     return true;
@@ -135,7 +135,7 @@ export function getOllamaApiKey(): string | undefined {
  * @returns JWT secret or undefined if not available
  */
 export function getJwtSecret(): string | undefined {
-  return getSecret('JWT_SECRET_FILE', 'JWT_SECRET', 'default_jwt_secret_for_dev');
+  return getSecret('JWT_SECRET_FILE', 'JWT_SECRET', 'default_jwt_secret_for_dev_must_be_32_chars');
 }
 
 /**
@@ -143,5 +143,5 @@ export function getJwtSecret(): string | undefined {
  * @returns Session secret or undefined if not available
  */
 export function getSessionSecret(): string | undefined {
-  return getSecret('SESSION_SECRET_FILE', 'SESSION_SECRET', 'default_session_secret_for_dev');
+  return getSecret('SESSION_SECRET_FILE', 'SESSION_SECRET', 'default_session_secret_for_dev_must_be_32_chars');
 }

@@ -12,7 +12,7 @@ const TEST_DB_PATH = path.join(__dirname, '../../data/test.db');
 /**
  * Creates an isolated test database
  */
-export function createTestDatabase(): Database.Database {
+export function createTestDatabase(): Database {
   // Ensure data directory exists
   const dataDir = path.dirname(TEST_DB_PATH);
   if (!fs.existsSync(dataDir)) {
@@ -33,7 +33,7 @@ export function createTestDatabase(): Database.Database {
 /**
  * Initialize test database with schema
  */
-export function initTestSchema(db: Database.Database): void {
+export function initTestSchema(db: Database): void {
   // Users table with role field
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -67,7 +67,7 @@ export function initTestSchema(db: Database.Database): void {
 /**
  * Seed test data
  */
-export function seedTestData(db: Database.Database): void {
+export function seedTestData(db: Database): void {
   const stmt = db.prepare(`
     INSERT INTO users (email, password, name, role)
     VALUES (?, ?, ?, ?)
@@ -80,7 +80,7 @@ export function seedTestData(db: Database.Database): void {
 /**
  * Close and cleanup test database
  */
-export function closeTestDatabase(db: Database.Database): void {
+export function closeTestDatabase(db: Database): void {
   db.close();
   
   // Cleanup WAL files
@@ -101,7 +101,7 @@ export function closeTestDatabase(db: Database.Database): void {
 /**
  * Setup helper for Jest tests
  */
-export function setupTestDb(): { db: Database.Database; cleanup: () => void } {
+export function setupTestDb(): { db: Database; cleanup: () => void } {
   const db = createTestDatabase();
   initTestSchema(db);
   seedTestData(db);

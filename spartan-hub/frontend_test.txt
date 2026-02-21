@@ -1,0 +1,205 @@
+
+> spartan-hub@1.0.0 test
+> npm run test:node && npm run test:components
+
+
+> spartan-hub@1.0.0 test:node
+> jest --config scripts/config/jest.config.js
+
+PASS src/__tests__/entrypoint.test.js
+PASS src/__tests__/suggestionComponents.test.js
+PASS src/services/__tests__/exerciseAnalysisMapper.test.ts
+PASS src/__tests__/scripts.test.js
+PASS src/__tests__/componentImport.test.js
+PASS src/__tests__/errorReportingService.test.js
+  ÔùÅ Console
+
+    console.error
+      [ERROR] Error Report {"component":"TestComponent","message":"Test error message","report":{"id":"err_1771665455909_testuuidm","timestamp":"2026-02-21T09:17:35.909Z","error":"Test error message","errorStack":"Error: Test error message\n    at Function.reportError (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\src\\services\\errorReportingService.ts:46:50)\n    at Object.<anonymous> (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\src\\__tests__\\errorReportingService.test.js:32:42)\n    at Promise.finally.completed (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:1497:10)\n    at _callCircusTest (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:947:3)\n    at C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:857:11)\n    at run (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:1918:21)\n    at jestAdapter (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\runner.js:101:19)\n    at runTestInternal (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-runner\\build\\testWorker.js:275:16)\n    at runTest (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-runner\\build\\testWorker.js:343:7)\n    at Object.worker (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-runner\\build\\testWorker.js:497:12)","component":"TestComponent","userAgent":"Node.js/22","userProfile":{"name":"Test User","email":"[REDACTED]"},"context":{"testContext":"testValue"},"severity":"medium","reportedByUser":true}} {
+        timestamp: '2026-02-21T09:17:35.935Z',
+        level: 'error',
+        message: 'Error Report',
+        service: 'spartan-hub-frontend',
+        correlationId: 'test-uuid-mock-for-testing',
+        context: 'error-reporting',
+        metadata: {
+          component: 'TestComponent',
+          message: 'Test error message',
+          report: {
+            id: 'err_1771665455909_testuuidm',
+            timestamp: '2026-02-21T09:17:35.909Z',
+            error: 'Test error message',
+            errorStack: 'Error: Test error message\n' +
+              '    at Function.reportError (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\src\\services\\errorReportingService.ts:46:50)\n' +
+              '    at Object.<anonymous> (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\src\\__tests__\\errorReportingService.test.js:32:42)\n' +
+              '    at Promise.finally.completed (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:1557:28)\n' +
+              '    at new Promise (<anonymous>)\n' +
+              '    at callAsyncCircusFn (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:1497:10)\n' +
+              '    at _callCircusTest (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:1007:40)\n' +
+              '    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n' +
+              '    at _runTest (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:947:3)\n' +
+              '    at C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:849:7\n' +
+              '    at _runTestsForDescribeBlock (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:862:11)\n' +
+              '    at _runTestsForDescribeBlock (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:857:11)\n' +
+              '    at run (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:761:3)\n' +
+              '    at runAndTransformResultsToJestFormat (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\jestAdapterInit.js:1918:21)\n' +
+              '    at jestAdapter (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-circus\\build\\runner.js:101:19)\n' +
+              '    at runTestInternal (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-runner\\build\\testWorker.js:275:16)\n' +
+              '    at runTest (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-runner\\build\\testWorker.js:343:7)\n' +
+              '    at Object.worker (C:\\Proyectos\\Spartan hub 2.0 - codex - ollama\\spartan-hub\\node_modules\\jest-runner\\build\\testWorker.js:497:12)',
+            component: 'TestComponent',
+            userAgent: 'Node.js/22',
+            url: undefined,
+            userProfile: [Object],
+            context: [Object],
+            severity: 'medium',
+            reportedByUser: true
+          }
+        }
+      }
+
+      160 |     switch (entry.level) {
+      161 |       case LogLevel.ERROR:
+    > 162 |         console.error(fullLogMessage, { ...entry, metadata: entry.metadata || undefined });
+          |                 ^
+      163 |         break;
+      164 |       case LogLevel.WARN:
+      165 |         console.warn(fullLogMessage, { ...entry, metadata: entry.metadata || undefined });
+
+      at FrontendStructuredLogger.writeToConsole (src/utils/logger.ts:162:17)
+      at FrontendStructuredLogger.log (src/utils/logger.ts:141:12)
+      at FrontendStructuredLogger.error (src/utils/logger.ts:215:10)
+      at Function.reportError (src/services/errorReportingService.ts:76:12)
+      at Object.<anonymous> (src/__tests__/errorReportingService.test.js:32:42)
+
+PASS src/services/__tests__/formAnalysisEngine.test.ts
+  ÔùÅ Console
+
+    console.warn
+      [WARN] No analyzer registered for exercise type: custom {
+        timestamp: '2026-02-21T09:17:36.017Z',
+        level: 'warn',
+        message: 'No analyzer registered for exercise type: custom',
+        service: 'spartan-hub-frontend',
+        correlationId: 'test-uuid-mock-for-testing',
+        metadata: undefined
+      }
+
+      163 |         break;
+      164 |       case LogLevel.WARN:
+    > 165 |         console.warn(fullLogMessage, { ...entry, metadata: entry.metadata || undefined });
+          |                 ^
+      166 |         break;
+      167 |       case LogLevel.INFO:
+      168 |         console.info(fullLogMessage, { ...entry, metadata: entry.metadata || undefined });
+
+      at FrontendStructuredLogger.writeToConsole (src/utils/logger.ts:165:17)
+      at FrontendStructuredLogger.log (src/utils/logger.ts:141:12)
+      at FrontendStructuredLogger.warn (src/utils/logger.ts:222:10)
+      at FormAnalysisEngine.analyzeForm (src/services/formAnalysisEngine.ts:114:20)
+      at Object.<anonymous> (src/services/__tests__/formAnalysisEngine.test.ts:32:31)
+
+PASS src/services/__tests__/exerciseAnalyzers.test.ts
+  ÔùÅ Console
+
+    console.warn
+      [WARN] No analyzer registered for exercise type: unsupported_exercise {
+        timestamp: '2026-02-21T09:17:36.058Z',
+        level: 'warn',
+        message: 'No analyzer registered for exercise type: unsupported_exercise',
+        service: 'spartan-hub-frontend',
+        correlationId: 'test-uuid-mock-for-testing',
+        metadata: undefined
+      }
+
+      163 |         break;
+      164 |       case LogLevel.WARN:
+    > 165 |         console.warn(fullLogMessage, { ...entry, metadata: entry.metadata || undefined });
+          |                 ^
+      166 |         break;
+      167 |       case LogLevel.INFO:
+      168 |         console.info(fullLogMessage, { ...entry, metadata: entry.metadata || undefined });
+
+      at FrontendStructuredLogger.writeToConsole (src/utils/logger.ts:165:17)
+      at FrontendStructuredLogger.log (src/utils/logger.ts:141:12)
+      at FrontendStructuredLogger.warn (src/utils/logger.ts:222:10)
+      at FormAnalysisEngine.analyzeForm (src/services/formAnalysisEngine.ts:114:20)
+      at Object.<anonymous> (src/services/__tests__/exerciseAnalyzers.test.ts:86:43)
+
+PASS src/__tests__/utils/formAnalysis.test.ts
+  ÔùÅ Console
+
+    console.log
+      DEBUG Frame 0 - backAngle: 0 threshold: 15 kneeExtension: 0 threshold: 160
+
+      at src/utils/formAnalysis.ts:220:15
+          at Array.forEach (<anonymous>)
+
+    console.log
+      DEBUG Frame 0 - backAngle: 0 threshold: 15 kneeExtension: 0 threshold: 160
+
+      at src/utils/formAnalysis.ts:220:15
+          at Array.forEach (<anonymous>)
+
+    console.log
+      DEBUG Frame 0 - backAngle: 0 threshold: 15 kneeExtension: 0 threshold: 160
+
+      at src/utils/formAnalysis.ts:220:15
+          at Array.forEach (<anonymous>)
+
+    console.log
+      DEBUG Frame 0 - backAngle: 20.556045219583453 threshold: 15 kneeExtension: 0 threshold: 160
+
+      at src/utils/formAnalysis.ts:220:15
+          at Array.forEach (<anonymous>)
+
+    console.log
+      DEBUG Frame 0 - backAngle: 0 threshold: 15 kneeExtension: 0 threshold: 160
+
+      at src/utils/formAnalysis.ts:220:15
+          at Array.forEach (<anonymous>)
+
+    console.log
+      DEBUG Frame 0 - backAngle: 0 threshold: 15 kneeExtension: 0 threshold: 160
+
+      at src/utils/formAnalysis.ts:220:15
+          at Array.forEach (<anonymous>)
+
+    console.log
+      DEBUG Frame 0 - backAngle: 20.556045219583453 threshold: 15 kneeExtension: 0 threshold: 160
+
+      at src/utils/formAnalysis.ts:220:15
+          at Array.forEach (<anonymous>)
+
+PASS src/services/__tests__/RowAnalyzer.test.ts
+PASS src/__tests__/indexHtml.test.js
+PASS src/services/__tests__/SquatAnalyzer.test.ts
+PASS src/services/__tests__/analyzers.test.ts
+PASS src/__tests__/inputSanitizer.test.ts
+PASS src/__tests__/useSuggestions.test.js
+PASS src/__tests__/suggestionService.test.js
+PASS src/services/__tests__/DeadliftAnalyzer.test.ts
+PASS src/__tests__/publicAssets.test.js
+PASS src/services/__tests__/LungeAnalyzer.test.ts
+PASS src/__tests__/errorReportButton.test.js
+PASS src/services/__tests__/PushUpAnalyzer.test.ts
+PASS src/__tests__/aiService.test.js
+
+Test Suites: 22 passed, 22 total
+Tests:       104 passed, 104 total
+Snapshots:   0 total
+Time:        3.535 s
+Ran all test suites.
+
+> spartan-hub@1.0.0 test:components
+> jest --config scripts/config/jest.config.components.js
+
+PASS src/__tests__/components/FormAnalysisModal.test.tsx
+PASS src/__tests__/AiErrorScreen.test.tsx
+PASS src/__tests__/components/VideoCapture.test.tsx
+
+Test Suites: 3 passed, 3 total
+Tests:       28 passed, 28 total
+Snapshots:   0 total
+Time:        2.457 s
+Ran all test suites.

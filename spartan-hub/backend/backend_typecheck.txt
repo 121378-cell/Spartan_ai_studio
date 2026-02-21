@@ -1,0 +1,5 @@
+src/__mocks__/testDatabase.ts(15,39): error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+src/__mocks__/testDatabase.ts(36,36): error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+src/__mocks__/testDatabase.ts(70,34): error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+src/__mocks__/testDatabase.ts(83,39): error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
+src/__mocks__/testDatabase.ts(104,38): error TS2702: 'Database' only refers to a type, but is being used as a namespace here.
