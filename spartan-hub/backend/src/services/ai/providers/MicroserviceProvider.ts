@@ -7,6 +7,7 @@ import { executeAiOperationWithReconnection, initializeAiServiceMonitoring } fro
 import { executeAxiosWithRetry } from '../../../utils/retryHandler';
 import { logger } from '../../../utils/logger';
 import { alertService, AlertType, AlertSeverity } from '../../alertService';
+import { withConditionalCache } from '../../../utils/cacheService';
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8001';
 
@@ -48,25 +49,42 @@ export class MicroserviceProvider extends BaseProvider {
     try {
       const startTime = Date.now();
 
-      const response = await executeAiOperationWithReconnection(() => {
-        return executeAxiosWithRetry<any>(
-          axios,
-          {
-            method: 'POST',
-            url: `${AI_SERVICE_URL}/predict_alert`,
-            data: aiInput,
-            timeout: 30000,
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          },
-          AI_SERVICE_RETRY_OPTIONS
-        );
-      });
+      const aiResponse = await withConditionalCache<AiAlertResponse>(
+        '/ai/alert',
+        {
+          name: data.name,
+          email: data.email,
+          stats: data.stats,
+          keystoneHabits: data.keystoneHabits
+        },
+        async () => {
+          const response = await executeAiOperationWithReconnection(() => {
+            return executeAxiosWithRetry<any>(
+              axios,
+              {
+                method: 'POST',
+                url: `${AI_SERVICE_URL}/predict_alert`,
+                data: aiInput,
+                timeout: 30000,
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              },
+              AI_SERVICE_RETRY_OPTIONS
+            );
+          });
 
-      if (!response) {
-        throw new Error('Failed to get response from AI service');
-      }
+          if (!response) {
+            throw new Error('Failed to get response from AI service');
+          }
+
+          return response as AiAlertResponse;
+        },
+        'ai/alert',
+        ['ai/alert', 'ai/alert/microservice'],
+        undefined,
+        result => !result.fallback_used && !result.error
+      );
 
       const processingTime = Date.now() - startTime;
       logger.debug('AI prediction processed', { 
@@ -74,8 +92,6 @@ export class MicroserviceProvider extends BaseProvider {
         metadata: { processingTime } 
       });
 
-      const aiResponse: AiAlertResponse = response;
-      
       if (typeof aiResponse.alerta_roja === 'boolean' && 
           typeof aiResponse.processing_time_ms === 'number') {
         return {

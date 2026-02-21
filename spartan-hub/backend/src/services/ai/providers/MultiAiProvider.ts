@@ -12,6 +12,7 @@ import { OpenAIProvider } from './OpenAIProvider';
 import { AnthropicProvider } from './AnthropicProvider';
 import { GoogleAiProvider } from './GoogleAiProvider';
 import { executeWithRetry } from '../../../utils/retryHandler';
+import { alertService, AlertType, AlertSeverity } from '../../alertService';
 
 type ProviderEntry = {
   id: AiProviderId;
@@ -19,8 +20,23 @@ type ProviderEntry = {
   limiter: RateLimiter;
 };
 
+type CircuitState = 'closed' | 'open' | 'half_open';
+
+type CircuitBreaker = {
+  state: CircuitState;
+  failureCount: number;
+  lastFailureTime: number;
+  nextAttemptTime: number;
+  halfOpenTrialCount: number;
+};
+
+const CIRCUIT_BREAKER_FAILURE_THRESHOLD = parseInt(process.env.AI_CB_FAILURE_THRESHOLD || '3', 10);
+const CIRCUIT_BREAKER_RESET_TIMEOUT_MS = parseInt(process.env.AI_CB_RESET_TIMEOUT_MS || '60000', 10);
+const CIRCUIT_BREAKER_HALF_OPEN_MAX_TRIALS = parseInt(process.env.AI_CB_HALF_OPEN_MAX_TRIALS || '1', 10);
+
 export class MultiAiProvider implements IAiProvider {
   private providers: ProviderEntry[];
+  private circuitBreakers: Map<AiProviderId, CircuitBreaker>;
 
   constructor() {
     const config = getAiConfig();
@@ -39,6 +55,17 @@ export class MultiAiProvider implements IAiProvider {
         id: 'microservice',
         instance: new MicroserviceProvider(),
         limiter: this.createRateLimiter('microservice', config.providers.microservice.rateLimitPerMinute)
+      });
+    }
+
+    this.circuitBreakers = new Map();
+    for (const entry of this.providers) {
+      this.circuitBreakers.set(entry.id, {
+        state: 'closed',
+        failureCount: 0,
+        lastFailureTime: 0,
+        nextAttemptTime: 0,
+        halfOpenTrialCount: 0
       });
     }
   }
@@ -61,8 +88,18 @@ export class MultiAiProvider implements IAiProvider {
   async predictAlert(data: UserProfile): Promise<FallbackResponse> {
     const errors: string[] = [];
     const config = getAiConfig();
+    let lastProviderId: AiProviderId | null = null;
 
     for (const entry of this.providers) {
+      if (!this.canUseProvider(entry.id)) {
+        errors.push(`Circuit open for ${entry.id}`);
+        logger.warn('AI provider skipped due to open circuit breaker', {
+          context: 'MultiAiProvider',
+          metadata: { provider: entry.id }
+        });
+        continue;
+      }
+
       const limiterResult = entry.limiter.checkRateLimit('global');
       if (!limiterResult.isAllowed) {
         logger.warn('AI provider rate limit exceeded', {
@@ -78,6 +115,16 @@ export class MultiAiProvider implements IAiProvider {
 
       const startTime = Date.now();
       try {
+        if (lastProviderId && lastProviderId !== entry.id) {
+          logger.info('AI provider failover activated for alert prediction', {
+            context: 'MultiAiProvider',
+            metadata: {
+              from: lastProviderId,
+              to: entry.id
+            }
+          });
+        }
+
         const response = await executeWithRetry(
           async () => entry.instance.predictAlert(data),
           {
@@ -95,13 +142,16 @@ export class MultiAiProvider implements IAiProvider {
         this.recordMetrics(entry.id, duration, 'success');
 
         if (typeof response.alerta_roja === 'boolean' && typeof response.processing_time_ms === 'number') {
+          this.handleSuccess(entry.id);
           return response;
         }
 
+        this.handleFailure(entry.id);
         errors.push(`Invalid response from ${entry.id}`);
       } catch (error) {
         const duration = Date.now() - startTime;
         this.recordMetrics(entry.id, duration, 'error');
+        this.handleFailure(entry.id);
         const message = error instanceof Error ? error.message : String(error);
         logger.error('AI provider error during alert prediction', {
           context: 'MultiAiProvider',
@@ -109,9 +159,22 @@ export class MultiAiProvider implements IAiProvider {
         });
         errors.push(`${entry.id}: ${message}`);
       }
+
+      lastProviderId = entry.id;
     }
 
     const errorMessage = errors.join(' | ') || 'No AI providers available';
+
+    alertService.createAlert(
+      AlertType.AI_SERVICE_FAILURE,
+      AlertSeverity.HIGH,
+      'All AI providers failed for alert prediction',
+      'MultiAiProvider',
+      {
+        error: errorMessage,
+        providers: this.providers.map(p => p.id)
+      }
+    );
 
     return {
       alerta_roja: false,
@@ -124,8 +187,18 @@ export class MultiAiProvider implements IAiProvider {
   async generateDecision(context: DecisionContext): Promise<DecisionOutput | null> {
     const errors: string[] = [];
     const config = getAiConfig();
+    let lastProviderId: AiProviderId | null = null;
 
     for (const entry of this.providers) {
+      if (!this.canUseProvider(entry.id)) {
+        errors.push(`Circuit open for ${entry.id}`);
+        logger.warn('AI provider skipped due to open circuit breaker', {
+          context: 'MultiAiProvider',
+          metadata: { provider: entry.id }
+        });
+        continue;
+      }
+
       const limiterResult = entry.limiter.checkRateLimit('global');
       if (!limiterResult.isAllowed) {
         logger.warn('AI provider rate limit exceeded', {
@@ -141,6 +214,16 @@ export class MultiAiProvider implements IAiProvider {
 
       const startTime = Date.now();
       try {
+        if (lastProviderId && lastProviderId !== entry.id) {
+          logger.info('AI provider failover activated for decision generation', {
+            context: 'MultiAiProvider',
+            metadata: {
+              from: lastProviderId,
+              to: entry.id
+            }
+          });
+        }
+
         const result = await executeWithRetry(
           async () => entry.instance.generateDecision(context),
           {
@@ -158,13 +241,16 @@ export class MultiAiProvider implements IAiProvider {
         this.recordMetrics(entry.id, duration, result ? 'success' : 'error');
 
         if (result) {
+          this.handleSuccess(entry.id);
           return result;
         }
 
+        this.handleFailure(entry.id);
         errors.push(`Null decision from ${entry.id}`);
       } catch (error) {
         const duration = Date.now() - startTime;
         this.recordMetrics(entry.id, duration, 'error');
+        this.handleFailure(entry.id);
         const message = error instanceof Error ? error.message : String(error);
         logger.error('AI provider error during decision generation', {
           context: 'MultiAiProvider',
@@ -172,6 +258,8 @@ export class MultiAiProvider implements IAiProvider {
         });
         errors.push(`${entry.id}: ${message}`);
       }
+
+      lastProviderId = entry.id;
     }
 
     logger.error('All AI providers failed for decision generation', {
@@ -183,16 +271,113 @@ export class MultiAiProvider implements IAiProvider {
   }
 
   async checkHealth(): Promise<boolean> {
+    let anyHealthy = false;
+
     for (const entry of this.providers) {
       try {
         const healthy = await entry.instance.checkHealth();
         if (healthy) {
-          return true;
+          anyHealthy = true;
+          this.resetCircuit(entry.id);
+        } else {
+          this.handleFailure(entry.id);
         }
       } catch {
+        this.handleFailure(entry.id);
       }
     }
-    return false;
+
+    return anyHealthy;
+  }
+
+  private canUseProvider(id: AiProviderId): boolean {
+    const circuit = this.circuitBreakers.get(id);
+    if (!circuit) {
+      return true;
+    }
+
+    const now = Date.now();
+
+    if (circuit.state === 'open') {
+      if (now >= circuit.nextAttemptTime) {
+        circuit.state = 'half_open';
+        circuit.halfOpenTrialCount = 0;
+        this.circuitBreakers.set(id, circuit);
+        return true;
+      }
+      return false;
+    }
+
+    if (circuit.state === 'half_open' && circuit.halfOpenTrialCount >= CIRCUIT_BREAKER_HALF_OPEN_MAX_TRIALS) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private handleSuccess(id: AiProviderId): void {
+    const circuit = this.circuitBreakers.get(id);
+    if (!circuit) {
+      return;
+    }
+
+    circuit.state = 'closed';
+    circuit.failureCount = 0;
+    circuit.lastFailureTime = 0;
+    circuit.nextAttemptTime = 0;
+    circuit.halfOpenTrialCount = 0;
+    this.circuitBreakers.set(id, circuit);
+  }
+
+  private handleFailure(id: AiProviderId): void {
+    const now = Date.now();
+    const existing = this.circuitBreakers.get(id);
+    const circuit: CircuitBreaker = existing || {
+      state: 'closed',
+      failureCount: 0,
+      lastFailureTime: 0,
+      nextAttemptTime: 0,
+      halfOpenTrialCount: 0
+    };
+
+    circuit.failureCount += 1;
+    circuit.lastFailureTime = now;
+
+    if (circuit.state === 'half_open') {
+      circuit.halfOpenTrialCount += 1;
+    }
+
+    if (circuit.failureCount >= CIRCUIT_BREAKER_FAILURE_THRESHOLD) {
+      circuit.state = 'open';
+      circuit.nextAttemptTime = now + CIRCUIT_BREAKER_RESET_TIMEOUT_MS;
+      logger.warn('AI provider circuit opened', {
+        context: 'MultiAiProvider',
+        metadata: { provider: id, failureCount: circuit.failureCount }
+      });
+    }
+
+    this.circuitBreakers.set(id, circuit);
+  }
+
+  private resetCircuit(id: AiProviderId): void {
+    const circuit = this.circuitBreakers.get(id);
+    if (!circuit) {
+      return;
+    }
+
+    if (circuit.state !== 'closed') {
+      logger.info('AI provider circuit reset after successful health check', {
+        context: 'MultiAiProvider',
+        metadata: { provider: id }
+      });
+    }
+
+    circuit.state = 'closed';
+    circuit.failureCount = 0;
+    circuit.lastFailureTime = 0;
+    circuit.nextAttemptTime = 0;
+    circuit.halfOpenTrialCount = 0;
+    this.circuitBreakers.set(id, circuit);
   }
 
   private createProviderInstance(id: AiProviderId): IAiProvider {
@@ -242,4 +427,3 @@ export class MultiAiProvider implements IAiProvider {
     }
   }
 }
-
