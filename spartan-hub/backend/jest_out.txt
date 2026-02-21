@@ -1,0 +1,80 @@
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ­ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒùé´©Å backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒùé´©Å backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒøá´©Å  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    Added column stressLevel to daily_biometric_summaries
+
+      at addStressLevelColumn (src/database/migrations/005-add-stress-level.ts:16:15)
+
+  console.log
+    [DEBUG] findSessionByToken checking DB Name: C:\Proyectos\Spartan hub 2.0 - codex - ollama\spartan-hub\backend\data\test_spartan_1.db
+
+      at Object.findSessionByToken (src/services/sqliteDatabaseService.ts:309:13)
+
+  console.log
+    [DEBUG] findSessionByToken ALL SESSIONS: [
+      {
+        id: 'test-session-form-1771668654891',
+        userId: '7818fe88-fe0a-44aa-9705-260bdf4b263f',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3ODE4ZmU4OC1mZTBhLTQ0YWEtOTcwNS0yNjBiZGY0YjI2M2YiLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6InRlc3Qtc2Vzc2lvbi1mb3JtLTE3NzE2Njg2NTQ4OTEiLCJ0b2tlblR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3NzE2Njg2NTQsImV4cCI6MTc3MTY2OTU1NCwianRpIjoiN2M2MTAyN2YtOTcwYi00ZjZiLWI3YWYtNmFlMzgxYjY3MmQ1In0.n92gRJ-QaOInXrish-9HtLH3zFwMFmazJoOcYvbTdQg',
+        userAgent: 'test-agent',
+        ipAddress: '127.0.0.1',
+        createdAt: '2026-02-21T10:10:54.952Z',
+        expiresAt: '2026-02-21T11:10:54.952Z',
+        lastActivityAt: '2026-02-21T10:10:54.952Z',
+        isActive: 1
+      }
+    ]
+
+      at Object.findSessionByToken (src/services/sqliteDatabaseService.ts:311:13)
+
+  console.log
+    [DEBUG] findSessionByToken result for token eyJhbGciOi...: true
+
+      at Object.findSessionByToken (src/services/sqliteDatabaseService.ts:314:13)
+
+PASS src/__tests__/formAnalysis.monolithic.test.ts (24.191 s)
+  Form Analysis Monolithic API
+    ÔêÜ should save a monolithic form analysis and update ML (77 ms)
+    ÔêÜ should return 401 if unauthorized (8 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        24.537 s
+Ran all test suites matching src/__tests__/formAnalysis.monolithic.test.ts.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
