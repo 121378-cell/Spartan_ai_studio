@@ -290,14 +290,26 @@ export class FormAnalysisService {
     const feedbackParts: string[] = [];
 
     switch (exerciseType) {
-    case 'push_up':
-      return this.generatePushUpFeedback(angles, metrics);
-    case 'plank':
-      return this.generatePlankFeedback(angles, metrics);
-    case 'row':
-      return this.generateRowFeedback(angles, metrics);
-    default:
-      return this.generateGenericFeedback(angles, metrics);
+      case 'push_up':
+        return this.generatePushUpFeedback(angles, metrics);
+      case 'plank':
+        return this.generatePlankFeedback(angles, metrics);
+      case 'row':
+        return this.generateRowFeedback(angles, metrics);
+      case 'squat':
+        return this.generateSquatFeedback(angles, metrics);
+      case 'deadlift':
+        return this.generateDeadliftFeedback(angles, metrics);
+      case 'overhead_press':
+        return this.generateOverheadPressFeedback(angles, metrics);
+      case 'bench_press':
+        return this.generateBenchPressFeedback(angles, metrics);
+      case 'pull_up':
+        return this.generatePullUpFeedback(angles, metrics);
+      case 'lunge':
+        return this.generateLungeFeedback(angles, metrics);
+      default:
+        return this.generateGenericFeedback(angles, metrics);
     }
   }
 
@@ -321,7 +333,7 @@ export class FormAnalysisService {
       feedbackParts.push('Excellent push-up form!');
     }
 
-    return `${feedbackParts.join('. ')  }.`;
+    return `${feedbackParts.join('. ')}.`;
   }
 
   private generatePlankFeedback(angles: any, metrics: any): string {
@@ -344,7 +356,7 @@ export class FormAnalysisService {
       feedbackParts.push('Perfect plank position maintained!');
     }
 
-    return `${feedbackParts.join('. ')  }.`;
+    return `${feedbackParts.join('. ')}.`;
   }
 
   private generateRowFeedback(angles: any, metrics: any): string {
@@ -367,7 +379,61 @@ export class FormAnalysisService {
       feedbackParts.push('Excellent row technique with great scapular retraction!');
     }
 
-    return `${feedbackParts.join('. ')  }.`;
+    return `${feedbackParts.join('. ')}.`;
+  }
+
+  private generateSquatFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+    if (metrics?.depth !== undefined && metrics.depth < 0.8) feedbackParts.push('Try to squat deeper, aiming for parallel');
+    if (metrics?.kneeTracking !== undefined && metrics.kneeTracking < 0.8) feedbackParts.push('Keep knees tracking over your toes');
+    if (metrics?.backStraightness !== undefined && metrics.backStraightness < 0.8) feedbackParts.push('Keep your chest up and back straight');
+    if (feedbackParts.length === 0) feedbackParts.push('Great squat form!');
+    return `${feedbackParts.join('. ')}.`;
+  }
+
+  private generateDeadliftFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+    if (metrics?.backStraightness !== undefined && metrics.backStraightness < 0.85) feedbackParts.push('Maintain a flat back throughout the pull');
+    if (metrics?.barPath !== undefined && metrics.barPath < 0.8) feedbackParts.push('Keep the bar close to your body');
+    if (metrics?.lockout !== undefined && metrics.lockout < 0.9) feedbackParts.push('Ensure full hip and knee extension at the top');
+    if (feedbackParts.length === 0) feedbackParts.push('Strong deadlift execution!');
+    return `${feedbackParts.join('. ')}.`;
+  }
+
+  private generateBenchPressFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+    if (metrics?.barPath !== undefined && metrics.barPath < 0.8) feedbackParts.push('Maintain a controlled, slightly arched bar path');
+    if (metrics?.elbowAngle !== undefined && metrics.elbowAngle > 75) feedbackParts.push('Tuck your elbows slightly on the descent');
+    if (metrics?.chestTouch !== undefined && metrics.chestTouch < 0.8) feedbackParts.push('Bring the bar all the way to your chest');
+    if (feedbackParts.length === 0) feedbackParts.push('Solid bench press technique!');
+    return `${feedbackParts.join('. ')}.`;
+  }
+
+  private generateOverheadPressFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+    if (metrics?.torsoStability !== undefined && metrics.torsoStability < 0.8) feedbackParts.push('Brace your core to prevent excessive leaning back');
+    if (metrics?.barPath !== undefined && metrics.barPath < 0.8) feedbackParts.push('Press the bar straight up over your mid-foot');
+    if (metrics?.lockout !== undefined && metrics.lockout < 0.9) feedbackParts.push('Fully extend elbows at the top of the press');
+    if (feedbackParts.length === 0) feedbackParts.push('Excellent overhead pressing form!');
+    return `${feedbackParts.join('. ')}.`;
+  }
+
+  private generatePullUpFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+    if (metrics?.chinOverBar !== undefined && metrics.chinOverBar < 0.8) feedbackParts.push('Pull until your chin clears the bar');
+    if (metrics?.bodySwing !== undefined && metrics.bodySwing > 0.3) feedbackParts.push('Reduce body swing to recruit strictly your back and arms');
+    if (metrics?.armExtension !== undefined && metrics.armExtension < 0.8) feedbackParts.push('Fully extend arms at the bottom of the movement');
+    if (feedbackParts.length === 0) feedbackParts.push('Great controlled pull-ups!');
+    return `${feedbackParts.join('. ')}.`;
+  }
+
+  private generateLungeFeedback(angles: any, metrics: any): string {
+    const feedbackParts: string[] = [];
+    if (metrics?.kneeTracking !== undefined && metrics.kneeTracking < 0.8) feedbackParts.push('Ensure front knee tracks over the toes, avoiding caving inwards');
+    if (metrics?.torsoAngle !== undefined && metrics.torsoAngle < 0.8) feedbackParts.push('Keep torso upright during the lunge');
+    if (metrics?.depth !== undefined && metrics.depth < 0.8) feedbackParts.push('Lower your back knee closer to the ground');
+    if (feedbackParts.length === 0) feedbackParts.push('Perfect lunge mechanics!');
+    return `${feedbackParts.join('. ')}.`;
   }
 
   private generateGenericFeedback(angles: any, metrics: any): string {
@@ -406,7 +472,7 @@ export class FormAnalysisService {
     }
 
     return feedbackParts.length > 0
-      ? `${feedbackParts.join('. ')  }.`
+      ? `${feedbackParts.join('. ')}.`
       : 'Good form overall!';
   }
 
@@ -425,17 +491,35 @@ export class FormAnalysisService {
 
       // Generate exercise-specific feedback
       switch (exerciseType) {
-      case 'push_up':
-        this.generatePushUpAutomaticFeedback(repData, feedbackItems);
-        break;
-      case 'plank':
-        this.generatePlankAutomaticFeedback(repData, feedbackItems);
-        break;
-      case 'row':
-        this.generateRowAutomaticFeedback(repData, feedbackItems);
-        break;
-      default:
-        this.generateGenericAutomaticFeedback(repData, feedbackItems);
+        case 'push_up':
+          this.generatePushUpAutomaticFeedback(repData, feedbackItems);
+          break;
+        case 'plank':
+          this.generatePlankAutomaticFeedback(repData, feedbackItems);
+          break;
+        case 'row':
+          this.generateRowAutomaticFeedback(repData, feedbackItems);
+          break;
+        case 'squat':
+          this.generateSquatAutomaticFeedback(repData, feedbackItems);
+          break;
+        case 'deadlift':
+          this.generateDeadliftAutomaticFeedback(repData, feedbackItems);
+          break;
+        case 'bench_press':
+          this.generateBenchPressAutomaticFeedback(repData, feedbackItems);
+          break;
+        case 'overhead_press':
+          this.generateOverheadPressAutomaticFeedback(repData, feedbackItems);
+          break;
+        case 'pull_up':
+          this.generatePullUpAutomaticFeedback(repData, feedbackItems);
+          break;
+        case 'lunge':
+          this.generateLungeAutomaticFeedback(repData, feedbackItems);
+          break;
+        default:
+          this.generateGenericAutomaticFeedback(repData, feedbackItems);
       }
 
       // Add encouragement for good performance
@@ -607,6 +691,78 @@ export class FormAnalysisService {
           suggestion: 'Maintain consistent hinge angle throughout exercise',
           severity: 'low'
         });
+      }
+    }
+  }
+
+  private generateSquatAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.depth !== undefined && repData.metrics.depth < 0.8) {
+        feedbackItems.push({ feedbackType: 'correction', bodyPart: 'legs', issue: 'Insufficient squat depth', suggestion: 'Try to squat deeper, aiming to get thighs parallel to the ground', severity: 'medium' });
+      }
+      if (repData.metrics.kneeTracking !== undefined && repData.metrics.kneeTracking < 0.8) {
+        feedbackItems.push({ feedbackType: 'warning', bodyPart: 'knees', issue: 'Knees caving inwards', suggestion: 'Push your knees out to track over your toes', severity: 'high' });
+      }
+      if (repData.metrics.backStraightness !== undefined && repData.metrics.backStraightness < 0.8) {
+        feedbackItems.push({ feedbackType: 'warning', bodyPart: 'back', issue: 'Rounding of the back', suggestion: 'Keep your chest up and back straight throughout the movement', severity: 'high' });
+      }
+    }
+  }
+
+  private generateDeadliftAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.backStraightness !== undefined && repData.metrics.backStraightness < 0.85) {
+        feedbackItems.push({ feedbackType: 'warning', bodyPart: 'back', issue: 'Rounded back during pull', suggestion: 'Maintain a flat, neutral spine engaging your core', severity: 'high' });
+      }
+      if (repData.metrics.barPath !== undefined && repData.metrics.barPath < 0.8) {
+        feedbackItems.push({ feedbackType: 'correction', bodyPart: 'arms', issue: 'Bar drifting away', suggestion: 'Keep the bar as close to your legs as possible', severity: 'medium' });
+      }
+      if (repData.metrics.lockout !== undefined && repData.metrics.lockout < 0.9) {
+        feedbackItems.push({ feedbackType: 'tip', bodyPart: 'hips', issue: 'Incomplete lockout', suggestion: 'Ensure you fully extend hips and squeeze glutes at the top', severity: 'low' });
+      }
+    }
+  }
+
+  private generateBenchPressAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.barPath !== undefined && repData.metrics.barPath < 0.8) {
+        feedbackItems.push({ feedbackType: 'correction', bodyPart: 'arms', issue: 'Inconsistent bar path', suggestion: 'Press the bar in a slight arc from the chest tracking over your shoulders', severity: 'medium' });
+      }
+      if (repData.metrics.elbowAngle !== undefined && repData.metrics.elbowAngle > 75) {
+        feedbackItems.push({ feedbackType: 'warning', bodyPart: 'elbows', issue: 'Elbows flared excessively', suggestion: 'Tuck your elbows to about 45-60 degrees to protect shoulders', severity: 'high' });
+      }
+    }
+  }
+
+  private generateOverheadPressAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.torsoStability !== undefined && repData.metrics.torsoStability < 0.8) {
+        feedbackItems.push({ feedbackType: 'warning', bodyPart: 'core', issue: 'Excessive leaning back', suggestion: 'Squeeze your glutes and brace your core so you press without bending back', severity: 'high' });
+      }
+      if (repData.metrics.lockout !== undefined && repData.metrics.lockout < 0.9) {
+        feedbackItems.push({ feedbackType: 'correction', bodyPart: 'arms', issue: 'Incomplete press', suggestion: 'Press all the way up until your elbows are fully locked', severity: 'medium' });
+      }
+    }
+  }
+
+  private generatePullUpAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.chinOverBar !== undefined && repData.metrics.chinOverBar < 0.8) {
+        feedbackItems.push({ feedbackType: 'correction', bodyPart: 'back', issue: 'Not pulling high enough', suggestion: 'Try to pull until your chin is over the bar for a full rep', severity: 'medium' });
+      }
+      if (repData.metrics.bodySwing !== undefined && repData.metrics.bodySwing > 0.3) {
+        feedbackItems.push({ feedbackType: 'tip', bodyPart: 'core', issue: 'Excessive swinging (kipping)', suggestion: 'Engage your core to maintain strict movement', severity: 'low' });
+      }
+    }
+  }
+
+  private generateLungeAutomaticFeedback(repData: any, feedbackItems: any[]): void {
+    if (repData.metrics) {
+      if (repData.metrics.kneeTracking !== undefined && repData.metrics.kneeTracking < 0.8) {
+        feedbackItems.push({ feedbackType: 'warning', bodyPart: 'knees', issue: 'Front knee caving inwards', suggestion: 'Ensure your front knee tracks in line with your toes', severity: 'high' });
+      }
+      if (repData.metrics.depth !== undefined && repData.metrics.depth < 0.8) {
+        feedbackItems.push({ feedbackType: 'correction', bodyPart: 'legs', issue: 'Shallow lunge depth', suggestion: 'Lower your back knee until it is just above the floor', severity: 'medium' });
       }
     }
   }

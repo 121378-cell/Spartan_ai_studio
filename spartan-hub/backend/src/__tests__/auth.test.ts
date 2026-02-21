@@ -88,7 +88,7 @@ describe('Auth Middleware Tests', () => {
     it('should return 401 when no token is provided', async () => {
       const res = await request(app).get('/api/governance/health');
       expect(res.status).toBe(401);
-      expect(res.body.message).toContain('Access denied');
+      expect(res.body.message).toContain('No token provided');
     });
 
     it('should return 401 when invalid token is provided', async () => {

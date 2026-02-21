@@ -37,7 +37,22 @@ import { MLInferenceService } from '../ml/services/mlInferenceService';
 // Mock dependencies
 jest.mock('../ml/models/injuryPredictionModel');
 jest.mock('../ml/services/mlInferenceService');
-jest.mock('../models/BiometricData');
+jest.mock('../models/BiometricData', () => {
+  const mockSort = jest.fn().mockResolvedValue([
+    {
+      userId: 'user-test-123',
+      date: new Date().toISOString().slice(0, 10),
+    },
+  ]);
+
+  return {
+    BiometricModel: {
+      find: jest.fn(() => ({
+        sort: mockSort,
+      })),
+    },
+  };
+});
 
 describe('ML Injury Prediction Routes E2E', () => {
   let app: any;

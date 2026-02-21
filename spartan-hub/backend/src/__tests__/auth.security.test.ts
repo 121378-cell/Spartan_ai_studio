@@ -421,7 +421,7 @@ describe('Security and Authentication Tests', () => {
       expect(res.headers['x-content-type-options']).toBe('nosniff');
 
       expect(res.headers).toHaveProperty('x-frame-options');
-      expect(res.headers['x-frame-options']).toBe('SAMEORIGIN');
+      expect(res.headers['x-frame-options']).toBe('DENY');
 
       expect(res.headers).toHaveProperty('x-xss-protection');
       expect(res.headers['x-xss-protection']).toBe('1; mode=block');

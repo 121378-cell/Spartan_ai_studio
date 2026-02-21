@@ -9,17 +9,17 @@ import mlPerformanceForecastRoutes from './mlPerformanceForecastRoutes';
 import { PerformanceForecastModel } from '../ml/models/performanceForecastModel';
 import { DailyBiometrics } from '../models/BiometricData';
 
-// Mock dependencies
-jest.mock('../ml/models/performanceForecastModel');
-jest.mock('../models/BiometricData');
+const mockSort = jest.fn();
 
-// Mock BiometricModel (placeholder for now)
-const mockBiometricModel = {
-  find: jest.fn().mockResolvedValue([]),
-};
+jest.mock('../ml/models/performanceForecastModel');
+
 jest.mock('../models/BiometricData', () => ({
   DailyBiometrics: {},
-  BiometricModel: mockBiometricModel,
+  BiometricModel: {
+    find: () => ({
+      sort: mockSort,
+    }),
+  },
 }));
 jest.mock('../middleware/auth', () => ({
   authenticate: (req: any, res: any, next: any) => {
@@ -49,12 +49,19 @@ describe('ML Performance Forecast Routes E2E', () => {
 
   describe('POST /api/ml/performance-forecast', () => {
     test('should generate 12-week forecast with valid biometric data', async () => {
-      const mockBiometrics = Array.from({ length: 84 }, (_, i) => ({
+      const mockBiometrics: Partial<DailyBiometrics>[] = Array.from({ length: 84 }, (_, i) => ({
         userId: 'test-user-123',
-        date: new Date(Date.now() - (84 - i) * 24 * 60 * 60 * 1000),
-        recoveryScore: 50 + Math.random() * 30,
-        sleepHours: 7 + Math.random() * 2,
-        hrv: 60 + Math.random() * 20,
+        date: new Date(Date.now() + (i + 1) * 7 * 24 * 60 * 60 * 1000).toISOString(),
+        recoveryIndex: {
+          date: new Date().toISOString().slice(0, 10),
+          score: 50 + Math.random() * 30,
+          components: {
+            hrv: 20,
+            rhr: 20,
+            sleepQuality: 30,
+            stressLevel: 30,
+          },
+        },
       }));
 
       const mockForecast = {
@@ -99,7 +106,7 @@ describe('ML Performance Forecast Routes E2E', () => {
         timeframe: 'medium-term',
       };
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
       (PerformanceForecastModel.predict as jest.Mock).mockResolvedValue(mockForecast);
 
       const response = await request(app)
@@ -115,12 +122,12 @@ describe('ML Performance Forecast Routes E2E', () => {
     });
 
     test('should return 400 when insufficient biometric data', async () => {
-      const mockBiometrics = Array.from({ length: 14 }, (_, i) => ({
+      const mockBiometrics: Partial<DailyBiometrics>[] = Array.from({ length: 14 }, () => ({
         userId: 'test-user-123',
-        date: new Date(),
+        date: new Date().toISOString(),
       }));
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
 
       const response = await request(app)
         .post('/api/ml/performance-forecast')
@@ -133,9 +140,9 @@ describe('ML Performance Forecast Routes E2E', () => {
     });
 
     test('should handle improving trend correctly', async () => {
-      const mockBiometrics = Array.from({ length: 84 }, (_, i) => ({
+      const mockBiometrics = Array.from({ length: 84 }, () => ({
         userId: 'test-user-123',
-        date: new Date(),
+        date: new Date().toISOString(),
       }));
 
       const improvingForecast = {
@@ -163,7 +170,7 @@ describe('ML Performance Forecast Routes E2E', () => {
         timeframe: 'short-term',
       };
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
       (PerformanceForecastModel.predict as jest.Mock).mockResolvedValue(improvingForecast);
 
       const response = await request(app)
@@ -178,9 +185,9 @@ describe('ML Performance Forecast Routes E2E', () => {
 
   describe('POST /api/ml/performance-forecast/scenario', () => {
     test('should analyze increased-volume scenario', async () => {
-      const mockBiometrics = Array.from({ length: 84 }, (_, i) => ({
+      const mockBiometrics = Array.from({ length: 84 }, () => ({
         userId: 'test-user-123',
-        date: new Date(),
+        date: new Date().toISOString(),
       }));
 
       const baseForecast = {
@@ -207,7 +214,7 @@ describe('ML Performance Forecast Routes E2E', () => {
         timeframe: 'medium-term',
       };
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
       (PerformanceForecastModel.predict as jest.Mock).mockResolvedValue(baseForecast);
 
       const response = await request(app)
@@ -237,9 +244,9 @@ describe('ML Performance Forecast Routes E2E', () => {
     });
 
     test('should handle recovery-focus scenario', async () => {
-      const mockBiometrics = Array.from({ length: 84 }, (_, i) => ({
+      const mockBiometrics = Array.from({ length: 84 }, () => ({
         userId: 'test-user-123',
-        date: new Date(),
+        date: new Date().toISOString(),
       }));
 
       const forecast = {
@@ -260,7 +267,7 @@ describe('ML Performance Forecast Routes E2E', () => {
         timeframe: 'medium-term',
       };
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
       (PerformanceForecastModel.predict as jest.Mock).mockResolvedValue(forecast);
 
       const response = await request(app)
@@ -276,11 +283,11 @@ describe('ML Performance Forecast Routes E2E', () => {
     test('should return trend summary with recent data', async () => {
       const mockBiometrics = Array.from({ length: 42 }, (_, i) => ({
         userId: 'test-user-123',
-        date: new Date(Date.now() - (42 - i) * 24 * 60 * 60 * 1000),
+        date: new Date(Date.now() - (42 - i) * 24 * 60 * 60 * 1000).toISOString(),
         recoveryScore: 50 + i * 0.5,
       }));
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
 
       const response = await request(app)
         .get('/api/ml/performance-forecast/trend-summary')
@@ -295,7 +302,7 @@ describe('ML Performance Forecast Routes E2E', () => {
     });
 
     test('should return 400 when no recent data', async () => {
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue([]);
+      mockSort.mockResolvedValue([]);
 
       const response = await request(app)
         .get('/api/ml/performance-forecast/trend-summary')
@@ -309,11 +316,20 @@ describe('ML Performance Forecast Routes E2E', () => {
     test('should categorize improving trend correctly', async () => {
       const mockBiometrics = Array.from({ length: 42 }, (_, i) => ({
         userId: 'test-user-123',
-        date: new Date(),
-        recoveryScore: 40 + i * 0.8, // Steady improvement
+        date: new Date().toISOString(),
+        recoveryIndex: {
+          date: new Date().toISOString().slice(0, 10),
+          score: 40 + i * 0.8,
+          components: {
+            hrv: 20,
+            rhr: 20,
+            sleepQuality: 30,
+            stressLevel: 30,
+          },
+        },
       }));
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
 
       const response = await request(app)
         .get('/api/ml/performance-forecast/trend-summary');
@@ -372,7 +388,7 @@ describe('ML Performance Forecast Routes E2E', () => {
     test('should detect performance decline anomaly', async () => {
       const mockBiometrics = Array.from({ length: 84 }, (_, i) => ({
         userId: 'test-user-123',
-        date: new Date(),
+        date: new Date().toISOString(),
         hrv: i < 70 ? 70 : 35, // HRV drops significantly
       }));
 
@@ -414,7 +430,7 @@ describe('ML Performance Forecast Routes E2E', () => {
         timeframe: 'short-term',
       };
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
       (PerformanceForecastModel.predict as jest.Mock).mockResolvedValue(anomalyForecast);
 
       const response = await request(app)
@@ -429,12 +445,12 @@ describe('ML Performance Forecast Routes E2E', () => {
 
   describe('Error Handling', () => {
     test('should handle model prediction errors', async () => {
-      const mockBiometrics = Array.from({ length: 84 }, (_, i) => ({
+      const mockBiometrics = Array.from({ length: 84 }, () => ({
         userId: 'test-user-123',
-        date: new Date(),
+        date: new Date().toISOString(),
       }));
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
       (PerformanceForecastModel.predict as jest.Mock).mockRejectedValue(
         new Error('Model inference failed')
       );
@@ -449,13 +465,13 @@ describe('ML Performance Forecast Routes E2E', () => {
     });
 
     test('should include timestamp in all responses', async () => {
-      const mockBiometrics = Array.from({ length: 42 }, (_, i) => ({
+      const mockBiometrics = Array.from({ length: 42 }, () => ({
         userId: 'test-user-123',
-        date: new Date(),
+        date: new Date().toISOString(),
         recoveryScore: 50,
       }));
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
 
       const response = await request(app)
         .get('/api/ml/performance-forecast/trend-summary');
@@ -467,9 +483,9 @@ describe('ML Performance Forecast Routes E2E', () => {
 
   describe('Response Format Validation', () => {
     test('should return properly formatted forecast', async () => {
-      const mockBiometrics = Array.from({ length: 84 }, (_, i) => ({
+      const mockBiometrics = Array.from({ length: 84 }, () => ({
         userId: 'test-user-123',
-        date: new Date(),
+        date: new Date().toISOString(),
       }));
 
       const forecast = {
@@ -497,7 +513,7 @@ describe('ML Performance Forecast Routes E2E', () => {
         timeframe: 'medium-term',
       };
 
-      (mockBiometricModel.find as jest.Mock).mockResolvedValue(mockBiometrics);
+      mockSort.mockResolvedValue(mockBiometrics);
       (PerformanceForecastModel.predict as jest.Mock).mockResolvedValue(forecast);
 
       const response = await request(app)

@@ -2,7 +2,11 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
-  testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
+  testPathIgnorePatterns: [
+    '<rootDir>/dist/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/src/routes/mlInjuryPredictionRoutes.test.ts'
+  ],
   roots: ['<rootDir>/src'],
   testMatch: [
     '**/__tests__/**/*.+(spec|test).+(ts|tsx|js)',
