@@ -4,6 +4,8 @@ import VideoCapture from './VideoCapture';
 import { getPoseDetectionService } from '../../services/poseDetection';
 import VitalisFeedbackAlert from './VitalisFeedbackAlert';
 import { DeadliftReportView } from './DeadliftReportView';
+import BackendApiService from '../../services/api';
+import { logger } from '../../utils/logger';
 
 interface FormAnalysisModalProps {
   isOpen: boolean;
@@ -36,11 +38,29 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
     setCaptureState(newState);
   }, []);
 
-  const handleAnalysisComplete = useCallback((result: FormAnalysisResult) => {
+  const handleAnalysisComplete = useCallback(async (result: FormAnalysisResult) => {
     setAnalysisResult(result);
     setCurrentFormScore(result.score);
     onAnalysisComplete?.(result);
-  }, [onAnalysisComplete]);
+
+    // Auto-save if userId is present
+    if (userId) {
+      try {
+        await BackendApiService.saveFormAnalysis({
+          userId,
+          exerciseType,
+          formScore: result.score,
+          metrics: result.metrics,
+          warnings: result.issues.map(i => `${i.label}: ${i.description}`),
+          recommendations: result.tips,
+          timestamp: new Date().toISOString()
+        });
+        logger.info('Form analysis saved successfully', { context: 'FormAnalysisModal' });
+      } catch (error) {
+        logger.error('Failed to auto-save form analysis', { context: 'FormAnalysisModal', error });
+      }
+    }
+  }, [onAnalysisComplete, userId, exerciseType]);
 
   const handleClose = useCallback(() => {
     setCaptureState({ isActive: false, framesProcessed: 0, fps: 0, lastFrameTime: 0, error: null });

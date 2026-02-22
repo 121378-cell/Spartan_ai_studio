@@ -287,17 +287,59 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
               </p>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
-              <h4 className="font-bold text-yellow-900 mb-2 flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5" />
-                Alerta de Integridad Estructural
-              </h4>
-              <p className="text-sm text-yellow-800">
-                {result.metrics?.backAngle && result.metrics.backAngle > 20 
-                  ? "CRÍTICO: La desviación de la viga principal (columna) excede el 20%. El momento flector se incrementa exponencialmente, aumentando el riesgo de fallo estructural (lesión discal)."
-                  : "NOMINAL: La geometría actual mantiene las cargas dentro de los límites de seguridad del material biológico."}
-              </p>
-            </div>
+            {/* Evaluación de Riesgo de Lesiones */}
+            {result.injuryRisk ? (
+              <div className={`border rounded-xl p-6 ${
+                result.injuryRisk.level === 'critical' || result.injuryRisk.level === 'high' 
+                  ? 'bg-red-50 border-red-200' 
+                  : result.injuryRisk.level === 'moderate'
+                    ? 'bg-yellow-50 border-yellow-200'
+                    : 'bg-green-50 border-green-200'
+              }`}>
+                <h4 className={`font-bold mb-4 flex items-center gap-2 ${
+                  result.injuryRisk.level === 'critical' || result.injuryRisk.level === 'high' 
+                    ? 'text-red-900' 
+                    : result.injuryRisk.level === 'moderate'
+                      ? 'text-yellow-900'
+                      : 'text-green-900'
+                }`}>
+                  <AlertTriangle className="w-5 h-5" />
+                  Evaluación de Riesgo: {result.injuryRisk.level.toUpperCase()}
+                </h4>
+                
+                {result.injuryRisk.factors.length > 0 ? (
+                  <div className="space-y-4">
+                    {result.injuryRisk.factors.map((factor, idx) => (
+                      <div key={idx} className="bg-white/60 rounded-lg p-3">
+                        <div className="flex justify-between mb-1">
+                          <span className="font-semibold text-gray-900">{factor.name}</span>
+                          <span className="text-xs font-mono bg-gray-200 px-2 py-0.5 rounded">
+                            Contribución: {(factor.riskContribution * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700">{factor.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-green-800">
+                    No se han detectado factores de riesgo biomecánico significativos. La ejecución es segura bajo cargas estándar.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+                <h4 className="font-bold text-yellow-900 mb-2 flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5" />
+                  Alerta de Integridad Estructural
+                </h4>
+                <p className="text-sm text-yellow-800">
+                  {result.metrics?.backAngle && result.metrics.backAngle > 20 
+                    ? "CRÍTICO: La desviación de la viga principal (columna) excede el 20%. El momento flector se incrementa exponencialmente, aumentando el riesgo de fallo estructural (lesión discal)."
+                    : "NOMINAL: La geometría actual mantiene las cargas dentro de los límites de seguridad del material biológico."}
+                </p>
+              </div>
+            )}
           </div>
         )}
 

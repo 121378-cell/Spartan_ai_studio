@@ -76,6 +76,17 @@ export interface FormAnalysisResult {
   /** Metrics breakdown by category */
   metrics?: Record<string, number | string>;
   
+  /** Injury risk assessment */
+  injuryRisk?: {
+    total: number; // 0-1 (low to high)
+    level: 'low' | 'moderate' | 'high' | 'critical';
+    factors: {
+      name: string;
+      riskContribution: number; // 0-1
+      description: string;
+    }[];
+  };
+
   /** How many frames were analyzed */
   frameCount: number;
 }

@@ -195,10 +195,9 @@ export function analyzeDeadliftForm(
     hipHinge: 0,
   };
 
-  let depthScore = 100; // Full ROM
   let alignmentScore = 100; // Back angle
   let trackingScore = 100; // Knee extension
-  let stabilityScore = 100; // Overall stability
+  let stabilityScore = 100; // Overall stability (hip hinge)
 
   // Calculate average confidence
   const avgConfidence =
@@ -237,6 +236,13 @@ export function analyzeDeadliftForm(
       issueTypes.add('kneeExtension');
       trackingScore -= 20; // Penalty for incomplete extension
     }
+    
+    // Check hip hinge quality (stability/mechanics)
+    if (analysis.hipHinge < 45 && !issueTypes.has('poorHinge')) {
+         // Don't push issue to UI yet to avoid noise, but penalize score
+         stabilityScore -= 10;
+         issueTypes.add('poorHinge');
+    }
 
     // Update metrics
     metricsData.backAngle += analysis.backAngle / validFrames.length;
@@ -246,16 +252,68 @@ export function analyzeDeadliftForm(
 
   const tips = generateDeadliftTips(metricsData, alignmentScore, trackingScore);
 
-  // Weight factors: back angle (alignment) is most critical
+  // Weight factors: alignment (back) is most critical, followed by tracking (knees) and stability (hips)
   let score = Math.max(
     0,
-    (depthScore * 0.1 + alignmentScore * 0.4 + trackingScore * 0.3 + stabilityScore * 0.1 + confidenceScore * 0.1)
+    (alignmentScore * 0.45 + trackingScore * 0.35 + stabilityScore * 0.1 + confidenceScore * 0.1)
   );
 
   // Additional penalty: if confidence is low, further cap the score
   if (avgConfidence < 0.86) {
     score = score * 0.25; // Very low score for poor confidence
   }
+
+  // --- Injury Risk Assessment ---
+  const riskFactors: { name: string; riskContribution: number; description: string }[] = [];
+  let riskScore = 0; // 0-1 scale
+
+  // Factor 1: Lumbar Rounding (Critical)
+  // Any rounding beyond threshold adds significant risk
+  if (metricsData.backAngle > fullConfig.thresholds.deadlift.maxBackRound) {
+    // Scale: 0 at threshold, 1 at threshold + 20 degrees
+    const contribution = Math.min(1, (metricsData.backAngle - fullConfig.thresholds.deadlift.maxBackRound) / 20);
+    riskScore += contribution * 0.6; // 60% weight
+    riskFactors.push({
+      name: 'Flexión Lumbar Excesiva',
+      riskContribution: contribution,
+      description: 'El redondeo de la espalda bajo carga aumenta exponencialmente la fuerza de cizalla en los discos intervertebrales (L4-L5/S1).',
+    });
+  }
+
+  // Factor 2: Incomplete Lockout / Soft Knees (Moderate)
+  if (metricsData.kneeExtension < fullConfig.thresholds.deadlift.minKneeExtension) {
+    const contribution = Math.min(1, (fullConfig.thresholds.deadlift.minKneeExtension - metricsData.kneeExtension) / 30);
+    riskScore += contribution * 0.3; // 30% weight
+    riskFactors.push({
+      name: 'Bloqueo Inestable',
+      riskContribution: contribution,
+      description: 'La falta de extensión completa transfiere carga innecesaria a la musculatura lumbar en lugar de la cadena posterior.',
+    });
+  }
+
+  // Factor 3: Hip Mechanics (Low/Moderate)
+  if (metricsData.hipHinge < 45) {
+    const contribution = 0.4;
+    riskScore += contribution * 0.1; // 10% weight
+    riskFactors.push({
+      name: 'Mecánica de Cadera Ineficiente',
+      riskContribution: contribution,
+      description: 'Patrón de movimiento pobre que reduce la capacidad de carga y estabilidad.',
+    });
+  }
+
+  riskScore = Math.min(1, riskScore);
+
+  let riskLevel: 'low' | 'moderate' | 'high' | 'critical' = 'low';
+  if (riskScore > 0.7) riskLevel = 'critical';
+  else if (riskScore > 0.4) riskLevel = 'high';
+  else if (riskScore > 0.2) riskLevel = 'moderate';
+
+  const injuryRisk = {
+    total: riskScore,
+    level: riskLevel,
+    factors: riskFactors,
+  };
 
   return {
     score: Math.round(score),
@@ -266,6 +324,7 @@ export function analyzeDeadliftForm(
       kneeExtension: Math.round(metricsData.kneeExtension),
       hipHinge: Math.round(metricsData.hipHinge),
     },
+    injuryRisk,
     frameCount: validFrames.length,
   };
 }
