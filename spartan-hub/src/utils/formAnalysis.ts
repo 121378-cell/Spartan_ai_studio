@@ -34,6 +34,20 @@ export const DEFAULT_FORM_ANALYSIS_CONFIG: FormAnalysisConfig = {
       minKneeExtension: 160, // degrees - full lockout
       maxBarDeviation: 20, // pixels
     },
+    push_up: {
+      maxElbowFlare: 60, // degrees
+      minDepth: 90, // degrees (elbow angle at bottom)
+      maxHipSag: 15, // degrees
+    },
+    plank: {
+      maxHipSag: 10, // degrees
+      maxHipHike: 15, // degrees
+    },
+    row: {
+      maxBackRound: 15, // degrees
+      minElbowRetraction: 10, // degrees past torso
+      maxTorsoSwing: 20, // degrees
+    },
   },
 };
 
@@ -576,6 +590,187 @@ function createEmptySquatAnalysis(error: string): FormAnalysisResult {
     ],
     tips: ['Asegúrate de tener buena iluminación y ángulo de cámara'],
     frameCount: 0,
+  };
+}
+
+/**
+ * Analyze push-up form
+ */
+export function analyzePushUpForm(
+  frames: PoseFrame[],
+  config: Partial<FormAnalysisConfig> = {}
+): FormAnalysisResult {
+  const fullConfig = { ...DEFAULT_FORM_ANALYSIS_CONFIG, ...config };
+  
+  // Basic validation
+  const validFrames = frames.filter(f => f.isValid);
+  if (validFrames.length < fullConfig.minFrames) {
+    return createEmptySquatAnalysis('Insufficient valid frames'); // Reuse existing empty creator
+  }
+
+  const issues: FormIssue[] = [];
+  const issueTypes = new Set<string>();
+  const metricsData = {
+    depth: 0,
+    elbowAngle: 0,
+    bodyAlignment: 0
+  };
+
+  let formScore = 100;
+
+  validFrames.forEach(frame => {
+    const analysis = analyzePushUpFrame(frame);
+    
+    // Check depth (elbow flexion)
+    if (analysis.elbowAngle > fullConfig.thresholds.push_up.minDepth && !issueTypes.has('depth')) {
+      // Note: elbow angle 180 = straight, <90 = deep. So >90 is shallow
+      issues.push({
+        label: 'Profundidad insuficiente',
+        severity: 'medium',
+        description: 'Baja más el pecho hasta que los codos formen al menos 90 grados'
+      });
+      issueTypes.add('depth');
+      formScore -= 15;
+    }
+
+    // Check body alignment (hip sag)
+    if (analysis.bodyAlignment > fullConfig.thresholds.push_up.maxHipSag && !issueTypes.has('alignment')) {
+      issues.push({
+        label: 'Cadera caída',
+        severity: 'high',
+        description: 'Mantén el cuerpo recto como una tabla, activa glúteos y abdomen'
+      });
+      issueTypes.add('alignment');
+      formScore -= 25;
+    }
+
+    // Elbow flare (measured from body)
+    if (analysis.elbowFlare > fullConfig.thresholds.push_up.maxElbowFlare && !issueTypes.has('flare')) {
+      issues.push({
+        label: 'Codos abiertos',
+        severity: 'medium',
+        description: 'Mantén los codos más cerca del cuerpo (aprox 45 grados) para proteger hombros'
+      });
+      issueTypes.add('flare');
+      formScore -= 10;
+    }
+
+    metricsData.depth += analysis.depth / validFrames.length; // Normalized depth 0-1
+    metricsData.elbowAngle += analysis.elbowAngle / validFrames.length;
+    metricsData.bodyAlignment += analysis.bodyAlignment / validFrames.length;
+  });
+
+  const tips = [];
+  if (formScore < 90) tips.push('Concentra la vista un poco adelante de tus manos');
+  if (formScore >= 90) tips.push('¡Excelente forma y control!');
+
+  return {
+    score: Math.max(0, Math.round(formScore)),
+    issues,
+    tips,
+    metrics: {
+      elbowAngle: Math.round(metricsData.elbowAngle),
+      bodyAlignment: Math.round(metricsData.bodyAlignment)
+    },
+    frameCount: validFrames.length
+  };
+}
+
+/**
+ * Analyze plank form
+ */
+export function analyzePlankForm(
+  frames: PoseFrame[],
+  config: Partial<FormAnalysisConfig> = {}
+): FormAnalysisResult {
+  const fullConfig = { ...DEFAULT_FORM_ANALYSIS_CONFIG, ...config };
+  const validFrames = frames.filter(f => f.isValid);
+  
+  if (validFrames.length < fullConfig.minFrames) return createEmptySquatAnalysis('Insufficient data');
+
+  const issues: FormIssue[] = [];
+  const issueTypes = new Set<string>();
+  let score = 100;
+  let avgAlignment = 0;
+
+  validFrames.forEach(frame => {
+    const analysis = analyzePlankFrame(frame);
+    
+    if (Math.abs(analysis.bodyAlignment) > fullConfig.thresholds.plank.maxHipSag && !issueTypes.has('alignment')) {
+      const isSagging = analysis.bodyAlignment > 0; // Assuming positive is sagging down
+      issues.push({
+        label: isSagging ? 'Cadera caída' : 'Cadera muy alta',
+        severity: 'high',
+        description: isSagging ? 'Sube la cadera para alinear con hombros' : 'Baja la cadera para alinear con hombros'
+      });
+      issueTypes.add('alignment');
+      score -= 20;
+    }
+    
+    avgAlignment += Math.abs(analysis.bodyAlignment) / validFrames.length;
+  });
+
+  return {
+    score: Math.max(0, Math.round(score)),
+    issues,
+    tips: score > 80 ? ['¡Gran estabilidad!'] : ['Activa el abdomen fuertemente'],
+    metrics: { bodyAlignment: Math.round(avgAlignment) },
+    frameCount: validFrames.length
+  };
+}
+
+/**
+ * Analyze row form
+ */
+export function analyzeRowForm(
+  frames: PoseFrame[],
+  config: Partial<FormAnalysisConfig> = {}
+): FormAnalysisResult {
+  // Placeholder implementation for MVP
+  return analyzeDeadliftForm(frames, config); // Re-use deadlift back analysis for now
+}
+
+// Private helpers
+
+function analyzePushUpFrame(frame: PoseFrame) {
+  const lm = frame.landmarks;
+  const shoulder = lm[POSE_LANDMARKS.LEFT_SHOULDER];
+  const elbow = lm[POSE_LANDMARKS.LEFT_ELBOW];
+  const wrist = lm[POSE_LANDMARKS.LEFT_WRIST];
+  const hip = lm[POSE_LANDMARKS.LEFT_HIP];
+  const ankle = lm[POSE_LANDMARKS.LEFT_ANKLE];
+
+  // Elbow angle
+  const elbowAngle = calculateAngle(shoulder, elbow, wrist);
+  
+  // Body alignment (Shoulder-Hip-Ankle)
+  // 180 is straight. Deviation implies sag or pike.
+  const bodyAngle = calculateAngle(shoulder, hip, ankle);
+  const bodyAlignment = Math.abs(180 - bodyAngle);
+
+  // Elbow flare (Shoulder-Elbow vs Body line)
+  // Harder to calculate in 2D without depth, approximating with vector angles
+  // For MVP, we'll use a simplified metric or skip if too noisy
+  const elbowFlare = 45; // Placeholder
+
+  return {
+    elbowAngle,
+    depth: Math.max(0, (180 - elbowAngle) / 90), // 0=straight, 1=90deg
+    bodyAlignment,
+    elbowFlare
+  };
+}
+
+function analyzePlankFrame(frame: PoseFrame) {
+  const lm = frame.landmarks;
+  const shoulder = lm[POSE_LANDMARKS.LEFT_SHOULDER];
+  const hip = lm[POSE_LANDMARKS.LEFT_HIP];
+  const ankle = lm[POSE_LANDMARKS.LEFT_ANKLE];
+
+  const bodyAngle = calculateAngle(shoulder, hip, ankle);
+  
+  return {
+    bodyAlignment: 180 - bodyAngle // Signed deviation
   };
 }
 

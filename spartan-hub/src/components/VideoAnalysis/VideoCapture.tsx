@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { VideoCaptureState, PoseFrame, FormAnalysisResult } from '../../types/pose';
 import { getPoseDetectionService } from '../../services/poseDetection';
-import { analyzeSquatForm, analyzeDeadliftForm } from '../../utils/formAnalysis';
+import { 
+  analyzeSquatForm, 
+  analyzeDeadliftForm,
+  analyzePushUpForm,
+  analyzePlankForm,
+  analyzeRowForm
+} from '../../utils/formAnalysis';
 import { useDevice } from '../../context/DeviceContext';
 import { ExerciseType } from '../../types/formAnalysis';
 
@@ -97,13 +103,23 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
         });
 
         streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.onloadedmetadata = () => {
-            videoRef.current?.play();
-            startCapture();
-          };
-        }
+    // Initialize canvas dimensions once when video metadata loads
+    const handleVideoMetadata = () => {
+      if (videoRef.current && canvasRef.current && overlayCanvasRef.current) {
+        const video = videoRef.current;
+        canvasRef.current.width = video.videoWidth;
+        canvasRef.current.height = video.videoHeight;
+        overlayCanvasRef.current.width = video.videoWidth;
+        overlayCanvasRef.current.height = video.videoHeight;
+        
+        video.play().then(() => startCapture()).catch(err => console.error("Play error:", err));
+      }
+    };
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.onloadedmetadata = handleVideoMetadata;
+    }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : 'Failed to access camera';
@@ -172,25 +188,12 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
       lastFrameTime: performance.now(),
     }));
 
-    const canvas = canvasRef.current;
     const overlayCanvas = overlayCanvasRef.current;
-    const ctx = canvas.getContext('2d');
     const overlayCtx = overlayCanvas?.getContext('2d');
     const video = videoRef.current;
 
-    if (!ctx) {
-      setCaptureState((prev) => ({
-        ...prev,
-        error: 'Canvas context not available',
-      }));
-      return;
-    }
-
-    // Set canvas dimensions
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
-    if (overlayCanvas && overlayCtx) {
+    // Ensure canvas dimensions match video
+    if (overlayCanvas && video.videoWidth > 0) {
       overlayCanvas.width = video.videoWidth;
       overlayCanvas.height = video.videoHeight;
     }
@@ -201,18 +204,17 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
         
         // Adaptive frame processing based on performance
         const timeSinceLastProcess = currentTime - lastProcessedTimeRef.current;
-        const minProcessingInterval = 1000 / 15; // Target 15 FPS for mobile
+        // Mobile optimization: cap at 30fps max, 15fps min
+        const minProcessingInterval = isMobile ? 1000 / 15 : 1000 / 30; 
         
-        // Only process frame if enough time has passed or if we're on a high-performance device
-        if (timeSinceLastProcess >= minProcessingInterval || !isMobile) {
-          // Draw video frame to canvas
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+        if (timeSinceLastProcess >= minProcessingInterval) {
           // Implement frame skipping for performance on mobile
           frameSkipCounterRef.current++;
+          
           if (frameSkipCounterRef.current % processingInterval === 0) {
-            // Run pose detection
-            const poseFrame = await poseService.detectImage(canvas);
+            // OPTIMIZATION: Use detect() for video stream instead of detectImage()
+            // Pass video element directly to avoid canvas draw overhead
+            const poseFrame = poseService.detect(video, currentTime);
 
             if (poseFrame) {
               setPoseFrames((prev) => {
@@ -228,8 +230,9 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
                 return kept;
               });
 
-              // Draw landmarks on overlay canvas only when needed (reduce drawing overhead)
+              // Draw landmarks on overlay canvas
               if (overlayCtx) {
+                overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
                 drawLandmarks(overlayCtx, poseFrame);
               }
 
@@ -242,7 +245,7 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
                 return {
                   ...prev,
                   framesProcessed: (prev.framesProcessed || 0) + 1,
-                  fps: fps * 0.3 + (prev.fps || 0) * 0.7, // Exponential moving average
+                  fps: fps * 0.1 + (prev.fps || 0) * 0.9, // Smoother FPS calculation
                   lastFrameTime: now,
                 };
               });
@@ -255,19 +258,30 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
           }
         }
 
-        animationRef.current = requestAnimationFrame(processFrame);
+        if (captureState.isActive) {
+          animationRef.current = requestAnimationFrame(processFrame);
+        }
       } catch (error) {
         console.error('Frame processing error:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Processing error';
-        setCaptureState((prev) => ({
-          ...prev,
-          error: errorMessage,
-        }));
+        // Don't stop capturing on transient errors, just log
+        // But stop if critical
+        if (error instanceof Error && error.message.includes('not initialized')) {
+             const errorMessage = error.message;
+             setCaptureState((prev) => ({
+               ...prev,
+               error: errorMessage,
+             }));
+        } else {
+             // Continue loop
+             if (captureState.isActive) {
+               animationRef.current = requestAnimationFrame(processFrame);
+             }
+        }
       }
     };
 
     animationRef.current = requestAnimationFrame(processFrame);
-  }, [processingInterval, isMobile]);
+  }, [processingInterval, isMobile, captureState.isActive]);
 
   const drawLandmarks = (ctx: CanvasRenderingContext2D, poseFrame: PoseFrame) => {
     const confidenceThreshold = 0.5;
@@ -349,10 +363,24 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
       try {
         let result: FormAnalysisResult;
 
-        if (exerciseType === 'squat') {
-          result = analyzeSquatForm(frames);
-        } else {
-          result = analyzeDeadliftForm(frames);
+        switch (exerciseType) {
+          case 'squat':
+            result = analyzeSquatForm(frames);
+            break;
+          case 'deadlift':
+            result = analyzeDeadliftForm(frames);
+            break;
+          case 'push_up':
+            result = analyzePushUpForm(frames);
+            break;
+          case 'plank':
+            result = analyzePlankForm(frames);
+            break;
+          case 'row':
+            result = analyzeRowForm(frames);
+            break;
+          default:
+            result = analyzeSquatForm(frames); // Fallback
         }
 
         // Stop capture

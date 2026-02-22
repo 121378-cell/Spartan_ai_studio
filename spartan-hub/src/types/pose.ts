@@ -228,6 +228,21 @@ export interface FormAnalysisConfig {
       minKneeExtension: number; // degrees
       maxBarDeviation: number; // pixels
     };
+    push_up: {
+      maxElbowFlare: number; // degrees (ideal ~45)
+      minDepth: number; // degrees (elbow flexion)
+      maxHipSag: number; // degrees (body line deviation)
+    };
+    plank: {
+      maxHipSag: number; // degrees
+      maxHipHike: number; // degrees
+      minDuration?: number; // seconds
+    };
+    row: {
+      maxBackRound: number; // degrees
+      minElbowRetraction: number; // degrees (past torso)
+      maxTorsoSwing: number; // degrees
+    };
   };
 }
 

@@ -80,6 +80,21 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
     return labels[type] || type;
   };
 
+  const getMetricLabel = (key: string) => {
+    const labels: Record<string, string> = {
+      hipDepth: 'Profundidad Cadera',
+      kneeAngle: 'Ángulo Rodilla',
+      torsoAngle: 'Ángulo Torso',
+      backAngle: 'Desviación Espalda',
+      kneeExtension: 'Extensión Rodilla',
+      hipHinge: 'Bisagra Cadera',
+      elbowAngle: 'Ángulo Codo',
+      bodyAlignment: 'Alineación Cuerpo',
+      elbowFlare: 'Apertura Codos'
+    };
+    return labels[key] || key;
+  };
+
   if (!isOpen) return null;
 
   // Renderizado específico para el reporte detallado de Peso Muerto
@@ -188,9 +203,9 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   {Object.entries(analysisResult.metrics).map(([key, value]) => (
                     <div key={key} className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-600 uppercase tracking-wide">{key}</p>
+                      <p className="text-xs text-gray-600 uppercase tracking-wide">{getMetricLabel(key)}</p>
                       <p className="text-lg font-semibold text-gray-900">
-                        {typeof value === 'number' ? value.toFixed(1) : value}
+                        {typeof value === 'number' ? value.toFixed(1) : value}°
                       </p>
                     </div>
                   ))}
