@@ -131,7 +131,9 @@ cp .env.example .env
 npm run dev
 ```
 
-### Opción 2: Docker Compose
+### Opción 2: Docker Compose (Stack Completo)
+
+Para levantar tanto el Frontend como el Backend en contenedores:
 
 ```bash
 # Configurar secretos primero
@@ -140,10 +142,14 @@ cp api_key.txt.example api_key.txt
 cp db_password.txt.example db_password.txt
 # Editar archivos con valores seguros
 
-# Iniciar con Docker
+# Iniciar con Docker desde la raíz
 cd ../..
 docker-compose up --build
 ```
+
+Esto levantará:
+- **Frontend**: http://localhost:5173
+- **Backend**: http://localhost:3001
 
 ### Servicios Disponibles
 
@@ -153,6 +159,23 @@ docker-compose up --build
 | Backend API | http://localhost:3001 | API REST |
 | AI Service | http://localhost:8000 | Servicio de IA |
 | Health Check | http://localhost:3001/health | Estado del sistema |
+
+---
+
+## 🏗️ Infraestructura y CI/CD
+
+El proyecto cuenta con una configuración robusta de CI/CD documentada en [docs/CI_CD_GUIDE.md](./docs/CI_CD_GUIDE.md).
+
+### Pre-commit Hooks
+Antes de cada commit, **Husky** y **lint-staged** ejecutan automáticamente:
+- ESLint (con auto-fix)
+- Prettier
+
+### GitHub Actions
+El pipeline de CI (`.github/workflows/ci.yml`) verifica:
+- Tests de Frontend y Backend
+- Linting y Type-checking
+- Validación de Build
 
 ---
 
