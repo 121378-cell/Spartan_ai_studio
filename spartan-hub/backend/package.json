@@ -22,6 +22,7 @@
     "test:e2e": "npm run test:e2e:setup && set NODE_ENV=test&& set DATABASE_TYPE=sqlite&& set DB_PATH=data/test_e2e.db&& jest --config jest.e2e.config.js",
     "test:i18n": "ts-node src/scripts/testI18n.ts",
     "test:database": "jest --testPathPattern='database'",
+    "test:postgres": "set DATABASE_TYPE=postgres&& set POSTGRES_HOST=localhost&& set POSTGRES_PORT=5434&& set POSTGRES_DB=spartan_db&& set POSTGRES_USER=postgres&& set POSTGRES_PASSWORD=postgres_password&& set REDIS_HOST=localhost&& set REDIS_PORT=6380&& jest --testPathPatterns='postgresConnection'",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "db:init": "ts-node src/scripts/initDatabase.ts",
