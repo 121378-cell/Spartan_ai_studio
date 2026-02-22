@@ -16,7 +16,7 @@ import BookIcon from './icons/BookIcon.tsx';
 import FocusIcon from './icons/FocusIcon.tsx';
 import ChartBarIcon from './icons/ChartBarIcon.tsx';
 import VideoCameraIcon from './icons/VideoCameraIcon.tsx';
-import { Users } from 'lucide-react';
+import { Users, Cpu } from 'lucide-react';
 import BluetoothConnector from './BluetoothConnector.tsx';
 
 interface NavItemProps {
@@ -48,6 +48,14 @@ const Sidebar: React.FC = () => {
       page: 'coach-dashboard', 
       label: 'Coach Hub', 
       icon: <Users className="w-6 h-6" /> 
+    });
+  }
+
+  if (userProfile.role === 'admin') {
+    navItems.push({
+      page: 'ai-dashboard',
+      label: 'AI Dashboard',
+      icon: <Cpu className="w-6 h-6" />
     });
   }
   

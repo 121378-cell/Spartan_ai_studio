@@ -27,6 +27,7 @@ const Progress = lazy(() => import('./components/Progress.tsx'));
 const SynergyHub = lazy(() => import('./components/SynergyHub.tsx'));
 const ExerciseLibrary = lazy(() => import('./components/ExerciseLibrary.tsx'));
 const CoachDashboard = lazy(() => import('./components/CoachDashboard.tsx'));
+const AiDashboard = lazy(() => import('./components/AiDashboard.tsx'));
 
 // Lazy loaded modals
 const SmartRoutineModal = lazy(() => import('./components/modals/SmartRoutineModal.tsx'));
@@ -125,6 +126,7 @@ const AppContent: React.FC = () => {
       case 'synergy-hub': return <SynergyHub />;
       case 'form-analysis': return <FormAnalysisModal onClose={() => setCurrentPage('dashboard')} />;
       case 'coach-dashboard': return <CoachDashboard />;
+      case 'ai-dashboard': return <AiDashboard />;
       default: return <Dashboard />;
     }
   };

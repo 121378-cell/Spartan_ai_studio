@@ -476,6 +476,39 @@ export class BackendApiService {
   }
 
   /**
+   * Get AI Queue Statistics
+   */
+  static async getAiQueueStats(): Promise<any> {
+    try {
+      const response = await HttpService.get<{ success: boolean; data: any }>('/ai/queue/stats');
+      return response.data.data;
+    } catch (error) {
+      logger.error('Error getting AI queue stats', {
+        context: 'api-service',
+        metadata: { error: error instanceof Error ? error.message : String(error) }
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Reload AI Provider Configuration
+   */
+  static async reloadAiConfig(): Promise<{ success: boolean; message: string }> {
+    try {
+      const response = await HttpService.post<{ success: boolean; message: string }>('/ai/config/reload', {});
+      return response.data;
+    } catch (error) {
+      logger.error('Error reloading AI config', {
+        context: 'api-service',
+        metadata: { error: error instanceof Error ? error.message : String(error) }
+      });
+      throw error;
+    }
+  }
+
+
+  /**
    * Save form analysis result
    * @param data - Form analysis result data
    */

@@ -16,7 +16,8 @@ export type Page =
   | 'flow'
   | 'progress'
   | 'synergy-hub'
-  | 'coach-dashboard';
+  | 'coach-dashboard'
+  | 'ai-dashboard';
 
 export type DeviceType = 'Mobile' | 'Tablet/SmallLaptop' | 'Desktop/Wide';
 
