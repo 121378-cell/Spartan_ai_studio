@@ -91,7 +91,7 @@ export function analyzeSquatForm(
 
   // Analyze each frame
   validFrames.forEach((frame) => {
-    const analysis = analyzeSquatFrame(frame, fullConfig);
+    const analysis = analyzeSquatFrame(frame);
 
     // Track issues (only add once per issue type)
     if (analysis.depth < fullConfig.thresholds.squat.minDepth && !issueTypes.has('depth')) {
@@ -213,12 +213,8 @@ export function analyzeDeadliftForm(
   }
 
   // Analyze each frame
-  validFrames.forEach((frame, frameIdx) => {
-    const analysis = analyzeDeadliftFrame(frame, fullConfig);
-
-    if (frameIdx === 0) {
-      console.log('DEBUG Frame 0 - backAngle:', analysis.backAngle, 'threshold:', fullConfig.thresholds.deadlift.maxBackRound, 'kneeExtension:', analysis.kneeExtension, 'threshold:', fullConfig.thresholds.deadlift.minKneeExtension);
-    }
+  validFrames.forEach((frame) => {
+    const analysis = analyzeDeadliftFrame(frame);
 
     // Check back angle (most critical for deadlift)
     if (analysis.backAngle > fullConfig.thresholds.deadlift.maxBackRound && !issueTypes.has('backRound')) {
@@ -278,8 +274,7 @@ export function analyzeDeadliftForm(
  * Private: Analyze single squat frame
  */
 function analyzeSquatFrame(
-  frame: PoseFrame,
-  config: FormAnalysisConfig
+  frame: PoseFrame
 ): {
   depth: number;
   kneeAngle: number;
@@ -360,8 +355,7 @@ function analyzeSquatFrame(
  * Private: Analyze single deadlift frame
  */
 function analyzeDeadliftFrame(
-  frame: PoseFrame,
-  config: FormAnalysisConfig
+  frame: PoseFrame
 ): {
   hipHinge: number;
   backAngle: number;

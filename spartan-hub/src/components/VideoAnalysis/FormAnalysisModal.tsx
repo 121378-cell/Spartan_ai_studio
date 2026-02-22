@@ -3,6 +3,7 @@ import { VideoCaptureState, PoseFrame, FormAnalysisResult } from '../../types/po
 import VideoCapture from './VideoCapture';
 import { getPoseDetectionService } from '../../services/poseDetection';
 import VitalisFeedbackAlert from './VitalisFeedbackAlert';
+import { DeadliftReportView } from './DeadliftReportView';
 
 interface FormAnalysisModalProps {
   isOpen: boolean;
@@ -60,6 +61,21 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
   };
 
   if (!isOpen) return null;
+
+  // Renderizado específico para el reporte detallado de Peso Muerto
+  if (analysisResult && exerciseType === 'deadlift') {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="relative w-full max-w-5xl bg-white rounded-xl shadow-2xl h-[90vh] overflow-hidden flex flex-col">
+          <DeadliftReportView
+            result={analysisResult}
+            onRetry={() => setAnalysisResult(null)}
+            onClose={handleClose}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
