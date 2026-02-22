@@ -6,6 +6,33 @@ import { userDb } from '../services/databaseServiceFactory';
 import { ServiceUnavailableError, NotFoundError, ValidationError } from '../utils/errorHandler';
 import { aiMessageQueue } from '../utils/messageQueue';
 import { logger } from '../utils/logger';
+import { AiProviderFactory } from '../services/ai/AiProviderFactory';
+
+/**
+ * Reload AI provider configuration
+ * POST /ai/config/reload
+ */
+export const reloadAiConfig = async (req: Request, res: Response) => {
+  try {
+    AiProviderFactory.resetProvider();
+    logger.info('AI provider configuration reloaded manually', { context: 'aiController' });
+
+    return res.status(200).json({
+      success: true,
+      message: 'AI provider configuration reloaded successfully.'
+    });
+  } catch (error: unknown) {
+    logger.error('Error reloading AI configuration', {
+      context: 'aiController',
+      metadata: { error: error instanceof Error ? error.message : String(error) }
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to reload AI configuration at this time.'
+    });
+  }
+};
+
 
 /**
  * Get AI alert prediction for a user

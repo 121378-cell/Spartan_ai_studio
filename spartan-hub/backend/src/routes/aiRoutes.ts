@@ -4,7 +4,8 @@ import {
   checkAiHealth,
   getAiAlertFromBody,
   generateStructuredDecision,
-  getQueueStats
+  getQueueStats,
+  reloadAiConfig
 } from '../controllers/aiController';
 import { validate } from '../middleware/validate';
 import { verifyJWT } from '../middleware/auth';
@@ -248,5 +249,36 @@ router.get('/health', validate(healthCheckSchema), checkAiHealth);
  *         $ref: '#/components/responses/ServerError'
  */
 router.get('/queue/stats', validate(queueStatsSchema), getQueueStats);
+
+/**
+ * @swagger
+ * /ai/config/reload:
+ *   post:
+ *     summary: Reload AI provider configuration
+ *     description: Manually triggers a reload of the AI provider configuration without restarting the server.
+ *     tags: [AI Services]
+ *     security:
+ *       - cookieAuth: []
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Configuration reloaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: 'AI provider configuration reloaded successfully.'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+router.post('/config/reload', verifyJWT, reloadAiConfig);
 
 export default router;

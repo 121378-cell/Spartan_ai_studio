@@ -23,7 +23,16 @@ AI_PRIMARY_PROVIDER=groq
 AI_FALLBACK_PROVIDERS=openai,anthropic,google
 ```
 
+### Configuración de Circuit Breakers
+
+Variables para ajustar el comportamiento de los interruptores de circuito:
+
+- `AI_CB_FAILURE_THRESHOLD` (por defecto `3`): Número de fallos consecutivos para abrir el circuito.
+- `AI_CB_RESET_TIMEOUT_MS` (por defecto `60000`): Tiempo en ms que un proveedor permanece deshabilitado (estado `open`) antes de intentar reconectar (`half_open`).
+- `AI_CB_HALF_OPEN_MAX_TRIALS` (por defecto `1`): Número de intentos permitidos en estado `half_open` para verificar recuperación.
+
 ### Límites de rate limiting y timeouts por proveedor
+
 
 - `AI_MICROSERVICE_RATE_LIMIT_PER_MINUTE` (por defecto `120`)
 - `AI_MICROSERVICE_TIMEOUT_MS` (por defecto `30000`)
@@ -124,6 +133,27 @@ Cuando `AI_PROVIDER=multi`:
     - `status`: `success` o `error`.
   - Métricas específicas en `metricsCollector` para endpoints del microservicio de IA si se usa `MicroserviceProvider`.
 
+### Health Checks y Circuit Breakers
+
+El sistema implementa patrones de resiliencia:
+
+1. **Circuit Breakers**:
+   - Cada proveedor tiene su propio interruptor.
+   - Si un proveedor falla `AI_CB_FAILURE_THRESHOLD` veces consecutivas, el circuito se abre (`open`).
+   - Las peticiones posteriores fallan inmediatamente sin intentar llamar al API externo.
+   - Tras `AI_CB_RESET_TIMEOUT_MS`, el circuito pasa a `half_open` permitiendo un intento de prueba.
+   - Si el intento tiene éxito, el circuito se cierra (`closed`); si falla, vuelve a abrirse.
+
+2. **Health Checks Periódicos**:
+   - `/ai/health` verifica el estado de todos los proveedores configurados.
+   - Un health check exitoso puede resetear automáticamente un circuito abierto.
+
+3. **Caché Inteligente (Ollama/Microservicio)**:
+   - Para el proveedor local (`microservice`), se implementa caché con Redis/memoria.
+   - Se cachean solo respuestas exitosas y validadas.
+   - Claves basadas en parámetros de entrada para garantizar consistencia.
+   - TTL específico para alertas y decisiones.
+
 ## Validación y formato de respuestas
 
 ### Alertas (`predictAlert`)
@@ -157,6 +187,7 @@ type FallbackResponse = {
   - `/ai/alert/:userId` → usa `aiMessageQueue` y `CheckInferenciaIA`.
   - `/ai/alert` (body) → idem pero tomando datos del cuerpo.
   - `/ai/health` → usa `checkAiServiceHealth` y expone estado de proveedores.
+  - `/ai/config/reload` (POST, admin) → Recarga la configuración de proveedores en caliente.
 
 ## Pruebas
 
