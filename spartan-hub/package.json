@@ -40,8 +40,8 @@
     "verify:secrets": "node scripts/verifySecrets.js",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "start:e2e-server": "concurrently \"vite\" \"cd backend && node dist/server.js\"",
-    "test:e2e": "start-server-and-test start:e2e-server http://localhost:5173 cy:run"
+    "start:e2e-server": "concurrently \"vite\" \"cd backend && cross-env NODE_ENV=test ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3002 node dist/server.js\"",
+    "test:e2e": "start-server-and-test start:e2e-server http://localhost:3002 cy:run"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -99,6 +99,7 @@
     "@yao-pkg/pkg": "^6.11.0",
     "babel-jest": "^30.2.0",
     "concurrently": "^8.2.2",
+    "cross-env": "^10.1.0",
     "cypress": "^15.10.0",
     "eslint": "^9.39.2",
     "eslint-plugin-import": "^2.32.0",

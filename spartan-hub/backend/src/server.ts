@@ -230,7 +230,7 @@ function getCorsWhitelist(): string[] | string {
   logger.warn('No valid CORS_ORIGIN configured, using localhost default', {
     context: 'corsSecurity'
   });
-  return 'http://localhost:5173';
+  return ['http://localhost:5173', 'http://localhost:3002'];
 }
 
 const corsOptions = {
