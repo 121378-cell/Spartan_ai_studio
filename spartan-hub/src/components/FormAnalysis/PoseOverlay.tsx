@@ -16,11 +16,17 @@ const PoseOverlay: React.FC<PoseOverlayProps> = ({ pose, result, width, height, 
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: true });
         if (!ctx) return;
 
+        // Clear canvas
         ctx.clearRect(0, 0, width, height);
+        
         if (!pose) return;
+
+        // Optimization: Batch drawing operations
+        ctx.save();
+
 
         // Determine dynamic color based on results
         let drawColor = color;
@@ -111,6 +117,8 @@ const PoseOverlay: React.FC<PoseOverlayProps> = ({ pose, result, width, height, 
                 }
             });
         }
+        
+        ctx.restore();
 
     }, [pose, result, width, height, color]);
 

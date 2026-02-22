@@ -193,9 +193,9 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="flex bg-spartan-bg text-spartan-text min-h-screen font-sans">
+    <div className="flex flex-col lg:flex-row bg-spartan-bg text-spartan-text min-h-screen font-sans">
       {userProfile.onboardingCompleted && <Sidebar />}
-      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto mt-16 lg:mt-0">
         <Suspense fallback={<LoadingSpinner />}>
           {isPreWorkoutActive ? <PreWorkoutFlow /> : renderPage()}
         </Suspense>

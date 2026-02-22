@@ -43,14 +43,24 @@ export const useDeviceContext = (): DeviceType => {
       setDeviceType(getDeviceContext());
     };
 
+    // Debounce resize event for performance
+    let timeoutId: number;
+    const debouncedHandleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(handleResize, 150);
+    };
+
     // Add event listener
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', debouncedHandleResize);
 
     // Call handler right away so state gets updated with initial window size
     handleResize();
 
     // Remove event listener on cleanup
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+        window.removeEventListener('resize', debouncedHandleResize);
+        clearTimeout(timeoutId);
+    }
   }, []);
 
   return deviceType;

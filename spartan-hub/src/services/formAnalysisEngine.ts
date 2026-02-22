@@ -61,7 +61,10 @@ export class FormAnalysisEngine {
                         delegate: "GPU"
                     },
                     runningMode: "VIDEO",
-                    numPoses: 1
+                    numPoses: 1,
+                    minPoseDetectionConfidence: 0.5,
+                    minPosePresenceConfidence: 0.5,
+                    minTrackingConfidence: 0.5
                 });
                 logger.info('FormAnalysisEngine: MediaPipe PoseLandmarker initialized (GPU)');
             } catch (gpuError) {
@@ -73,7 +76,10 @@ export class FormAnalysisEngine {
                         delegate: "CPU"
                     },
                     runningMode: "VIDEO",
-                    numPoses: 1
+                    numPoses: 1,
+                    minPoseDetectionConfidence: 0.5,
+                    minPosePresenceConfidence: 0.5,
+                    minTrackingConfidence: 0.5
                 });
                 logger.info('FormAnalysisEngine: MediaPipe PoseLandmarker initialized (CPU)');
             }

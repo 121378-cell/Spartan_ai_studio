@@ -26,9 +26,9 @@ export function useFormAnalysis(exerciseType: ExerciseType) {
     const repCounter = useMemo(() => new RepCounterService(), []);
 
     // Performance configuration
-    // Mobile: 10 FPS (100ms) - Saves battery, prevents thermal throttling
+    // Mobile: 15 FPS (66ms) - Balance between battery and smoothness
     // Desktop: 30 FPS (33ms) - Smoother visualization
-    const minFrameInterval = isMobile ? 100 : 33;
+    const minFrameInterval = isMobile ? 66 : 33;
 
     useEffect(() => {
         typeRef.current = exerciseType;

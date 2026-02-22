@@ -27,9 +27,9 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
     // Adaptive resolution
     const { width, height } = useMemo(() => {
         if (manualWidth && manualHeight) return { width: manualWidth, height: manualHeight };
-        if (isMobile) return { width: 480, height: 640 }; // Portrait for mobile
-        if (isTablet) return { width: 640, height: 480 };
-        return { width: 1280, height: 720 }; // HD for desktop
+        if (isMobile) return { width: 360, height: 480 }; // Reduced resolution for mobile performance
+        if (isTablet) return { width: 480, height: 640 };
+        return { width: 640, height: 480 }; // Standard VGA for desktop to save ML processing time
     }, [isMobile, isTablet, manualWidth, manualHeight]);
 
     const [state, setState] = useState<VideoCaptureState>({
