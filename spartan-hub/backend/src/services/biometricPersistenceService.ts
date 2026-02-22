@@ -68,8 +68,8 @@ export class BiometricPersistenceService {
   }
 
   /**
-     * Get latest metrics for a user
-     */
+   * Get latest metrics for a user
+   */
   public async getLatestMetrics(userId: string): Promise<BiometricSummary | null> {
     try {
       const stmt = this.db.prepare(`
@@ -80,7 +80,21 @@ export class BiometricPersistenceService {
       `);
 
       const row = stmt.get(userId) as any;
-      if (!row) return null;
+      
+      // Calculate real training load from recent activities
+      const trainingLoad = await this.calculateTrainingLoad(userId);
+
+      if (!row) {
+        // If no biometric data, return just the training load if available
+        if (trainingLoad > 0) {
+          return {
+            userId,
+            date: new Date().toISOString().split('T')[0],
+            trainingLoad
+          };
+        }
+        return null;
+      }
 
       return {
         userId: row.userId,
@@ -89,7 +103,7 @@ export class BiometricPersistenceService {
         hrvAvg: row.hrvAvg,
         stressLevelAvg: row.stressLevel,
         sleepDuration: row.sleepDuration,
-        trainingLoad: 100, // TODO: calculate from activities
+        trainingLoad: trainingLoad > 0 ? trainingLoad : (row.totalCalories > 0 ? Math.round((row.totalCalories / 2000) * 100) : 50)
       };
     } catch (error) {
       logger.error('Error fetching latest metrics', {
@@ -101,8 +115,63 @@ export class BiometricPersistenceService {
   }
 
   /**
-     * Get HRV trend for the last N days
-     */
+   * Calculate training load (Acute Training Load - ATL) based on recent workouts
+   * Formula: Sum of (Duration_mins * RPE) for last 7 days
+   */
+  private async calculateTrainingLoad(userId: string): Promise<number> {
+    try {
+      // Check if workout_sessions table exists
+      const tableCheck = this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='workout_sessions'").get();
+      if (!tableCheck) return 0;
+
+      const stmt = this.db.prepare(`
+        SELECT start_time, end_time, actual_intensity
+        FROM workout_sessions
+        WHERE user_id = ? 
+        AND status = 'completed' 
+        AND start_time >= date('now', '-7 days')
+      `);
+
+      const sessions = stmt.all(userId) as any[];
+      
+      let totalLoad = 0;
+      
+      const intensityMap: Record<string, number> = {
+        'very_light': 1,
+        'light': 2,
+        'moderate': 3,
+        'hard': 4,
+        'very_hard': 5
+      };
+
+      for (const session of sessions) {
+        if (session.start_time && session.end_time) {
+          const start = new Date(session.start_time).getTime();
+          const end = new Date(session.end_time).getTime();
+          const durationMins = (end - start) / 60000;
+          
+          if (durationMins > 0) {
+            const intensity = intensityMap[session.actual_intensity] || 3; // Default to moderate
+            totalLoad += durationMins * intensity;
+          }
+        }
+      }
+
+      // Normalize load (e.g., 0-100 scale where 100 is very high load)
+      // Assuming 3000 arbitrary units is max weekly load
+      return Math.min(100, Math.round((totalLoad / 3000) * 100));
+    } catch (error) {
+      logger.warn('Error calculating training load', {
+        context: 'biometric-persistence',
+        metadata: { userId, error: error instanceof Error ? error.message : String(error) }
+      });
+      return 0;
+    }
+  }
+
+  /**
+   * Get HRV trend for the last N days
+   */
   public async getHrvTrend(userId: string, days: number = 7): Promise<number[]> {
     try {
       const stmt = this.db.prepare(`

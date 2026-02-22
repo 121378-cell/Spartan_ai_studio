@@ -188,6 +188,62 @@ export class HealthConnectHubService {
   }
 
   /**
+   * Update a wearable device configuration or tokens
+   */
+  async updateDevice(deviceId: string, updates: Partial<WearableDevice>): Promise<void> {
+    if (!this.db) {
+      throw new Error('Database not initialized');
+    }
+
+    try {
+      const allowedFields = [
+        'accessToken', 'refreshToken', 'tokenExpiresAt', 
+        'isActive', 'lastSyncTime', 'nextSyncTime', 
+        'syncInterval', 'permissions', 'metadata'
+      ];
+
+      const fieldsToUpdate = Object.keys(updates).filter(key => allowedFields.includes(key));
+      
+      if (fieldsToUpdate.length === 0) {
+        return;
+      }
+
+      const setClause = fieldsToUpdate.map(field => `${field} = ?`).join(', ');
+      const values = fieldsToUpdate.map(field => {
+        const value = updates[field as keyof WearableDevice];
+        if (field === 'permissions' || field === 'metadata') {
+          return JSON.stringify(value);
+        }
+        return value;
+      });
+
+      // Add updatedAt
+      values.push(Date.now());
+      values.push(deviceId);
+
+      const stmt = this.db.prepare(`
+        UPDATE wearable_devices
+        SET ${setClause}, updatedAt = ?
+        WHERE id = ? OR deviceId = ?
+      `);
+
+      // We bind deviceId twice for the OR condition to handle both internal ID and external deviceId
+      stmt.run(...values, deviceId);
+
+      logger.info('Wearable device updated', {
+        context: 'healthConnect',
+        metadata: { deviceId, updatedFields: fieldsToUpdate }
+      });
+    } catch (error) {
+      logger.error('Failed to update wearable device', {
+        context: 'healthConnect',
+        metadata: { deviceId, error: error instanceof Error ? error.message : String(error) }
+      });
+      throw error;
+    }
+  }
+
+  /**
    * Store biometric data point
    */
   async storeBiometricData(dataPoint: BiometricDataPoint): Promise<string> {

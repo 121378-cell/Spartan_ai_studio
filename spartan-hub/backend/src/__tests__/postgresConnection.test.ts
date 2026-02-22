@@ -12,6 +12,7 @@ describe('PostgreSQL Connection', () => {
                                process.env.POSTGRES_HOST !== undefined;
 
   if (!isPostgresConfigured) {
+    console.warn('⚠️ PostgreSQL tests skipped: DATABASE_TYPE not set to "postgres" or POSTGRES_HOST missing.');
     it.skip('should connect to PostgreSQL and execute a simple query', async () => {
       // This test is skipped when not in PostgreSQL environment
     });

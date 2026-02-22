@@ -499,14 +499,13 @@ export const syncAppleHealthData = async (req: Request, res: Response) => {
       if (appleDevice.refreshToken) {
         const newToken = await appleHealthService.refreshToken(appleDevice.refreshToken);
         // Update device with new token
-        // TODO: Implement updateDevice method in HealthConnectHubService
-        // if (healthHub) {
-        //   await healthHub.updateDevice(appleDevice.deviceId || '', {
-        //     accessToken: newToken.accessToken,
-        //     refreshToken: newToken.refreshToken,
-        //     tokenExpiresAt: Date.now() + newToken.expiresIn * 1000
-        //   });
-        // }
+        if (healthHub) {
+          await healthHub.updateDevice(appleDevice.deviceId || '', {
+            accessToken: newToken.accessToken,
+            refreshToken: newToken.refreshToken,
+            tokenExpiresAt: Date.now() + newToken.expiresIn * 1000
+          });
+        }
       }
     }
 
