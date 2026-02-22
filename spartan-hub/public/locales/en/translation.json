@@ -1,0 +1,161 @@
+{
+  "app": {
+    "title": "Spartan Hub",
+    "loading": "Loading..."
+  },
+  "header": {
+    "dashboard": "Dashboard",
+    "workouts": "Workouts",
+    "nutrition": "Nutrition",
+    "community": "Community",
+    "profile": "Profile",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "routines": "Routines",
+    "armory": "Armory",
+    "formAnalysis": "Form Analysis",
+    "progress": "Progress",
+    "calendar": "Calendar",
+    "legend": "Legend",
+    "discipline": "Discipline",
+    "flow": "Flow",
+    "reconditioning": "Reconditioning",
+    "nutrition": "Nutrition",
+    "regulation": "Regulation",
+    "coachHub": "Coach Hub",
+    "aiDashboard": "AI Dashboard",
+    "manual": "Manual",
+    "aiConsultant": "AI Consultant",
+    "synergyAi": "Synergy AI"
+  },
+  "language": {
+    "select": "Select Language",
+    "en": "English",
+    "es": "Spanish"
+  },
+  "videoAnalysis": {
+    "title": "Form Analysis",
+    "startCapture": "Start Capture",
+    "stopCapture": "Stop Capture",
+    "analyzing": "Analyzing...",
+    "score": "Score",
+    "issues": "Issues",
+    "tips": "Tips",
+    "metrics": "Metrics",
+    "noIssues": "Great form! No significant issues detected.",
+    "newAnalysis": "New Analysis",
+    "close": "Close Report",
+    "exportCSV": "Export CSV",
+    "structuralAnalysis": "STRUCTURAL ANALYSIS",
+    "integrityIndex": "Integrity Index",
+    "executiveSummary": "Executive Summary",
+    "structuralElements": "Structural Elements",
+    "loadCalculation": "Load Calculation",
+    "validation": "Validation",
+    "generalStatus": "General Status",
+    "criticalFindings": "Critical Findings",
+    "technicalRecommendations": "Technical Recommendations",
+    "structuralHealthy": "Structurally Sound",
+    "attentionRequired": "Attention Required",
+    "basedOnFrames": "Based on {{count}} frames analyzed",
+    "noSignificantFaults": "No significant structural faults detected.",
+    "estimatedTorque": "Estimated Bending Moment (L5/S1)",
+    "torqueCalculation": "Calculation based on standard biomechanical model considering user weight ({{userWeight}}kg) and external load ({{barWeight}}kg).",
+    "structuralIntegrityAlert": "Structural Integrity Alert",
+    "riskAssessment": "Risk Assessment",
+    "riskContribution": "Contribution",
+    "noRiskDetected": "No significant biomechanical risk factors detected. Execution is safe under standard loads.",
+    "closeReport": "Close Report",
+    
+    "elements": {
+      "mainBeam": "Main Beam (Torso/Spine)",
+      "supportColumns": "Support Columns (Femur/Tibia)",
+      "centralPivot": "Joint (Hip)"
+    },
+    "loads": {
+      "axialCompression": "Axial Compression + Bending Moment",
+      "compression": "Compression",
+      "rotationalTorque": "Rotational Torque"
+    },
+    "status": {
+      "optimal": "OPTIMAL",
+      "warning": "WARNING",
+      "critical": "CRITICAL",
+      "conforme": "COMPLIANT",
+      "noConforme": "NON-COMPLIANT"
+    },
+    "warnings": {
+      "backCritical": "CRITICAL: Main beam (spine) deviation exceeds 20%. Bending moment increases exponentially, raising structural failure risk (disc injury).",
+      "backNominal": "NOMINAL: Current geometry keeps loads within biological material safety limits."
+    },
+    "validationMetrics": {
+      "spinalNeutrality": "Spinal Neutrality",
+      "kneeLockout": "Knee Lockout",
+      "target": "Target",
+      "tolerance": "Tolerance"
+    },
+    "exerciseTypes": {
+      "squat": "Squat",
+      "deadlift": "Deadlift",
+      "push_up": "Push Up",
+      "plank": "Plank",
+      "row": "Row"
+    },
+    "metricsLabels": {
+      "hipDepth": "Hip Depth",
+      "kneeAngle": "Knee Angle",
+      "torsoAngle": "Torso Angle",
+      "backAngle": "Back Deviation",
+      "kneeExtension": "Knee Extension",
+      "hipHinge": "Hip Hinge",
+      "elbowAngle": "Elbow Angle",
+      "bodyAlignment": "Body Alignment",
+      "elbowFlare": "Elbow Flare"
+    },
+    "generalScore": "General Score",
+    "improvementPoints": "Improvement Points",
+    "analyzeAgain": "Analyze Again",
+    "cancel": "Cancel",
+    "frames": "Frames",
+    "fps": "FPS",
+    "live": "Live",
+    "ready": "Ready",
+    "error": "Error"
+  },
+  "coachDashboard": {
+    "title": "Command Center",
+    "subtitle": "Technical and physiological athlete supervision",
+    "totalAthletes": "Total Athletes",
+    "athletesAtRisk": "Athletes at Risk Detected",
+    "riskReview": "Immediate review of load and technique recommended.",
+    "workouts": "Workouts",
+    "injuryRisk": "Injury Risk",
+    "since": "Since",
+    "viewProfile": "View Full Profile",
+    "riskLevels": {
+      "low": "LOW",
+      "medium": "MEDIUM",
+      "high": "HIGH",
+      "critical": "CRITICAL"
+    },
+    "details": {
+      "tabs": {
+        "overview": "Overview",
+        "videoAnalysis": "Video Analysis",
+        "workouts": "Workouts"
+      },
+      "videoHistory": "Analysis History",
+      "noVideos": "No video analysis recorded yet.",
+      "lastSession": "Last Session",
+      "score": "Score",
+      "plans": "Assigned Training Plans",
+      "plan": "Plan",
+      "assigned": "Assigned",
+      "start": "Start",
+      "noPlans": "No active plans assigned."
+    }
+  }
+}

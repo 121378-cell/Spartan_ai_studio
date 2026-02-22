@@ -1,0 +1,130 @@
+{
+  "app": {
+    "title": "Spartan Hub",
+    "loading": "Cargando..."
+  },
+  "header": {
+    "dashboard": "Panel",
+    "workouts": "Entrenamientos",
+    "nutrition": "Nutrición",
+    "community": "Comunidad",
+    "profile": "Perfil",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión"
+  },
+  "sidebar": {
+    "dashboard": "Panel",
+    "routines": "Rutinas",
+    "armory": "Armería",
+    "formAnalysis": "Análisis de Forma",
+    "progress": "Progreso",
+    "calendar": "Calendario",
+    "legend": "Leyenda",
+    "discipline": "Disciplina",
+    "flow": "Flujo",
+    "reconditioning": "Reacondicionamiento",
+    "nutrition": "Nutrición",
+    "regulation": "Regulación",
+    "coachHub": "Coach Hub",
+    "aiDashboard": "Panel IA",
+    "manual": "Manual",
+    "aiConsultant": "Consultor IA",
+    "synergyAi": "Sinergia IA"
+  },
+  "language": {
+    "select": "Seleccionar Idioma",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "videoAnalysis": {
+    "title": "Análisis de Forma",
+    "startCapture": "Iniciar Captura",
+    "stopCapture": "Detener Captura",
+    "analyzing": "Analizando...",
+    "score": "Puntuación",
+    "issues": "Problemas",
+    "tips": "Consejos",
+    "metrics": "Métricas",
+    "noIssues": "¡Excelente forma! No se detectaron problemas significativos.",
+    "newAnalysis": "Nuevo Análisis",
+    "close": "Cerrar Informe",
+    "exportCSV": "Exportar CSV",
+    "structuralAnalysis": "ANÁLISIS ESTRUCTURAL",
+    "integrityIndex": "Índice de Integridad",
+    "executiveSummary": "Resumen Ejecutivo",
+    "structuralElements": "Elementos Estructurales",
+    "loadCalculation": "Cálculo de Cargas",
+    "validation": "Validación",
+    "generalStatus": "Estado General",
+    "criticalFindings": "Hallazgos Críticos",
+    "technicalRecommendations": "Recomendaciones Técnicas",
+    "validationMetrics": {
+      "spinalNeutrality": "Neutralidad Espinal",
+      "kneeLockout": "Bloqueo de Rodilla",
+      "target": "Objetivo",
+      "tolerance": "Tolerancia"
+    },
+    "exerciseTypes": {
+      "squat": "Sentadilla",
+      "deadlift": "Peso Muerto",
+      "push_up": "Flexiones",
+      "plank": "Plancha",
+      "row": "Remo"
+    },
+    "metricsLabels": {
+      "hipDepth": "Profundidad Cadera",
+      "kneeAngle": "Ángulo Rodilla",
+      "torsoAngle": "Ángulo Torso",
+      "backAngle": "Desviación Espalda",
+      "kneeExtension": "Extensión Rodilla",
+      "hipHinge": "Bisagra Cadera",
+      "elbowAngle": "Ángulo Codo",
+      "bodyAlignment": "Alineación Cuerpo",
+      "elbowFlare": "Apertura Codos"
+    },
+    "generalScore": "Puntuación General",
+    "improvementPoints": "Puntos de Mejora",
+    "analyzeAgain": "Analizar Nuevamente",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "frames": "Cuadros",
+    "fps": "FPS",
+    "status": "Estado",
+    "live": "En vivo",
+    "ready": "Listo",
+    "error": "Error"
+  },
+  "coachDashboard": {
+    "title": "Centro de Mando",
+    "subtitle": "Supervisión técnica y fisiológica de atletas",
+    "totalAthletes": "Total Atletas",
+    "athletesAtRisk": "Atletas en Riesgo Detectados",
+    "riskReview": "Se recomienda revisión inmediata de carga y técnica.",
+    "workouts": "Entrenamientos",
+    "injuryRisk": "Riesgo Lesión",
+    "since": "Desde",
+    "viewProfile": "Ver Perfil Completo",
+    "riskLevels": {
+      "low": "BAJO",
+      "medium": "MEDIO",
+      "high": "ALTO",
+      "critical": "CRÍTICO"
+    },
+    "details": {
+      "tabs": {
+        "overview": "Resumen",
+        "videoAnalysis": "Análisis de Video",
+        "workouts": "Entrenamientos"
+      },
+      "videoHistory": "Historial de Análisis",
+      "noVideos": "No hay análisis de video registrados aún.",
+      "lastSession": "Última Sesión",
+      "score": "Puntuación",
+      "plans": "Planes de Entrenamiento Asignados",
+      "plan": "Plan",
+      "assigned": "Asignado",
+      "start": "Inicio",
+      "noPlans": "No hay planes activos asignados."
+    }
+  }
+}

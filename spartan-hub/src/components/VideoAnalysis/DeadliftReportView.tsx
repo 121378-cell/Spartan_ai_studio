@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FormAnalysisResult } from '../../types/pose';
+import { useTranslation } from 'react-i18next';
 import { 
   FileText, 
   BarChart2, 
@@ -24,35 +25,36 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
   onRetry,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>('resumen');
 
   // Metáforas de Ingeniería Estructural
   const structuralElements = [
     {
       id: 'viga_principal',
-      name: 'Viga Principal (Torso/Columna)',
+      name: t('videoAnalysis.elements.mainBeam'),
       status: result.metrics?.backAngle && result.metrics.backAngle < 15 ? 'optimal' : 'critical',
-      value: `${result.metrics?.backAngle}° desviación`,
+      value: `${result.metrics?.backAngle}°`,
       limit: '< 15°',
-      load: 'Compresión Axial + Momento Flector',
+      load: t('videoAnalysis.loads.axialCompression'),
       material: 'Tejido Óseo/Muscular'
     },
     {
       id: 'columnas_soporte',
-      name: 'Columnas de Soporte (Fémur/Tibia)',
+      name: t('videoAnalysis.elements.supportColumns'),
       status: result.metrics?.kneeExtension && result.metrics.kneeExtension > 160 ? 'optimal' : 'warning',
-      value: `${result.metrics?.kneeExtension}° extensión`,
-      limit: '> 160° (Bloqueo)',
-      load: 'Compresión',
+      value: `${result.metrics?.kneeExtension}°`,
+      limit: '> 160°',
+      load: t('videoAnalysis.loads.compression'),
       material: 'Estructura Ósea'
     },
     {
       id: 'pivote_central',
-      name: 'Articulación (Cadera)',
+      name: t('videoAnalysis.elements.centralPivot'),
       status: 'optimal', // Asumido
-      value: `${result.metrics?.hipHinge}° flexión`,
-      limit: 'Rango 45°-90°',
-      load: 'Torque Rotacional',
+      value: `${result.metrics?.hipHinge}°`,
+      limit: '45°-90°',
+      load: t('videoAnalysis.loads.rotationalTorque'),
       material: 'Complejo Articular'
     }
   ];
@@ -94,7 +96,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
           <div>
             <h2 className="text-2xl font-bold font-mono flex items-center gap-2">
               <Activity className="text-blue-400" />
-              ANÁLISIS ESTRUCTURAL: PESO MUERTO
+              {t('videoAnalysis.structuralAnalysis')}
             </h2>
             <p className="text-slate-400 text-sm mt-1 font-mono">
               REF: STR-DL-{new Date().toLocaleDateString().replace(/\//g, '')} | NORMATIVA: BIOMECH-2026
@@ -104,7 +106,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
             <div className={`text-3xl font-bold ${result.score >= 80 ? 'text-green-400' : 'text-yellow-400'}`}>
               {result.score}/100
             </div>
-            <div className="text-xs text-slate-500 uppercase tracking-wider">Índice de Integridad</div>
+            <div className="text-xs text-slate-500 uppercase tracking-wider">{t('videoAnalysis.integrityIndex')}</div>
           </div>
         </div>
       </div>
@@ -112,10 +114,10 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
       {/* Tabs de Navegación */}
       <div className="flex border-b border-gray-200 bg-white">
         {[
-          { id: 'resumen', label: 'Resumen Ejecutivo', icon: FileText },
-          { id: 'elementos', label: 'Elementos Estructurales', icon: Layers },
-          { id: 'cargas', label: 'Cálculo de Cargas', icon: BarChart2 },
-          { id: 'validacion', label: 'Validación Normativa', icon: CheckCircle },
+          { id: 'resumen', label: t('videoAnalysis.executiveSummary'), icon: FileText },
+          { id: 'elementos', label: t('videoAnalysis.structuralElements'), icon: Layers },
+          { id: 'cargas', label: t('videoAnalysis.loadCalculation'), icon: BarChart2 },
+          { id: 'validacion', label: t('videoAnalysis.validation'), icon: CheckCircle },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -140,22 +142,22 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">Estado General</h3>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">{t('videoAnalysis.generalStatus')}</h3>
                 <div className="flex items-center gap-4">
                   <div className={`p-4 rounded-full ${result.score >= 80 ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
                     {result.score >= 80 ? <CheckCircle className="w-8 h-8" /> : <AlertTriangle className="w-8 h-8" />}
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-gray-900">
-                      {result.score >= 80 ? 'Estructuralmente Sano' : 'Atención Requerida'}
+                      {result.score >= 80 ? t('videoAnalysis.structuralHealthy') : t('videoAnalysis.attentionRequired')}
                     </div>
-                    <p className="text-sm text-gray-500">Basado en {result.frameCount} cuadros analizados</p>
+                    <p className="text-sm text-gray-500">{t('videoAnalysis.basedOnFrames', { count: result.frameCount })}</p>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 col-span-2">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">Hallazgos Críticos</h3>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">{t('videoAnalysis.criticalFindings')}</h3>
                 {result.issues.length > 0 ? (
                   <ul className="space-y-3">
                     {result.issues.map((issue, idx) => (
@@ -171,7 +173,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                 ) : (
                   <div className="flex items-center gap-3 text-green-700 bg-green-50 p-4 rounded-lg border border-green-100">
                     <CheckCircle className="w-5 h-5" />
-                    <span>No se detectaron fallos estructurales significativos.</span>
+                    <span>{t('videoAnalysis.noSignificantFaults')}</span>
                   </div>
                 )}
               </div>
@@ -180,7 +182,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
               <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
                 <Activity className="w-5 h-5" />
-                Recomendaciones Técnicas
+                {t('videoAnalysis.technicalRecommendations')}
               </h3>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {result.tips.map((tip, idx) => (
@@ -218,7 +220,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                           el.status === 'warning' ? 'bg-yellow-100 text-yellow-800' : 
                           'bg-red-100 text-red-800'
                         }`}>
-                          {el.status === 'optimal' ? 'CONFORME' : 'NO CONFORME'}
+                          {el.status === 'optimal' ? t('videoAnalysis.status.conforme') : t('videoAnalysis.status.noConforme')}
                         </span>
                       </td>
                       <td className="px-6 py-4 font-mono text-sm text-gray-600">{el.value}</td>
@@ -278,12 +280,12 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
         {activeTab === 'cargas' && (
           <div className="space-y-6">
             <div className="bg-slate-900 text-white rounded-xl p-8 text-center">
-              <h3 className="text-slate-400 uppercase text-xs font-bold tracking-widest mb-2">Momento Flector Estimado (L5/S1)</h3>
+              <h3 className="text-slate-400 uppercase text-xs font-bold tracking-widest mb-2">{t('videoAnalysis.estimatedTorque')}</h3>
               <div className="text-5xl font-mono font-bold mb-2">
                 {estimatedTorque} <span className="text-2xl text-slate-500">Nm</span>
               </div>
               <p className="text-sm text-slate-400 max-w-md mx-auto">
-                Cálculo basado en modelo biomecánico estándar considerando peso usuario (80kg) y carga externa (100kg).
+                {t('videoAnalysis.torqueCalculation', { userWeight, barWeight })}
               </p>
             </div>
 
@@ -304,7 +306,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                       : 'text-green-900'
                 }`}>
                   <AlertTriangle className="w-5 h-5" />
-                  Evaluación de Riesgo: {result.injuryRisk.level.toUpperCase()}
+                  {t('videoAnalysis.riskAssessment')}: {result.injuryRisk.level.toUpperCase()}
                 </h4>
                 
                 {result.injuryRisk.factors.length > 0 ? (
@@ -314,7 +316,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                         <div className="flex justify-between mb-1">
                           <span className="font-semibold text-gray-900">{factor.name}</span>
                           <span className="text-xs font-mono bg-gray-200 px-2 py-0.5 rounded">
-                            Contribución: {(factor.riskContribution * 100).toFixed(0)}%
+                            {t('videoAnalysis.riskContribution')}: {(factor.riskContribution * 100).toFixed(0)}%
                           </span>
                         </div>
                         <p className="text-sm text-gray-700">{factor.description}</p>
@@ -323,7 +325,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                   </div>
                 ) : (
                   <p className="text-sm text-green-800">
-                    No se han detectado factores de riesgo biomecánico significativos. La ejecución es segura bajo cargas estándar.
+                    {t('videoAnalysis.noRiskDetected')}
                   </p>
                 )}
               </div>
@@ -331,12 +333,12 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
               <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
                 <h4 className="font-bold text-yellow-900 mb-2 flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5" />
-                  Alerta de Integridad Estructural
+                  {t('videoAnalysis.structuralIntegrityAlert')}
                 </h4>
                 <p className="text-sm text-yellow-800">
                   {result.metrics?.backAngle && result.metrics.backAngle > 20 
-                    ? "CRÍTICO: La desviación de la viga principal (columna) excede el 20%. El momento flector se incrementa exponencialmente, aumentando el riesgo de fallo estructural (lesión discal)."
-                    : "NOMINAL: La geometría actual mantiene las cargas dentro de los límites de seguridad del material biológico."}
+                    ? t('videoAnalysis.warnings.backCritical')
+                    : t('videoAnalysis.warnings.backNominal')}
                 </p>
               </div>
             )}
@@ -351,18 +353,18 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
               <div className="space-y-6">
                 {[
                   { 
-                    label: 'Neutralidad Espinal', 
+                    label: t('videoAnalysis.validationMetrics.spinalNeutrality'), 
                     current: result.metrics?.backAngle || 0, 
                     target: 0, 
                     tolerance: 15,
-                    unit: '° desv.'
+                    unit: '°'
                   },
                   { 
-                    label: 'Bloqueo de Rodilla', 
+                    label: t('videoAnalysis.validationMetrics.kneeLockout'), 
                     current: result.metrics?.kneeExtension || 0, 
                     target: 180, 
                     tolerance: 20,
-                    unit: '° ext.'
+                    unit: '°'
                   }
                 ].map((metric, idx) => {
                   const diff = Math.abs(metric.current - metric.target);
@@ -397,8 +399,8 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                           ></div>
                         </div>
                         <div className="flex justify-between text-xs text-gray-500 mt-1">
-                          <span>Objetivo: {metric.target}{metric.unit}</span>
-                          <span>Tolerancia: ±{metric.tolerance}{metric.unit}</span>
+                          <span>{t('videoAnalysis.validationMetrics.target')}: {metric.target}{metric.unit}</span>
+                          <span>{t('videoAnalysis.validationMetrics.tolerance')}: ±{metric.tolerance}{metric.unit}</span>
                         </div>
                       </div>
                     </div>
@@ -418,20 +420,20 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
           className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors"
         >
           <Download className="w-4 h-4" />
-          Exportar CSV
+          {t('videoAnalysis.exportCSV')}
         </button>
         <div className="flex gap-3">
           <button
             onClick={onRetry}
             className="px-6 py-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg font-medium transition-colors"
           >
-            Nuevo Análisis
+            {t('videoAnalysis.newAnalysis')}
           </button>
           <button
             onClick={onClose}
             className="px-6 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-colors shadow-sm"
           >
-            Cerrar Informe
+            {t('videoAnalysis.closeReport')}
           </button>
         </div>
       </div>

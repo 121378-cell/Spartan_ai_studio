@@ -6,6 +6,7 @@ import VitalisFeedbackAlert from './VitalisFeedbackAlert';
 import { DeadliftReportView } from './DeadliftReportView';
 import BackendApiService from '../../services/api';
 import { logger } from '../../utils/logger';
+import { useTranslation } from 'react-i18next';
 
 interface FormAnalysisModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
   exerciseType,
   userId,
 }) => {
+  const { t } = useTranslation();
   const [captureState, setCaptureState] = useState<VideoCaptureState>({
     isActive: false,
     framesProcessed: 0,
@@ -69,32 +71,6 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
     onClose();
   }, [onClose]);
 
-  const getExerciseLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      squat: 'Sentadilla',
-      deadlift: 'Peso Muerto',
-      push_up: 'Flexiones',
-      plank: 'Plancha',
-      row: 'Remo'
-    };
-    return labels[type] || type;
-  };
-
-  const getMetricLabel = (key: string) => {
-    const labels: Record<string, string> = {
-      hipDepth: 'Profundidad Cadera',
-      kneeAngle: 'Ángulo Rodilla',
-      torsoAngle: 'Ángulo Torso',
-      backAngle: 'Desviación Espalda',
-      kneeExtension: 'Extensión Rodilla',
-      hipHinge: 'Bisagra Cadera',
-      elbowAngle: 'Ángulo Codo',
-      bodyAlignment: 'Alineación Cuerpo',
-      elbowFlare: 'Apertura Codos'
-    };
-    return labels[key] || key;
-  };
-
   if (!isOpen) return null;
 
   // Renderizado específico para el reporte detallado de Peso Muerto
@@ -118,7 +94,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4 sticky top-0 bg-white z-10">
           <h2 className="text-xl font-semibold text-gray-900">
-            Análisis de Forma - {getExerciseLabel(exerciseType)}
+            {t('videoAnalysis.title')} - {t(`videoAnalysis.exerciseTypes.${exerciseType}`)}
           </h2>
           <button
             onClick={handleClose}
@@ -149,7 +125,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm font-medium">Puntuación General</p>
+                    <p className="text-gray-600 text-sm font-medium">{t('videoAnalysis.generalScore')}</p>
                     <p className="text-4xl font-bold text-gray-900">{analysisResult.score}</p>
                   </div>
                   <div className="text-5xl">
@@ -165,7 +141,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
               {/* Issues List */}
               {analysisResult.issues.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-900">Puntos de Mejora</h3>
+                  <h3 className="font-semibold text-gray-900">{t('videoAnalysis.improvementPoints')}</h3>
                   {analysisResult.issues.map((issue, idx) => (
                     <div
                       key={idx}
@@ -187,7 +163,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
               {/* Tips */}
               {analysisResult.tips.length > 0 && (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-2">
-                  <h3 className="font-semibold text-green-900">💡 Consejos</h3>
+                  <h3 className="font-semibold text-green-900">💡 {t('videoAnalysis.tips')}</h3>
                   <ul className="space-y-1">
                     {analysisResult.tips.map((tip, idx) => (
                       <li key={idx} className="text-sm text-green-800">
@@ -203,7 +179,9 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   {Object.entries(analysisResult.metrics).map(([key, value]) => (
                     <div key={key} className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-600 uppercase tracking-wide">{getMetricLabel(key)}</p>
+                      <p className="text-xs text-gray-600 uppercase tracking-wide">
+                        {t(`videoAnalysis.metricsLabels.${key}`, { defaultValue: key })}
+                      </p>
                       <p className="text-lg font-semibold text-gray-900">
                         {typeof value === 'number' ? value.toFixed(1) : value}°
                       </p>
@@ -225,17 +203,17 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
               <div className="border-t pt-4 space-y-3">
                 <div className="grid grid-cols-3 gap-4 text-center text-sm">
                   <div>
-                    <p className="text-gray-600">Frames</p>
+                    <p className="text-gray-600">{t('videoAnalysis.frames')}</p>
                     <p className="text-lg font-semibold text-gray-900">{captureState.framesProcessed}</p>
                   </div>
                   <div>
-                    <p className="text-gray-600">FPS</p>
+                    <p className="text-gray-600">{t('videoAnalysis.fps')}</p>
                     <p className="text-lg font-semibold text-gray-900">{captureState.fps?.toFixed(1) || '0'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-600">Estado</p>
+                    <p className="text-gray-600">{t('videoAnalysis.status')}</p>
                     <p className="text-lg font-semibold text-gray-900">
-                      {captureState.isActive ? '🔴 En vivo' : '⚪ Listo'}
+                      {captureState.isActive ? `🔴 ${t('videoAnalysis.live')}` : `⚪ ${t('videoAnalysis.ready')}`}
                     </p>
                   </div>
                 </div>
@@ -243,7 +221,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
                 {captureState.error && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                     <p className="text-sm text-red-800">
-                      <span className="font-semibold">Error:</span> {captureState.error}
+                      <span className="font-semibold">{t('videoAnalysis.error')}:</span> {captureState.error}
                     </p>
                   </div>
                 )}
@@ -260,13 +238,13 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
                 onClick={() => setAnalysisResult(null)}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
               >
-                Analizar Nuevamente
+                {t('videoAnalysis.analyzeAgain')}
               </button>
               <button
                 onClick={handleClose}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
               >
-                Cerrar
+                {t('videoAnalysis.close')}
               </button>
             </>
           ) : (
@@ -274,7 +252,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
               onClick={handleClose}
               className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
             >
-              Cancelar
+              {t('videoAnalysis.cancel')}
             </button>
           )}
         </div>

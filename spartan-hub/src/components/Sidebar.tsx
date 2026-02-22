@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext.tsx';
+import { useTranslation } from 'react-i18next';
 import type { Page } from '../types.ts';
 
 import HomeIcon from './icons/HomeIcon.tsx';
@@ -18,6 +19,7 @@ import ChartBarIcon from './icons/ChartBarIcon.tsx';
 import VideoCameraIcon from './icons/VideoCameraIcon.tsx';
 import { Users, Cpu } from 'lucide-react';
 import BluetoothConnector from './BluetoothConnector.tsx';
+import { LanguageSelector } from './LanguageSelector.tsx';
 
 interface NavItemProps {
   page: Page;
@@ -27,26 +29,27 @@ interface NavItemProps {
 
 const Sidebar: React.FC = () => {
   const { currentPage, setCurrentPage, toggleChat, userProfile } = useAppContext();
+  const { t } = useTranslation();
 
   const navItems: NavItemProps[] = [
-    { page: 'dashboard', label: 'Panel', icon: <HomeIcon className="w-6 h-6" /> },
-    { page: 'routines', label: 'Rutinas', icon: <DumbbellIcon className="w-6 h-6" /> },
-    { page: 'exercise-library', label: 'Armería', icon: <UserIcon className="w-6 h-6" /> },
-    { page: 'form-analysis', label: 'Análisis de Forma', icon: <VideoCameraIcon className="w-6 h-6" /> },
-    { page: 'progress', label: 'Progreso', icon: <ChartBarIcon className="w-6 h-6" /> },
-    { page: 'calendar', label: 'Calendario', icon: <CalendarIcon className="w-6 h-6" /> },
-    { page: 'legend', label: 'Leyenda', icon: <LaurelWreathIcon className="w-6 h-6" /> },
-    { page: 'discipline', label: 'Disciplina', icon: <FireIcon className="w-6 h-6" /> },
-    { page: 'flow', label: 'Flujo', icon: <FocusIcon className="w-6 h-6" /> },
-    { page: 'reconditioning', label: 'Reacondicionamiento', icon: <LotusIcon className="w-6 h-6" /> },
-    { page: 'nutrition', label: 'Nutrición', icon: <NutritionIcon className="w-6 h-6" /> },
-    { page: 'master-regulation', label: 'Regulación', icon: <RegulationIcon className="w-6 h-6" /> },
+    { page: 'dashboard', label: t('sidebar.dashboard'), icon: <HomeIcon className="w-6 h-6" /> },
+    { page: 'routines', label: t('sidebar.routines'), icon: <DumbbellIcon className="w-6 h-6" /> },
+    { page: 'exercise-library', label: t('sidebar.armory'), icon: <UserIcon className="w-6 h-6" /> },
+    { page: 'form-analysis', label: t('sidebar.formAnalysis'), icon: <VideoCameraIcon className="w-6 h-6" /> },
+    { page: 'progress', label: t('sidebar.progress'), icon: <ChartBarIcon className="w-6 h-6" /> },
+    { page: 'calendar', label: t('sidebar.calendar'), icon: <CalendarIcon className="w-6 h-6" /> },
+    { page: 'legend', label: t('sidebar.legend'), icon: <LaurelWreathIcon className="w-6 h-6" /> },
+    { page: 'discipline', label: t('sidebar.discipline'), icon: <FireIcon className="w-6 h-6" /> },
+    { page: 'flow', label: t('sidebar.flow'), icon: <FocusIcon className="w-6 h-6" /> },
+    { page: 'reconditioning', label: t('sidebar.reconditioning'), icon: <LotusIcon className="w-6 h-6" /> },
+    { page: 'nutrition', label: t('sidebar.nutrition'), icon: <NutritionIcon className="w-6 h-6" /> },
+    { page: 'master-regulation', label: t('sidebar.regulation'), icon: <RegulationIcon className="w-6 h-6" /> },
   ];
 
   if (userProfile.role === 'coach' || userProfile.role === 'admin') {
     navItems.unshift({ 
       page: 'coach-dashboard', 
-      label: 'Coach Hub', 
+      label: t('sidebar.coachHub'), 
       icon: <Users className="w-6 h-6" /> 
     });
   }
@@ -54,14 +57,14 @@ const Sidebar: React.FC = () => {
   if (userProfile.role === 'admin') {
     navItems.push({
       page: 'ai-dashboard',
-      label: 'AI Dashboard',
+      label: t('sidebar.aiDashboard'),
       icon: <Cpu className="w-6 h-6" />
     });
   }
   
   const autonomyNavItem: NavItemProps = { 
       page: 'success-manual', 
-      label: 'Manual', 
+      label: t('sidebar.manual'), 
       icon: <BookIcon className="w-6 h-6" /> 
   };
 
@@ -86,20 +89,21 @@ const Sidebar: React.FC = () => {
     <aside className="w-64 bg-spartan-card p-4 flex flex-col h-screen sticky top-0">
       <div className="text-center my-4">
         <h1 className="text-3xl font-bold text-spartan-gold tracking-widest">SPARTAN</h1>
-        <p className="text-xs text-spartan-text-secondary uppercase">Synergy AI</p>
+        <p className="text-xs text-spartan-text-secondary uppercase">{t('sidebar.synergyAi')}</p>
       </div>
-      <nav className="flex-1 mt-8">
+      <nav className="flex-1 mt-8 overflow-y-auto">
         {navItems.map(item => <NavLink key={item.page} {...item} />)}
         {userProfile.isInAutonomyPhase && <div className="mt-4 pt-4 border-t-2 border-spartan-border"><NavLink {...autonomyNavItem} /></div>}
       </nav>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-4 pt-4 border-t border-spartan-border">
+        <LanguageSelector className="px-2" />
         <BluetoothConnector />
         <button 
           onClick={toggleChat}
           className="flex items-center w-full p-3 rounded-lg bg-spartan-surface hover:bg-spartan-border transition-colors text-spartan-text font-bold"
         >
           <BrainIcon className="w-6 h-6 text-spartan-gold"/>
-          <span className="ml-4">Consultor IA</span>
+          <span className="ml-4">{t('sidebar.aiConsultant')}</span>
         </button>
       </div>
     </aside>
