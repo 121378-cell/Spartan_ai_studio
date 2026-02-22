@@ -481,6 +481,7 @@ export class MLForecastingService {
       
       // OPTIMIZATION: Dynamically tune parameters for this specific user's pattern
       const bestParams = this.optimizeHoltWintersParameters(readinessScores);
+      const metadata = this.getModelMetadata(); // Needed for accuracy score baseline
       
       const forecastResults = HoltWinters.forecast(readinessScores, forecastDays, {
         alpha: bestParams.alpha,
