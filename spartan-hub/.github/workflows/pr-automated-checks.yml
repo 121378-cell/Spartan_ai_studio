@@ -16,20 +16,20 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: |
-          package-lock.json
-          backend/package-lock.json
+          spartan-hub/package-lock.json
+          spartan-hub/backend/package-lock.json
     
     - name: Install dependencies
       run: npm ci
-      working-directory: ./
-    
+      working-directory: ./spartan-hub
+
     - name: Install backend dependencies
       run: npm ci
-      working-directory: ./backend
-    
+      working-directory: ./spartan-hub/backend
+
     - name: Run security audit
       run: npm audit --audit-level high
-      working-directory: ./backend
+      working-directory: ./spartan-hub/backend
 
   linting:
     runs-on: ubuntu-latest
@@ -42,20 +42,20 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: |
-          package-lock.json
-          backend/package-lock.json
+          spartan-hub/package-lock.json
+          spartan-hub/backend/package-lock.json
     
     - name: Install dependencies
       run: npm ci
-      working-directory: ./
-    
+      working-directory: ./spartan-hub
+
     - name: Install backend dependencies
       run: npm ci
-      working-directory: ./backend
-    
+      working-directory: ./spartan-hub/backend
+
     - name: Run ESLint
       run: npx eslint . --ext .ts,.tsx --max-warnings 0
-      working-directory: ./backend
+      working-directory: ./spartan-hub/backend
 
   tests:
     runs-on: ubuntu-latest
@@ -68,20 +68,20 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: |
-          package-lock.json
-          backend/package-lock.json
+          spartan-hub/package-lock.json
+          spartan-hub/backend/package-lock.json
     
     - name: Install dependencies
       run: npm ci
-      working-directory: ./
-    
+      working-directory: ./spartan-hub
+
     - name: Install backend dependencies
       run: npm ci
-      working-directory: ./backend
-    
+      working-directory: ./spartan-hub/backend
+
     - name: Run unit tests
       run: npm test
-      working-directory: ./backend
+      working-directory: ./spartan-hub/backend
       env:
         CI: true
 
@@ -96,16 +96,16 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: |
-          backend/package-lock.json
-    
+          spartan-hub/backend/package-lock.json
+
     - name: Install backend dependencies
       run: npm ci
-      working-directory: ./backend
+      working-directory: ./spartan-hub/backend
     
     - name: Verify rate limiting implementation
       run: |
         # Check that rate limiting middleware is properly configured
-        if grep -r "express-rate-limit" ./backend/src/middleware/; then
+        if grep -r "express-rate-limit" ./spartan-hub/backend/src/middleware/; then
           echo "✓ Rate limiting middleware found"
         else
           echo "✗ Rate limiting middleware not found"
@@ -113,7 +113,7 @@ jobs:
         fi
         
         # Check for Redis store implementation
-        if grep -r "RedisStore" ./backend/src/middleware/; then
+        if grep -r "RedisStore" ./spartan-hub/backend/src/middleware/; then
           echo "✓ Redis store for rate limiting found"
         else
           echo "✗ Redis store for rate limiting not found"
@@ -121,7 +121,7 @@ jobs:
         fi
         
         # Check for differentiated rate limits
-        if grep -r "authRateLimit\|getRateLimit\|writeRateLimit" ./backend/src/server.ts; then
+        if grep -r "authRateLimit\|getRateLimit\|writeRateLimit" ./spartan-hub/backend/src/server.ts; then
           echo "✓ Differentiated rate limits found"
         else
           echo "✗ Differentiated rate limits not found"
@@ -139,16 +139,16 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: |
-          backend/package-lock.json
-    
+          spartan-hub/backend/package-lock.json
+
     - name: Install backend dependencies
       run: npm ci
-      working-directory: ./backend
+      working-directory: ./spartan-hub/backend
     
     - name: Verify Zod validation implementation
       run: |
         # Check that Zod schemas are used for validation
-        if grep -r "zod\|Zod" ./backend/src/middleware/ ./backend/src/schemas/; then
+        if grep -r "zod\|Zod" ./spartan-hub/backend/src/middleware/ ./spartan-hub/backend/src/schemas/; then
           echo "✓ Zod validation found"
         else
           echo "✗ Zod validation not found"
@@ -166,12 +166,12 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: |
-          backend/package-lock.json
-    
+          spartan-hub/backend/package-lock.json
+
     - name: Install backend dependencies
       run: npm ci
-      working-directory: ./backend
-    
+      working-directory: ./spartan-hub/backend
+
     - name: Run TypeScript type check
       run: npx tsc --noEmit
-      working-directory: ./backend
+      working-directory: ./spartan-hub/backend
