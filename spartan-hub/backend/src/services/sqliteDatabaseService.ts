@@ -306,12 +306,19 @@ export const userDb = {
 
   findSessionByToken: (token: string) => {
     const db = getDb();
-    console.log('[DEBUG] findSessionByToken checking DB Name:', (db as any)?.name);
-    const allSessions = db?.prepare('SELECT * FROM sessions').all();
-    console.log('[DEBUG] findSessionByToken ALL SESSIONS:', allSessions);
     const stmt = db?.prepare('SELECT * FROM sessions WHERE token = ?');
     const row = stmt?.get(token) as SessionRow | undefined;
-    console.log(`[DEBUG] findSessionByToken result for token ${token.substring(0, 10)}...:`, Boolean(row));
+
+    if (process.env.DEBUG_SESSION_LOOKUP === 'true') {
+      logger.debug('findSessionByToken lookup', {
+        context: 'database',
+        metadata: {
+          found: Boolean(row),
+          tokenPrefix: token.slice(0, 10)
+        }
+      });
+    }
+
     if (!row) return null;
 
     return {
