@@ -18,18 +18,23 @@ jobs:
       with:
         node-version: '18.x'
         cache: 'npm'
+        cache-dependency-path: spartan-hub/package-lock.json
     
     - name: Install dependencies
       run: npm ci
+      working-directory: spartan-hub
     
-    - name: Build shared package
-      run: npm run build:shared
+    - name: Build frontend
+      run: npm run build:frontend
+      working-directory: spartan-hub
     
     - name: Run ESLint
       run: npm run lint
+      working-directory: spartan-hub
     
     - name: Run TypeScript type checking
       run: npm run type-check
+      working-directory: spartan-hub
 
   code-coverage:
     runs-on: ubuntu-latest
@@ -43,17 +48,20 @@ jobs:
       with:
         node-version: '18.x'
         cache: 'npm'
+        cache-dependency-path: spartan-hub/package-lock.json
     
     - name: Install dependencies
       run: npm ci
+      working-directory: spartan-hub
     
     - name: Run tests with coverage
       run: npm run test:coverage
+      working-directory: spartan-hub
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        file: ./coverage/lcov.info
+        file: ./spartan-hub/coverage/lcov.info
         flags: unittests
         name: codecov-umbrella
     
@@ -61,6 +69,7 @@ jobs:
       run: |
         # Parse coverage-summary.json and check thresholds
         node scripts/check-coverage-thresholds.js
+      working-directory: spartan-hub
 
   dependency-audit:
     runs-on: ubuntu-latest
@@ -72,12 +81,15 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: spartan-hub/package-lock.json
     
     - name: Audit dependencies
       run: |
         npm audit --audit-level=moderate
         # Check for outdated dependencies
         npm outdated || true
+      working-directory: spartan-hub
 
   performance-budget:
     runs-on: ubuntu-latest
@@ -91,17 +103,20 @@ jobs:
       with:
         node-version: '18.x'
         cache: 'npm'
+        cache-dependency-path: spartan-hub/package-lock.json
     
     - name: Install dependencies
       run: npm ci
+      working-directory: spartan-hub
     
     - name: Build for production
-      run: npm run build
+      run: npm run build:frontend
+      working-directory: spartan-hub
     
     - name: Check bundle sizes
       run: |
         # Check frontend bundle size
-        BUNDLE_SIZE=$(du -sb packages/frontend/dist/assets/*.js | awk '{sum += $1} END {print sum}')
+        BUNDLE_SIZE=$(du -sb dist/assets/*.js | awk '{sum += $1} END {print sum}')
         echo "Frontend bundle size: $BUNDLE_SIZE bytes"
         
         # Fail if bundle exceeds 2MB
@@ -109,3 +124,4 @@ jobs:
           echo "Bundle size exceeds 2MB limit"
           exit 1
         fi
+      working-directory: spartan-hub

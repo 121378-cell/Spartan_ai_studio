@@ -22,18 +22,27 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: spartan-hub/package-lock.json
       
       - name: Install dependencies
         run: npm ci
+        working-directory: ./spartan-hub
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: ./spartan-hub/backend
       
       - name: Type check
         run: npm run type-check
+        working-directory: ./spartan-hub
       
       - name: Lint
         run: npm run lint
+        working-directory: ./spartan-hub
       
       - name: Security audit
         run: npm run security-audit
+        working-directory: ./spartan-hub
 
   # Job 2: Unit Tests with Coverage
   unit-tests:
@@ -47,19 +56,22 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: spartan-hub/package-lock.json
       
       - name: Install dependencies
         run: npm ci
+        working-directory: ./spartan-hub
       
       - name: Run unit tests with coverage
         run: |
           npm run test:node -- --coverage \
             --coverageThreshold='{"global":{"branches":${{ env.COVERAGE_THRESHOLD }},"functions":${{ env.COVERAGE_THRESHOLD }},"lines":${{ env.COVERAGE_THRESHOLD }},"statements":${{ env.COVERAGE_THRESHOLD }}}}'
+        working-directory: ./spartan-hub
       
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage/lcov.info
+          files: ./spartan-hub/coverage/lcov.info
           fail_ci_if_error: true
           verbose: true
 
@@ -75,12 +87,15 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: spartan-hub/package-lock.json
       
       - name: Install dependencies
         run: npm ci
+        working-directory: ./spartan-hub
       
       - name: Run component tests
         run: npm run test:components
+        working-directory: ./spartan-hub
 
   # Job 4: Integration Tests
   integration-tests:
@@ -111,15 +126,20 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: |
+            spartan-hub/package-lock.json
+            spartan-hub/backend/package-lock.json
       
       - name: Install dependencies
         run: npm ci
+        working-directory: ./spartan-hub
       
       - name: Run integration tests
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/spartan_hub_test
           REDIS_URL: redis://localhost:6379
-        run: npm run test:integration
+        run: npm test
+        working-directory: ./spartan-hub/backend
 
   # Job 5: Security Scan
   security-scan:
@@ -161,7 +181,7 @@ jobs:
       - name: Build and push backend
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
+          context: ./spartan-hub/backend
           push: true
           tags: |
             ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
@@ -170,7 +190,7 @@ jobs:
       - name: Build and push frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: ./spartan-hub
           push: true
           tags: |
             ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
@@ -222,7 +242,7 @@ jobs:
       - name: Deploy to production (blue-green)
         run: |
           # Blue-green deployment
-          kubectl apply -f k8s/ --namespace=spartan-hub
+          kubectl apply -f spartan-hub/k8s/ --namespace=spartan-hub
           kubectl set image deployment/backend backend=ghcr.io/${{ github.repository }}/backend:${{ github.sha }} -n spartan-hub
           kubectl set image deployment/frontend frontend=ghcr.io/${{ github.repository }}/frontend:${{ github.sha }} -n spartan-hub
           kubectl rollout status deployment/backend -n spartan-hub --timeout=300s

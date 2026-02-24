@@ -294,7 +294,7 @@ jobs:
       - name: Build and push AI service image
         uses: docker/build-push-action@v5
         with:
-          context: ./spartan-hub/ai-microservice
+          context: ./spartan-hub/backend/ai-microservice
           push: true
           tags: ${{ steps.meta-ai.outputs.tags }}
           labels: ${{ steps.meta-ai.outputs.labels }}
@@ -342,7 +342,7 @@ jobs:
 
       - name: Deploy to staging
         run: |
-          helm upgrade --install spartan-hub-staging ./helm/spartan-hub \
+          helm upgrade --install spartan-hub-staging ./spartan-hub/scripts/deployment/helm/spartan-hub \
             --namespace spartan-hub-staging \
             --create-namespace \
             --set image.tag=${{ github.sha }} \
@@ -399,7 +399,7 @@ jobs:
 
       - name: Deploy to production
         run: |
-          helm upgrade --install spartan-hub-production ./helm/spartan-hub \
+          helm upgrade --install spartan-hub-production ./spartan-hub/scripts/deployment/helm/spartan-hub \
             --namespace spartan-hub-production \
             --create-namespace \
             --set image.tag=${{ github.sha }} \
@@ -444,7 +444,7 @@ jobs:
         uses: docker://kubesec/kubesec:v2.11.2
         with:
           entrypoint: kubesec
-          args: scan ./helm/spartan-hub/templates/*.yaml
+          args: scan ./spartan-hub/scripts/deployment/helm/spartan-hub/templates/*.yaml
 
   # 8. Notifications
   notifications:

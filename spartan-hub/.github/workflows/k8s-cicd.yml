@@ -15,7 +15,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME_BACKEND: synergycoach/backend
   IMAGE_NAME_AI: synergycoach/ai-microservice
-  HELM_CHART_PATH: ./helm/spartan-hub
+  HELM_CHART_PATH: ./spartan-hub/scripts/deployment/helm/spartan-hub
   K8S_NAMESPACE: spartan-hub
 
 jobs:
@@ -30,15 +30,19 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-    
+        cache-dependency-path: spartan-hub/package-lock.json
+
     - name: Install dependencies
       run: npm ci
-    
+      working-directory: ./spartan-hub
+
     - name: Run tests
       run: npm test
-    
+      working-directory: ./spartan-hub
+
     - name: Run linting
       run: npm run lint
+      working-directory: ./spartan-hub
 
   security-scan:
     runs-on: ubuntu-latest
@@ -104,7 +108,7 @@ jobs:
     - name: Build and push backend image
       uses: docker/build-push-action@v5
       with:
-        context: ./backend
+        context: ./spartan-hub/backend
         push: true
         tags: ${{ steps.meta-backend.outputs.tags }}
         labels: ${{ steps.meta-backend.outputs.labels }}
@@ -114,7 +118,7 @@ jobs:
     - name: Build and push AI microservice image
       uses: docker/build-push-action@v5
       with:
-        context: ./ai-microservice
+        context: ./spartan-hub/backend/ai-microservice
         push: true
         tags: ${{ steps.meta-ai.outputs.tags }}
         labels: ${{ steps.meta-ai.outputs.labels }}
@@ -251,7 +255,7 @@ jobs:
       uses: docker://kubesec/kubesec:v2.11.2
       with:
         entrypoint: kubesec
-        args: scan helm/spartan-hub/templates/*.yaml
+        args: scan spartan-hub/scripts/deployment/helm/spartan-hub/templates/*.yaml
 
   rollback:
     runs-on: ubuntu-latest

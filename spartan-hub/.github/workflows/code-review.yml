@@ -19,20 +19,33 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
+        cache-dependency-path: |
+          spartan-hub/package-lock.json
+          spartan-hub/backend/package-lock.json
         
     - name: Install dependencies
       run: npm ci
+      working-directory: ./spartan-hub
+
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: ./spartan-hub/backend
       
-    - name: Run security audit
-      run: |
-        cd backend && npm audit --audit-level=critical
-        cd .. && npm audit --audit-level=critical
+    - name: Run backend security audit
+      run: npm audit --audit-level=critical
+      working-directory: ./spartan-hub/backend
+
+    - name: Run frontend security audit
+      run: npm audit --audit-level=critical
+      working-directory: ./spartan-hub
         
     - name: TypeScript compilation check
-      run: npx tsc --noEmit
+      run: npm run type-check
+      working-directory: ./spartan-hub
       
     - name: Run tests
       run: npm test
+      working-directory: ./spartan-hub
       
     - name: Check for generated files
       run: |
@@ -63,12 +76,15 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
+        cache-dependency-path: spartan-hub/package-lock.json
         
     - name: Install dependencies
       run: npm ci
+      working-directory: ./spartan-hub
       
     - name: ESLint check
-      run: npx eslint . --ext .ts,.tsx
+      run: npm run lint
+      working-directory: ./spartan-hub
       
     - name: Check commit message format
       run: |

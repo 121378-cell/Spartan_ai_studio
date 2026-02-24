@@ -18,15 +18,23 @@ jobs:
       with:
         node-version: '18.x'
         cache: 'npm'
+        cache-dependency-path: spartan-hub/package-lock.json
     
     - name: Install dependencies
       run: npm ci
+      working-directory: spartan-hub
+
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: spartan-hub/backend
     
     - name: Build all packages
-      run: npm run build
+      run: npm run build:all
+      working-directory: spartan-hub
     
     - name: Run comprehensive tests
-      run: npm run ci
+      run: npm run test:all
+      working-directory: spartan-hub
     
     - name: Deploy to staging
       run: |
@@ -48,18 +56,26 @@ jobs:
       with:
         node-version: '18.x'
         cache: 'npm'
+        cache-dependency-path: spartan-hub/package-lock.json
     
     - name: Install dependencies
       run: npm ci
+      working-directory: spartan-hub
+
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: spartan-hub/backend
     
     - name: Build all packages
-      run: npm run build
+      run: npm run build:all
+      working-directory: spartan-hub
     
     - name: Run final validation
       run: |
         npm run test
         npm run lint
         npm run type-check
+      working-directory: spartan-hub
     
     - name: Deploy to production
       run: |
