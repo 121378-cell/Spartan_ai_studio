@@ -1,7 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import DatabaseManager from '../database/databaseManager';
 import { logger } from '../utils/logger';
+const Database = require('better-sqlite3');
+type DatabaseType = any;
 
 /**
  * E2E Test Database Manager
@@ -11,7 +14,7 @@ export class E2ETestManager {
   private dbPath: string;
 
   constructor() {
-    this.dbPath = path.join(process.cwd(), 'data', 'test_e2e.db');
+    this.dbPath = process.env.E2E_DB_PATH || path.join(os.tmpdir(), 'spartan-hub-e2e', 'test_e2e.db');
   }
 
   /**
@@ -37,10 +40,7 @@ export class E2ETestManager {
    * Clean all data but preserve schema
    */
   async cleanDatabase(): Promise<void> {
-    const manager = DatabaseManager.getInstance(this.dbPath);
-    const db = manager.getDatabase();
-
-    if (!db) return;
+    const db = this.openWritableDb();
 
     // Get all tables to clear from the migrations and schema
     const tables = [
@@ -54,8 +54,8 @@ export class E2ETestManager {
       'form_analyses' // This was missing and caused previous test failures!
     ];
 
-    db.pragma('foreign_keys = OFF');
     try {
+      db.pragma('foreign_keys = OFF');
       const tx = (db as any).transaction
         ? (db as any).transaction.bind(db)
         : null;
@@ -64,8 +64,12 @@ export class E2ETestManager {
         for (const table of tables) {
           try {
             db.prepare(`DELETE FROM ${table}`).run();
-          } catch {
+          } catch (error) {
             // Ignore if table doesn't exist yet
+            const message = error instanceof Error ? error.message : String(error);
+            if (!message.includes('no such table')) {
+              throw error;
+            }
           }
         }
       };
@@ -77,6 +81,7 @@ export class E2ETestManager {
       }
     } finally {
       db.pragma('foreign_keys = ON');
+      db.close();
     }
     logger.info('🧹 E2E Test Database cleaned', { context: 'e2e-test' });
   }
@@ -99,63 +104,74 @@ export class E2ETestManager {
    * Seed a user
    */
   async seedUser(user: any): Promise<void> {
-    const manager = DatabaseManager.getInstance(this.dbPath);
-    const db = manager.getDatabase();
-    if (!db) return;
+    const db = this.openWritableDb();
 
-    const stmt = db.prepare(`
-      INSERT INTO users (
-        id, name, email, password, role, onboardingCompleted, 
-        stats, preferences, createdAt, updatedAt
-      ) VALUES (
-        @id, @name, @email, @password, @role, @onboardingCompleted,
-        @stats, @preferences, @createdAt, @updatedAt
-      )
-    `);
+    try {
+      const stmt = db.prepare(`
+        INSERT INTO users (
+          id, name, email, password, role, onboardingCompleted, 
+          stats, preferences, createdAt, updatedAt
+        ) VALUES (
+          @id, @name, @email, @password, @role, @onboardingCompleted,
+          @stats, @preferences, @createdAt, @updatedAt
+        )
+      `);
 
-    stmt.run({
-      id: user.id || 'test-user-id',
-      name: user.name || 'Test User',
-      email: user.email || 'test@example.com',
-      password: user.password || '$2b$10$EpIc.k.d.g.h.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z', // Mock hash
-      role: user.role || 'user',
-      onboardingCompleted: user.onboardingCompleted ? 1 : 0,
-      stats: JSON.stringify(user.stats || {}),
-      preferences: JSON.stringify(user.preferences || {}),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
+      stmt.run({
+        id: user.id || 'test-user-id',
+        name: user.name || 'Test User',
+        email: user.email || 'test@example.com',
+        password: user.password || '$2b$10$EpIc.k.d.g.h.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z', // Mock hash
+        role: user.role || 'user',
+        onboardingCompleted: user.onboardingCompleted ? 1 : 0,
+        stats: JSON.stringify(user.stats || {}),
+        preferences: JSON.stringify(user.preferences || {}),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    } finally {
+      db.close();
+    }
   }
 
   /**
    * Seed a session
    */
   async seedSession(session: any): Promise<void> {
-    const manager = DatabaseManager.getInstance(this.dbPath);
-    const db = manager.getDatabase();
-    if (!db) return;
+    const db = this.openWritableDb();
 
-    const stmt = db.prepare(`
-      INSERT INTO sessions (
-        id, userId, token, userAgent, ipAddress, 
-        createdAt, expiresAt, lastActivityAt, isActive
-      ) VALUES (
-        @id, @userId, @token, @userAgent, @ipAddress,
-        @createdAt, @expiresAt, @lastActivityAt, @isActive
-      )
-    `);
+    try {
+      const stmt = db.prepare(`
+        INSERT INTO sessions (
+          id, userId, token, userAgent, ipAddress, 
+          createdAt, expiresAt, lastActivityAt, isActive
+        ) VALUES (
+          @id, @userId, @token, @userAgent, @ipAddress,
+          @createdAt, @expiresAt, @lastActivityAt, @isActive
+        )
+      `);
 
-    stmt.run({
-      id: session.id || 'test-session-id',
-      userId: session.userId,
-      token: session.token,
-      userAgent: session.userAgent || 'TestAgent',
-      ipAddress: session.ipAddress || '127.0.0.1',
-      createdAt: new Date().toISOString(),
-      expiresAt: session.expiresAt || new Date(Date.now() + 86400000).toISOString(),
-      lastActivityAt: new Date().toISOString(),
-      isActive: 1
-    });
+      stmt.run({
+        id: session.id || 'test-session-id',
+        userId: session.userId,
+        token: session.token,
+        userAgent: session.userAgent || 'TestAgent',
+        ipAddress: session.ipAddress || '127.0.0.1',
+        createdAt: new Date().toISOString(),
+        expiresAt: session.expiresAt || new Date(Date.now() + 86400000).toISOString(),
+        lastActivityAt: new Date().toISOString(),
+        isActive: 1
+      });
+    } finally {
+      db.close();
+    }
+  }
+
+  private openWritableDb(): DatabaseType {
+    return new Database(this.dbPath, {
+      readonly: false,
+      timeout: 10000
+    } as any);
   }
 }
 
