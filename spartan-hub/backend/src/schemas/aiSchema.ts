@@ -27,7 +27,7 @@ export const aiDecisionSchema = z.object({
     Causa: z.string({
       message: 'Causa is required',
     }),
-    PuntajeSinergico: z.number({
+    PuntajeSinergico: z.coerce.number({
       message: 'PuntajeSinergico is required',
     }),
   }).passthrough(),

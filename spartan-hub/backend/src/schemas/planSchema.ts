@@ -24,7 +24,7 @@ export const trackCommitmentSchema = z.object({
     routineId: z.string({
       message: 'Routine ID is required to track commitment.',
     }),
-    commitmentLevel: z.number({
+    commitmentLevel: z.coerce.number({
       message: 'Commitment level is required to track commitment.',
     }).min(1, 'Commitment level must be between 1 and 10.')
       .max(10, 'Commitment level must be between 1 and 10.'),
