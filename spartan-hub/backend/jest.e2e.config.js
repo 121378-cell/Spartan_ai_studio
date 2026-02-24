@@ -8,7 +8,6 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setupE2E.ts'],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      isolatedModules: true,
       diagnostics: false,
       tsconfig: {
         strict: false,
