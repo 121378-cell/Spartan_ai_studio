@@ -150,8 +150,10 @@ describe('E2E ML Forecasting', () => {
 
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
-        expect(res.body.data.predictions).toHaveLength(7);
-        expect(res.body.data.riskLevel).toBeDefined();
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.data).toHaveLength(7);
+        expect(res.body.data[0].predictedScore).toBeDefined();
+        expect(res.body.data[0].confidence).toBeDefined();
     });
 
     test('GET /injury-probability/:userId returns probability', async () => {
@@ -198,10 +200,10 @@ describe('E2E ML Forecasting', () => {
 
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
-        expect(res.body.data.readinessForecast).toBeDefined();
+        expect(res.body.data.weeklyForecast).toBeDefined();
         expect(res.body.data.injuryProbability).toBeDefined();
         expect(res.body.data.fatigueEstimate).toBeDefined();
-        expect(res.body.data.trainingSuggestion).toBeDefined();
+        expect(res.body.data.trainingLoadSuggestion).toBeDefined();
 
         // Verify consistency
         expect(res.body.data.injuryProbability.userId).toBe(testUser.id);
@@ -214,7 +216,7 @@ describe('E2E ML Forecasting', () => {
 
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
-        expect(res.body.data.version).toBeDefined();
-        expect(typeof res.body.data.accuracyScore).toBe('number');
+        expect(res.body.data.metadata.version).toBeDefined();
+        expect(typeof res.body.data.metadata.accuracyScore).toBe('number');
     });
 });
