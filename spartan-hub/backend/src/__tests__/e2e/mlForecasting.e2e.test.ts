@@ -76,10 +76,8 @@ describe('E2E ML Forecasting', () => {
             )
         `);
 
-        // VERIFY SEEDING
+        // Ensure pending writes are flushed before seeding forecasting data
         db.pragma('wal_checkpoint(FULL)');
-        const sessions = db.prepare('SELECT * FROM sessions').all();
-        console.log('[DEBUG] Test setup - Sessions in DB:', sessions);
 
         // 4. Seed 30 days of historical data
         // 4. Seed 30 days of historical data

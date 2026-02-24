@@ -11,7 +11,6 @@ describe('Security Tests (OWASP)', () => {
 
   // Create a test user before each test
   beforeEach(async () => {
-    console.log('[DEBUG] Starting beforeEach in security.test.ts');
     testUser = {
       id: uuidv4(),
       name: 'Security Test User',
@@ -38,16 +37,9 @@ describe('Security Tests (OWASP)', () => {
     };
 
     // Add the test user to the database
-    console.log(`[DEBUG] Creating test user in beforeEach: ${testUser.email}`);
-    try {
-      const createdUser = await userDb.create(testUser);
-      console.log(`[DEBUG] User created in beforeEach. ID: ${createdUser.id}`);
-    } catch (error) {
-      console.error('[DEBUG] Error creating user in beforeEach:', error);
-    }
+    await userDb.create(testUser);
 
     // Login to get authentication cookies
-    console.log('[DEBUG] Attempting login in beforeEach');
     const loginResponse = await request(app)
       .post('/auth/login')
       .send({
@@ -58,14 +50,13 @@ describe('Security Tests (OWASP)', () => {
 
     authCookies = loginResponse.headers['set-cookie'];
     if (!authCookies) {
-      console.error('LOGIN FAILED TO SET COOKIE:', loginResponse.body);
-    } else {
-      // Extract just the name=value part for sending back
-      authCookies = Array.isArray(authCookies) 
-        ? authCookies.map(c => c.split(';')[0]) 
-        : [authCookies.split(';')[0]];
-      console.log('Sending cookies to /auth/me:', authCookies);
+      throw new Error('Login did not set auth cookies in security.test.ts');
     }
+
+    // Extract just the name=value part for sending back
+    authCookies = Array.isArray(authCookies)
+      ? authCookies.map(c => c.split(';')[0])
+      : [authCookies.split(';')[0]];
   });
 
   // Clean up after tests (global afterEach handles DB clearing, but we can be explicit if needed)
