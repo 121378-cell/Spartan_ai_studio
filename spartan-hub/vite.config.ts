@@ -12,7 +12,28 @@ export default defineConfig(({ mode }) => {
       outDir: '../dist',
       emptyOutDir: true,
       rollupOptions: {
-        external: []
+        external: [],
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) {
+              return undefined;
+            }
+
+            if (id.includes('@mediapipe/tasks-vision')) {
+              return 'vendor-mediapipe';
+            }
+
+            if (id.includes('three')) {
+              return 'vendor-3d';
+            }
+
+            if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('scheduler')) {
+              return 'vendor-react';
+            }
+
+            return 'vendor';
+          }
+        }
       }
     },
     server: {

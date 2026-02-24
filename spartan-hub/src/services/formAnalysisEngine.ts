@@ -1,4 +1,3 @@
-import { PoseLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import { Pose, FormAnalysisResult, ExerciseType, Keypoint, ExerciseAnalyzer } from '../types/formAnalysis';
 import { logger } from '../utils/logger';
 import { SquatAnalyzer } from './analyzers/SquatAnalyzer';
@@ -11,8 +10,10 @@ import { OverheadPressAnalyzer } from './analyzers/OverheadPressAnalyzer';
 import { RowAnalyzer } from './analyzers/RowAnalyzer';
 import { PlankAnalyzer } from './analyzers/PlankAnalyzer';
 
+type PoseLandmarkerInstance = import('@mediapipe/tasks-vision').PoseLandmarker;
+
 export class FormAnalysisEngine {
-    private poseLandmarker: PoseLandmarker | null = null;
+    private poseLandmarker: PoseLandmarkerInstance | null = null;
     private isInitializing = false;
     private analyzers: Map<ExerciseType, ExerciseAnalyzer> = new Map();
 
@@ -49,6 +50,7 @@ export class FormAnalysisEngine {
         this.isInitializing = true;
 
         try {
+            const { FilesetResolver, PoseLandmarker } = await import('@mediapipe/tasks-vision');
             const vision = await FilesetResolver.forVisionTasks(
                 "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
             );
@@ -103,7 +105,7 @@ export class FormAnalysisEngine {
         // Convert MediaPipe landmarks to our internal Pose format
         const landmarks = result.landmarks[0];
         return {
-            keypoints: landmarks.map((lm: any, idx: number) => ({
+            keypoints: landmarks.map((lm, idx: number) => ({
                 x: lm.x,
                 y: lm.y,
                 z: lm.z,

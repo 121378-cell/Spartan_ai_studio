@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { useAppContext } from '../../context/AppContext.tsx';
 import { useDevice } from '../../context/DeviceContext.tsx';
 import { EXERCISE_LIBRARY } from '../../data/exerciseLibrary.ts';
 import FocusIcon from '../icons/FocusIcon.tsx';
 import ShieldIcon from '../icons/ShieldIcon.tsx'; // Using as a placeholder for safety/injury icon
-import ResponsiveHologramViewer from '../ResponsiveHologramViewer.tsx';
+
+const ResponsiveHologramViewer = lazy(() => import('../ResponsiveHologramViewer.tsx'));
+
+const HologramFallback: React.FC<{ isFullscreen?: boolean }> = ({ isFullscreen = false }) => (
+    <div className={isFullscreen ? 'fixed inset-0 z-50 bg-spartan-bg' : 'w-full h-full'}>
+        <div className="w-full h-full rounded-lg bg-spartan-card animate-pulse flex items-center justify-center">
+            <p className="text-spartan-text-secondary">Cargando visor 3D...</p>
+        </div>
+    </div>
+);
 
 const ExerciseDetailModal: React.FC = () => {
     const { hideModal, modal } = useAppContext();
@@ -37,14 +46,16 @@ const ExerciseDetailModal: React.FC = () => {
     // For mobile devices, we want to show the hologram in fullscreen mode
     if (isMobile) {
         return (
-            <ResponsiveHologramViewer 
-                modelUrl="/assets/hologram_model_with_deviations.glb" 
-                targetMuscle={targetMuscle}
-                animationType={animationType}
-                deviationPart={exercise.deviation?.highlightPart}
-                suggestedView={exercise.suggestedView}
-                onClose={hideModal}
-            />
+            <Suspense fallback={<HologramFallback isFullscreen />}>
+                <ResponsiveHologramViewer
+                    modelUrl="/assets/hologram_model_with_deviations.glb"
+                    targetMuscle={targetMuscle}
+                    animationType={animationType}
+                    deviationPart={exercise.deviation?.highlightPart}
+                    suggestedView={exercise.suggestedView}
+                    onClose={hideModal}
+                />
+            </Suspense>
         );
     }
 
@@ -74,13 +85,15 @@ const ExerciseDetailModal: React.FC = () => {
                         </div>
                     </div>
                     <div className="bg-spartan-bg rounded-lg h-96">
-                        <ResponsiveHologramViewer 
-                            modelUrl="/assets/hologram_model_with_deviations.glb" 
-                            targetMuscle={targetMuscle}
-                            animationType={animationType}
-                            deviationPart={exercise.deviation?.highlightPart}
-                            suggestedView={exercise.suggestedView}
-                        />
+                        <Suspense fallback={<HologramFallback />}>
+                            <ResponsiveHologramViewer
+                                modelUrl="/assets/hologram_model_with_deviations.glb"
+                                targetMuscle={targetMuscle}
+                                animationType={animationType}
+                                deviationPart={exercise.deviation?.highlightPart}
+                                suggestedView={exercise.suggestedView}
+                            />
+                        </Suspense>
                     </div>
                 </div>
                 <div className="space-y-6">

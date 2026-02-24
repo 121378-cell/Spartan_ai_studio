@@ -8,12 +8,10 @@
  * @module services/poseDetection
  */
 
-import {
-  FilesetResolver,
-  PoseLandmarker,
-  type PoseLandmarkerResult,
-} from '@mediapipe/tasks-vision';
 import type { Landmark, PoseFrame, PoseDetectionState } from '../types/pose';
+
+type PoseLandmarkerInstance = import('@mediapipe/tasks-vision').PoseLandmarker;
+type PoseLandmarkerResult = import('@mediapipe/tasks-vision').PoseLandmarkerResult;
 
 /**
  * Service for detecting body poses using MediaPipe
@@ -26,7 +24,7 @@ import type { Landmark, PoseFrame, PoseDetectionState } from '../types/pose';
  * ```
  */
 export class PoseDetectionService {
-  private poseLandmarker: PoseLandmarker | null = null;
+  private poseLandmarker: PoseLandmarkerInstance | null = null;
   private state: PoseDetectionState = {
     isInitialized: false,
     isDetecting: false,
@@ -47,6 +45,7 @@ export class PoseDetectionService {
    */
   public async initialize(): Promise<void> {
     try {
+      const { FilesetResolver, PoseLandmarker } = await import('@mediapipe/tasks-vision');
       const vision = await FilesetResolver.forVisionTasks(
         'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
       );
