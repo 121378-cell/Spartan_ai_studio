@@ -35,6 +35,7 @@ export class MessageQueue extends EventEmitter {
   private config: QueueConfig;
   private isProcessing: boolean = false;
   private concurrencyCount: number = 0;
+  private processingInterval: NodeJS.Timeout | null = null;
 
   constructor(config: Partial<QueueConfig> = {}) {
     super();
@@ -46,7 +47,9 @@ export class MessageQueue extends EventEmitter {
       concurrencyLimit: queueConfig.concurrencyLimit,
       ...config 
     };
-    this.startProcessing();
+    if (process.env.NODE_ENV !== 'test') {
+      this.startProcessing();
+    }
     
     // Log queue initialization
     if (queueConfig.enableLogging) {
@@ -309,7 +312,7 @@ export class MessageQueue extends EventEmitter {
    * Start periodic processing
    */
   private startProcessing(): void {
-    setInterval(() => {
+    this.processingInterval = setInterval(() => {
       if (this.queue.length > 0 && !this.isProcessing) {
         this.processQueue();
       }
@@ -365,6 +368,14 @@ export class MessageQueue extends EventEmitter {
         clearedItems
       }
     });
+  }
+
+  stop(): void {
+    if (this.processingInterval) {
+      clearInterval(this.processingInterval);
+      this.processingInterval = null;
+    }
+    this.clear();
   }
 }
 

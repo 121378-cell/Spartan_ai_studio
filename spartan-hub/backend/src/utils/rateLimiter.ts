@@ -13,34 +13,37 @@ interface RateLimitData {
 
 // In-memory store for rate limits (in production, use Redis or similar)
 const rateLimitStore = new Map<string, RateLimitData>();
+const isTestEnvironment = process.env.NODE_ENV === 'test';
 
 // Cleanup interval to prevent memory leaks
-setInterval(() => {
-  const now = Date.now();
-  const keysToDelete: string[] = [];
-  
-  // Collect keys to delete first to avoid modifying the map during iteration
-  rateLimitStore.forEach((data, key) => {
-    if (data.resetTime < now) {
-      keysToDelete.push(key);
-    }
-  });
-  
-  // Delete the collected keys
-  keysToDelete.forEach(key => {
-    rateLimitStore.delete(key);
-  });
-  
-  // Log cleanup activity
-  if (keysToDelete.length > 0) {
-    logger.debug(`Cleaned up ${keysToDelete.length} expired rate limit entries`, {
-      context: 'rateLimiter',
-      metadata: {
-        cleanedEntries: keysToDelete.length
+if (!isTestEnvironment) {
+  setInterval(() => {
+    const now = Date.now();
+    const keysToDelete: string[] = [];
+
+    // Collect keys to delete first to avoid modifying the map during iteration
+    rateLimitStore.forEach((data, key) => {
+      if (data.resetTime < now) {
+        keysToDelete.push(key);
       }
     });
-  }
-}, 60000); // Clean up every minute
+
+    // Delete the collected keys
+    keysToDelete.forEach(key => {
+      rateLimitStore.delete(key);
+    });
+
+    // Log cleanup activity
+    if (keysToDelete.length > 0) {
+      logger.debug(`Cleaned up ${keysToDelete.length} expired rate limit entries`, {
+        context: 'rateLimiter',
+        metadata: {
+          cleanedEntries: keysToDelete.length
+        }
+      });
+    }
+  }, 60000); // Clean up every minute
+}
 
 export class RateLimiter {
   private readonly maxRequests: number;

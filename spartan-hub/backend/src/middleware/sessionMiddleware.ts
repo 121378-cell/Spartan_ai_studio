@@ -145,4 +145,6 @@ const cleanupJob = new CronJob('0 0 * * *', async () => {
   await SessionModel.cleanupExpiredSessions();
 });
 
-cleanupJob.start();
+if (process.env.NODE_ENV !== 'test') {
+  cleanupJob.start();
+}

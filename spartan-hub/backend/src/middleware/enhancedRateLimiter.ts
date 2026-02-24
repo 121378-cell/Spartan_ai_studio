@@ -31,7 +31,7 @@ class EnhancedRateLimiter {
   private readonly config: RateLimitConfig;
   private readonly records: Map<string, RateLimitRecord> = new Map();
   private readonly banRecords: Map<string, number> = new Map();
-  private cleanupInterval: NodeJS.Timeout;
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(config: RateLimitConfig) {
     this.config = {
@@ -40,10 +40,12 @@ class EnhancedRateLimiter {
       ...config
     };
 
-    // Start cleanup interval
-    this.cleanupInterval = setInterval(() => {
-      this.cleanupExpiredRecords();
-    }, 60 * 1000); // Cleanup every minute
+    if (process.env.NODE_ENV !== 'test') {
+      // Start cleanup interval
+      this.cleanupInterval = setInterval(() => {
+        this.cleanupExpiredRecords();
+      }, 60 * 1000); // Cleanup every minute
+    }
   }
 
   /**
@@ -273,7 +275,10 @@ class EnhancedRateLimiter {
    * Stop the rate limiter and cleanup
    */
   public stop(): void {
-    clearInterval(this.cleanupInterval);
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+    }
     this.records.clear();
     this.banRecords.clear();
   }
