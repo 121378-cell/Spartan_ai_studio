@@ -185,6 +185,7 @@ router.post('/login', validate(loginSchema), async (req: Request, res: Response)
 
     // Find user by email
     const user = await userDb.findByEmail(email);
+    
     if (!user) {
       return res.status(401).json({
         success: false,
