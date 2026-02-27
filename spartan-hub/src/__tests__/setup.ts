@@ -118,3 +118,38 @@ if (typeof HTMLVideoElement !== 'undefined') {
   HTMLVideoElement.prototype.play = jest.fn().mockResolvedValue(undefined);
   HTMLVideoElement.prototype.pause = jest.fn();
 }
+
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: any) => {
+      const translations: Record<string, string> = {
+        'videoAnalysis.title': 'Análisis de Forma',
+        'videoAnalysis.exerciseTypes.squat': 'Sentadilla',
+        'videoAnalysis.exerciseTypes.deadlift': 'Peso Muerto',
+        'videoAnalysis.frames': 'Frames',
+        'videoAnalysis.fps': 'FPS',
+        'videoAnalysis.status': 'Estado',
+        'videoAnalysis.analyzeAgain': 'Analizar Nuevamente',
+        'videoAnalysis.close': 'Cerrar',
+        'videoAnalysis.cancel': 'Cancelar',
+        'videoAnalysis.generalScore': 'Puntuación General',
+        'videoAnalysis.improvementPoints': 'Puntos de Mejora',
+        'videoAnalysis.tips': 'Consejos',
+        'videoAnalysis.ready': 'Listo',
+        'videoAnalysis.live': 'En vivo',
+        'videoAnalysis.error': 'Error'
+      };
+      if (translations[key]) return translations[key];
+      if (options && options.defaultValue) return options.defaultValue;
+      return key;
+    },
+    i18n: {
+      changeLanguage: () => new Promise(() => {}),
+    },
+  }),
+  initReactI18next: {
+    type: '3rdParty',
+    init: () => {},
+  },
+}));

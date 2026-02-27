@@ -23,10 +23,13 @@ export interface BiometricSummary {
 
 export class BiometricPersistenceService {
   private static instance: BiometricPersistenceService;
-  private db: any;
 
   private constructor() {
-    this.db = getDatabase();
+    // Database connection retrieved on demand
+  }
+
+  private get db(): any {
+    return getDatabase();
   }
 
   public static getInstance(): BiometricPersistenceService {

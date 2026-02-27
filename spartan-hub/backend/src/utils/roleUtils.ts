@@ -2,7 +2,7 @@ import { ROLES, Role } from '../middleware/auth';
 import { Request, Response, NextFunction } from 'express';
 import { logger } from './logger';
 
-export { ROLES, Role };
+export { ROLES, type Role };
 
 /**
  * Middleware to require a specific role or higher

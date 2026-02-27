@@ -13,6 +13,9 @@ describe('Rate Limiting & DDoS Protection Security - Phase 3.4', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     rateLimitService = RateLimitService.getInstance();
+    if (typeof rateLimitService.reset === 'function') {
+      rateLimitService.reset();
+    }
   });
 
   describe('Token Bucket Algorithm', () => {
@@ -135,13 +138,16 @@ describe('Rate Limiting & DDoS Protection Security - Phase 3.4', () => {
       // Each IP should have independent limit
       for (let i = 0; i < limit; i++) {
         rateLimitService.checkRateLimitByIP(ip1, limit);
-        rateLimitService.checkRateLimitByIP(ip2, limit);
+        // Only consume quota for ip2 up to limit-1 to verify it remains allowed
+        if (i < limit - 1) {
+          rateLimitService.checkRateLimitByIP(ip2, limit);
+        }
       }
 
-      // IP1 should be limited
+      // IP1 should be limited (consumed 'limit' tokens)
       expect(rateLimitService.checkRateLimitByIP(ip1, limit)).toBe(false);
 
-      // IP2 should still have quota
+      // IP2 should still have quota (consumed 'limit - 1' tokens)
       expect(rateLimitService.checkRateLimitByIP(ip2, limit)).toBe(true);
     });
 

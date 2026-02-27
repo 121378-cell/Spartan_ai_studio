@@ -1378,10 +1378,10 @@ export class CoachVitalisService {
 
       const stmt = this.db.prepare(`
         INSERT INTO vital_coach_decisions (
-          userId, timestamp,
-          hrvCurrent, rhrCurrent, stressLevel, trainingLoad, sleepDuration,
-          overallRecoveryStatus, nervousSystemLoad, injuryRiskLevel, trainingReadiness,
-          decisionRuleId, recommendedAction, actionPriority, confidenceScore, explanation
+          user_id, timestamp,
+          hrv_status, rhr_trend, stress_status, training_load_status, sleep_quality,
+          overall_recovery_status, nervous_system_load, injury_risk, training_readiness,
+          triggered_rules, recommended_action, action_priority, confidence_score, explanation
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
@@ -1418,8 +1418,8 @@ export class CoachVitalisService {
       if (dbType === 'postgres') {
         const query = `
           INSERT INTO vital_coach_alerts (
-            id, userId, timestamp, type, severity, title, message,
-            context, recommendedAction, channels, expiresAt
+            id, user_id, timestamp, type, severity, title, message,
+            context, recommended_action, channels, expires_at
           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         `;
 
@@ -1444,8 +1444,8 @@ export class CoachVitalisService {
 
       const stmt = this.db.prepare(`
         INSERT INTO vital_coach_alerts (
-          id, userId, timestamp, alertType, severity, title, message,
-          triggerReason, recommendedAction, deliveryChannels, expiresAt
+          id, user_id, timestamp, type, severity, title, message,
+          context, recommended_action, channels, expires_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
@@ -1457,7 +1457,7 @@ export class CoachVitalisService {
         alert.severity,
         alert.title,
         alert.message,
-        alert.context.triggerReason,
+        JSON.stringify(alert.context),
         JSON.stringify(alert.recommendedAction),
         JSON.stringify(alert.channels),
         alert.expiresAt.toISOString()
@@ -1477,10 +1477,10 @@ export class CoachVitalisService {
       if (dbType === 'postgres') {
         const query = `
           INSERT INTO vital_coach_training_adjustments (
-            id, userId, plannedDate,
-            originalType, originalDuration, originalIntensity,
-            adjustedType, adjustedDuration, adjustedIntensity,
-            adjustmentReason, confidenceScore
+            id, user_id, planned_date,
+            original_type, original_duration, original_intensity,
+            adjusted_type, adjusted_duration, adjusted_intensity,
+            adjustment_reason, confidence_score
           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         `;
 
@@ -1505,11 +1505,11 @@ export class CoachVitalisService {
 
       const stmt = this.db.prepare(`
         INSERT INTO vital_coach_training_adjustments (
-          id, userId, plannedDate,
-          originalType, originalDuration, originalIntensity,
-          adjustedType, adjustedDuration, adjustedIntensity,
-          adjustmentReason
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          id, user_id, planned_date,
+          original_type, original_duration, original_intensity,
+          adjusted_type, adjusted_duration, adjusted_intensity,
+          adjustment_reason, confidence_score
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
       stmt.run(
@@ -1522,7 +1522,8 @@ export class CoachVitalisService {
         adjustment.adjustedType,
         adjustment.adjustedDuration,
         adjustment.adjustedIntensity,
-        adjustment.adjustmentReason
+        adjustment.adjustmentReason,
+        adjustment.confidence
       );
     } catch (error) {
       logger.error('Error saving training adjustment', {

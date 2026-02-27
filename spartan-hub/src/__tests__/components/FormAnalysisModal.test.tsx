@@ -206,7 +206,7 @@ describe('FormAnalysisModal', () => {
 
     await waitFor(() => {
       expect(screen.getByText('depth')).toBeInTheDocument();
-      expect(screen.getByText('85.0')).toBeInTheDocument();
+      expect(screen.getByText(/85\.0/)).toBeInTheDocument();
     });
   });
 

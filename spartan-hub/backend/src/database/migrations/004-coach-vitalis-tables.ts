@@ -19,40 +19,38 @@ export function createCoachVitalisTables(db: DatabaseType): void {
     db.exec(`
       CREATE TABLE IF NOT EXISTS vital_coach_decisions (
         id TEXT PRIMARY KEY,
-        userId TEXT NOT NULL,
+        user_id TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         
         -- Input Metrics
-        hrvCurrent REAL,
-        hrvBaseline REAL,
-        hrvPercentile REAL,
-        rhrCurrent REAL,
-        rhrBaseline REAL,
-        stressLevel REAL,
-        trainingLoad REAL,
-        sleepDuration REAL,
+        hrv_status TEXT,
+        rhr_trend TEXT,
+        stress_status TEXT,
+        training_load_status TEXT,
+        sleep_quality TEXT,
         
         -- Evaluation Results
-        nervousSystemLoad REAL,
-        overallRecoveryStatus REAL,
-        injuryRiskLevel TEXT,
-        trainingReadiness TEXT,
+        overall_recovery_status REAL,
+        nervous_system_load REAL,
+        injury_risk TEXT,
+        training_readiness TEXT,
         
         -- Decision Details
-        decisionRuleId TEXT,
-        recommendedAction TEXT,
-        actionPriority TEXT,
-        confidenceScore REAL,
+        triggered_rules TEXT,
+        recommended_action TEXT,
+        action_priority TEXT,
+        confidence_score REAL,
+        explanation TEXT,
         
         -- Outcome tracking
-        wasFollowed INTEGER DEFAULT 0,
-        outcomeNotes TEXT,
+        was_followed INTEGER DEFAULT 0,
+        outcome_notes TEXT,
         
-        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
     `);
 
-    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_decisions_user_time ON vital_coach_decisions(userId, timestamp)');
+    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_decisions_user_time ON vital_coach_decisions(user_id, timestamp)');
 
     logger.info('Created table: vital_coach_decisions', { context: 'database-migration' });
 
@@ -61,24 +59,25 @@ export function createCoachVitalisTables(db: DatabaseType): void {
     db.exec(`
       CREATE TABLE IF NOT EXISTS vital_coach_alerts (
         id TEXT PRIMARY KEY,
-        userId TEXT NOT NULL,
+        user_id TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        alertType TEXT,
+        type TEXT,
         severity TEXT,
         title TEXT,
         message TEXT,
-        triggerReason TEXT,
-        recommendedAction TEXT,
-        deliveryChannels TEXT, -- JSON string
+        context TEXT,
+        recommended_action TEXT,
+        channels TEXT, -- JSON string
+        expires_at DATETIME,
         delivered INTEGER DEFAULT 0,
-        readAt DATETIME,
-        actionTaken INTEGER DEFAULT 0,
+        read_at DATETIME,
+        action_taken INTEGER DEFAULT 0,
         
-        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
     `);
 
-    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_alerts_user_time ON vital_coach_alerts(userId, timestamp)');
+    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_alerts_user_time ON vital_coach_alerts(user_id, timestamp)');
 
     logger.info('Created table: vital_coach_alerts', { context: 'database-migration' });
 
@@ -87,29 +86,30 @@ export function createCoachVitalisTables(db: DatabaseType): void {
     db.exec(`
       CREATE TABLE IF NOT EXISTS vital_coach_training_adjustments (
         id TEXT PRIMARY KEY,
-        userId TEXT NOT NULL,
-        plannedDate DATE NOT NULL,
+        user_id TEXT NOT NULL,
+        planned_date DATE NOT NULL,
         
         -- Original Plan
-        originalType TEXT,
-        originalDuration INTEGER,
-        originalIntensity TEXT,
+        original_type TEXT,
+        original_duration INTEGER,
+        original_intensity TEXT,
         
         -- Adjusted Plan
-        adjustedType TEXT,
-        adjustedDuration INTEGER,
-        adjustedIntensity TEXT,
-        adjustmentReason TEXT,
+        adjusted_type TEXT,
+        adjusted_duration INTEGER,
+        adjusted_intensity TEXT,
+        adjustment_reason TEXT,
+        confidence_score REAL,
         
         -- Feedback
-        userAccepted INTEGER DEFAULT 0,
-        actualCompleted INTEGER DEFAULT 0,
+        user_accepted INTEGER DEFAULT 0,
+        actual_completed INTEGER DEFAULT 0,
         
-        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
     `);
 
-    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_adjustments_user_date ON vital_coach_training_adjustments(userId, plannedDate)');
+    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_adjustments_user_date ON vital_coach_training_adjustments(user_id, planned_date)');
 
     logger.info('Created table: vital_coach_training_adjustments', { context: 'database-migration' });
 
@@ -118,21 +118,21 @@ export function createCoachVitalisTables(db: DatabaseType): void {
     db.exec(`
       CREATE TABLE IF NOT EXISTS vital_coach_bio_baselines (
         id TEXT PRIMARY KEY,
-        userId TEXT NOT NULL,
-        metricType TEXT NOT NULL,
-        baselineValue REAL,
-        percentile25 REAL,
-        percentile50 REAL,
-        percentile75 REAL,
-        baselineCalculatedAt DATETIME,
-        lastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP,
+        user_id TEXT NOT NULL,
+        metric_type TEXT NOT NULL,
+        baseline_value REAL,
+        percentile_25 REAL,
+        percentile_50 REAL,
+        percentile_75 REAL,
+        baseline_calculated_at DATETIME,
+        last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
         
-        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
-        UNIQUE(userId, metricType)
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, metric_type)
       )
     `);
 
-    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_baselines_user_metric ON vital_coach_bio_baselines(userId, metricType)');
+    db.exec('CREATE INDEX IF NOT EXISTS idx_coach_baselines_user_metric ON vital_coach_bio_baselines(user_id, metric_type)');
 
     logger.info('Created table: vital_coach_bio_baselines', { context: 'database-migration' });
 
