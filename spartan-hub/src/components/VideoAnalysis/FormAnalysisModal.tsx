@@ -59,7 +59,7 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
         });
         logger.info('Form analysis saved successfully', { context: 'FormAnalysisModal' });
       } catch (error) {
-        logger.error('Failed to auto-save form analysis', { context: 'FormAnalysisModal', error });
+        logger.error('Failed to auto-save form analysis', { context: 'FormAnalysisModal' });
       }
     }
   }, [onAnalysisComplete, userId, exerciseType]);
@@ -145,13 +145,12 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
                   {analysisResult.issues.map((issue, idx) => (
                     <div
                       key={idx}
-                      className={`p-3 rounded-lg border-l-4 ${
-                        issue.severity === 'high'
+                      className={`p-3 rounded-lg border-l-4 ${issue.severity === 'high'
                           ? 'border-red-500 bg-red-50'
                           : issue.severity === 'medium'
                             ? 'border-yellow-500 bg-yellow-50'
                             : 'border-blue-500 bg-blue-50'
-                      }`}
+                        }`}
                     >
                       <p className="font-medium text-gray-900">{issue.label}</p>
                       <p className="text-sm text-gray-600 mt-1">{issue.description}</p>

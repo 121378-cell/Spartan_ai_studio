@@ -1,14 +1,5 @@
 import { BaseAnalyzer } from './BaseAnalyzer';
-import { Pose, FormAnalysisResult, ExerciseType, ExercisePattern } from '../../types/formAnalysis';
-
-export interface PlankMetrics {
-    [key: string]: any;
-    bodyAlignment: number;
-    coreEngagement: number;
-    hipPosition: number;
-    shoulderStability: number;
-    durationQuality: number;
-}
+import { Pose, FormAnalysisResult, ExerciseType, ExercisePattern, PlankMetrics } from '../../types/formAnalysis';
 
 export class PlankAnalyzer extends BaseAnalyzer {
     pattern: ExercisePattern = 'core';
@@ -55,10 +46,10 @@ export class PlankAnalyzer extends BaseAnalyzer {
         const headShoulderHipAngle = this.calculateAngle(nose, leftShoulder, leftHip);
         const shoulderHipKneeAngle = this.calculateAngle(leftShoulder, leftHip, leftKnee);
         const hipKneeAnkleAngle = this.calculateAngle(leftHip, leftKnee, leftAnkle);
-        
+
         const bodyAlignment = Math.max(0, 1.0 - Math.abs(headShoulderHipAngle - 180) / 180) *
-                             Math.max(0, 1.0 - Math.abs(shoulderHipKneeAngle - 180) / 180) *
-                             Math.max(0, 1.0 - Math.abs(hipKneeAnkleAngle - 180) / 180);
+            Math.max(0, 1.0 - Math.abs(shoulderHipKneeAngle - 180) / 180) *
+            Math.max(0, 1.0 - Math.abs(hipKneeAnkleAngle - 180) / 180);
 
         // 2. Hip Position (Correct height relative to shoulders and ankles)
         const hipHeight = Math.abs(leftHip.y - leftShoulder.y);

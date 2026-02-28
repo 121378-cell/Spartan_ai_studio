@@ -29,6 +29,29 @@ export interface DeadliftMetrics {
     lockoutComplete: boolean;
 }
 
+export interface PushUpMetrics {
+    depth: number;
+    backStraightness: number;
+    elbowAngle: number;
+    armExtension: number;
+}
+
+export interface PlankMetrics {
+    bodyAlignment: number;
+    coreEngagement: number;
+    hipPosition: number;
+    shoulderStability: number;
+    durationQuality: number;
+}
+
+export interface RowMetrics {
+    elbowRetraction: number;
+    backStraightness: number;
+    shoulderBladeMovement: number;
+    torsoAngle: number;
+    gripWidth: number;
+}
+
 export interface BaseMetrics {
   [key: string]: number | boolean | string | undefined;
 }
@@ -39,7 +62,7 @@ export interface FormAnalysisResult {
     formScore: number; // 0-100
     repCount?: number;
     angles?: Record<string, number>;
-    metrics: SquatMetrics | DeadliftMetrics | BaseMetrics;
+    metrics: SquatMetrics | DeadliftMetrics | PushUpMetrics | PlankMetrics | RowMetrics | BaseMetrics;
     warnings: string[];
     recommendations: string[];
 }

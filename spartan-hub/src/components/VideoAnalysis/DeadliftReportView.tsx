@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { FormAnalysisResult } from '../../types/pose';
 import { useTranslation } from 'react-i18next';
-import { 
-  FileText, 
-  BarChart2, 
-  Layers, 
-  AlertTriangle, 
-  CheckCircle, 
-  Download, 
+import {
+  FileText,
+  BarChart2,
+  Layers,
+  AlertTriangle,
+  CheckCircle,
+  Download,
   Activity,
   ArrowRight
 } from 'lucide-react';
@@ -33,8 +33,8 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
     {
       id: 'viga_principal',
       name: t('videoAnalysis.elements.mainBeam'),
-      status: result.metrics?.backAngle && result.metrics.backAngle < 15 ? 'optimal' : 'critical',
-      value: `${result.metrics?.backAngle}°`,
+      status: (Number(result.metrics?.backAngle) || 0) < 15 ? 'optimal' : 'critical',
+      value: `${Number(result.metrics?.backAngle) || 0}°`,
       limit: '< 15°',
       load: t('videoAnalysis.loads.axialCompression'),
       material: 'Tejido Óseo/Muscular'
@@ -42,8 +42,8 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
     {
       id: 'columnas_soporte',
       name: t('videoAnalysis.elements.supportColumns'),
-      status: result.metrics?.kneeExtension && result.metrics.kneeExtension > 160 ? 'optimal' : 'warning',
-      value: `${result.metrics?.kneeExtension}°`,
+      status: (Number(result.metrics?.kneeExtension) || 0) > 160 ? 'optimal' : 'warning',
+      value: `${Number(result.metrics?.kneeExtension) || 0}°`,
       limit: '> 160°',
       load: t('videoAnalysis.loads.compression'),
       material: 'Estructura Ósea'
@@ -52,7 +52,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
       id: 'pivote_central',
       name: t('videoAnalysis.elements.centralPivot'),
       status: 'optimal', // Asumido
-      value: `${result.metrics?.hipHinge}°`,
+      value: `${Number(result.metrics?.hipHinge) || 0}°`,
       limit: '45°-90°',
       load: t('videoAnalysis.loads.rotationalTorque'),
       material: 'Complejo Articular'
@@ -65,17 +65,18 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
   const barWeight = 100;
   const torsoMass = userWeight * 0.48; // ~48% del peso corporal
   const g = 9.81;
-  
+
   // Momento estimado en L5/S1 (Nm)
   // Torque = (M_torso * d_torso) + (M_load * d_load)
   // Asumiendo brazos de palanca estándar basados en el ángulo de la espalda detectado
-  const backAngleRad = (result.metrics?.backAngle || 0) * (Math.PI / 180);
+  const backAngleVal = Number(result.metrics?.backAngle) || 0;
+  const backAngleRad = backAngleVal * (Math.PI / 180);
   const momentArmFactor = Math.sin(backAngleRad + (45 * Math.PI / 180)); // Simplificación geométrica
   const estimatedTorque = Math.round(((torsoMass * 0.35) + (barWeight * 0.4)) * g * momentArmFactor);
 
   const downloadCSV = () => {
     const headers = ['Elemento', 'Estado', 'Valor Medido', 'Límite Normativo', 'Tipo de Carga'];
-    const rows = structuralElements.map(el => 
+    const rows = structuralElements.map(el =>
       [el.name, el.status, el.value, el.limit, el.load].join(',')
     );
     const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
@@ -122,11 +123,10 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as TabType)}
-            className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50/50'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
+            className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${activeTab === tab.id
+              ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50/50'
+              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+              }`}
           >
             <tab.icon className="w-4 h-4" />
             {tab.label}
@@ -136,7 +136,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
 
       {/* Contenido Principal */}
       <div className="flex-1 overflow-y-auto p-6">
-        
+
         {/* VISTA RESUMEN */}
         {activeTab === 'resumen' && (
           <div className="space-y-6">
@@ -215,11 +215,10 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                     <tr key={el.id} className="hover:bg-gray-50/50">
                       <td className="px-6 py-4 font-medium text-gray-900">{el.name}</td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          el.status === 'optimal' ? 'bg-green-100 text-green-800' : 
-                          el.status === 'warning' ? 'bg-yellow-100 text-yellow-800' : 
-                          'bg-red-100 text-red-800'
-                        }`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${el.status === 'optimal' ? 'bg-green-100 text-green-800' :
+                          el.status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
                           {el.status === 'optimal' ? t('videoAnalysis.status.conforme') : t('videoAnalysis.status.noConforme')}
                         </span>
                       </td>
@@ -240,12 +239,12 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Nivel Superior (Torso)</span>
-                      <span>{result.metrics?.backAngle || 0 > 20 ? 'Sobrecarga' : 'Nominal'}</span>
+                      <span>{(Number(result.metrics?.backAngle) || 0) > 20 ? 'Sobrecarga' : 'Nominal'}</span>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full ${result.metrics?.backAngle || 0 > 20 ? 'bg-red-500' : 'bg-blue-500'}`} 
-                        style={{ width: `${Math.min(100, (result.metrics?.backAngle || 0) * 3)}%` }}
+                      <div
+                        className={`h-2 rounded-full ${(Number(result.metrics?.backAngle) || 0) > 20 ? 'bg-red-500' : 'bg-blue-500'}`}
+                        style={{ width: `${Math.min(100, (Number(result.metrics?.backAngle) || 0) * 3)}%` }}
                       ></div>
                     </div>
                   </div>
@@ -261,12 +260,12 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Nivel Inferior (Rodillas)</span>
-                      <span>{result.metrics?.kneeExtension || 0 < 160 ? 'Inestable' : 'Estable'}</span>
+                      <span>{(Number(result.metrics?.kneeExtension) || 0) < 160 ? 'Inestable' : 'Estable'}</span>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full ${result.metrics?.kneeExtension || 0 < 160 ? 'bg-yellow-500' : 'bg-green-500'}`} 
-                        style={{ width: `${Math.min(100, (result.metrics?.kneeExtension || 0) / 1.8)}%` }}
+                      <div
+                        className={`h-2 rounded-full ${(Number(result.metrics?.kneeExtension) || 0) < 160 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                        style={{ width: `${Math.min(100, (Number(result.metrics?.kneeExtension) || 0) / 1.8)}%` }}
                       ></div>
                     </div>
                   </div>
@@ -291,24 +290,22 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
 
             {/* Evaluación de Riesgo de Lesiones */}
             {result.injuryRisk ? (
-              <div className={`border rounded-xl p-6 ${
-                result.injuryRisk.level === 'critical' || result.injuryRisk.level === 'high' 
-                  ? 'bg-red-50 border-red-200' 
-                  : result.injuryRisk.level === 'moderate'
-                    ? 'bg-yellow-50 border-yellow-200'
-                    : 'bg-green-50 border-green-200'
-              }`}>
-                <h4 className={`font-bold mb-4 flex items-center gap-2 ${
-                  result.injuryRisk.level === 'critical' || result.injuryRisk.level === 'high' 
-                    ? 'text-red-900' 
-                    : result.injuryRisk.level === 'moderate'
-                      ? 'text-yellow-900'
-                      : 'text-green-900'
+              <div className={`border rounded-xl p-6 ${result.injuryRisk.level === 'critical' || result.injuryRisk.level === 'high'
+                ? 'bg-red-50 border-red-200'
+                : result.injuryRisk.level === 'moderate'
+                  ? 'bg-yellow-50 border-yellow-200'
+                  : 'bg-green-50 border-green-200'
                 }`}>
+                <h4 className={`font-bold mb-4 flex items-center gap-2 ${result.injuryRisk.level === 'critical' || result.injuryRisk.level === 'high'
+                  ? 'text-red-900'
+                  : result.injuryRisk.level === 'moderate'
+                    ? 'text-yellow-900'
+                    : 'text-green-900'
+                  }`}>
                   <AlertTriangle className="w-5 h-5" />
                   {t('videoAnalysis.riskAssessment')}: {result.injuryRisk.level.toUpperCase()}
                 </h4>
-                
+
                 {result.injuryRisk.factors.length > 0 ? (
                   <div className="space-y-4">
                     {result.injuryRisk.factors.map((factor, idx) => (
@@ -336,7 +333,7 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                   {t('videoAnalysis.structuralIntegrityAlert')}
                 </h4>
                 <p className="text-sm text-yellow-800">
-                  {result.metrics?.backAngle && result.metrics.backAngle > 20 
+                  {(Number(result.metrics?.backAngle) || 0) > 20
                     ? t('videoAnalysis.warnings.backCritical')
                     : t('videoAnalysis.warnings.backNominal')}
                 </p>
@@ -352,24 +349,31 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
               <h3 className="font-bold text-gray-900 mb-4">Validación Cruzada vs Normativa</h3>
               <div className="space-y-6">
                 {[
-                  { 
-                    label: t('videoAnalysis.validationMetrics.spinalNeutrality'), 
-                    current: result.metrics?.backAngle || 0, 
-                    target: 0, 
+                  {
+                    label: t('videoAnalysis.validationMetrics.spinalNeutrality'),
+                    current: Number(result.metrics?.backAngle) || 0,
+                    target: 0,
                     tolerance: 15,
                     unit: '°'
                   },
-                  { 
-                    label: t('videoAnalysis.validationMetrics.kneeLockout'), 
-                    current: result.metrics?.kneeExtension || 0, 
-                    target: 180, 
+                  {
+                    label: t('videoAnalysis.validationMetrics.kneeLockout'),
+                    current: Number(result.metrics?.kneeExtension) || 0,
+                    target: 180,
                     tolerance: 20,
                     unit: '°'
+                  },
+                  {
+                    label: t('videoAnalysis.validationMetrics.barPathEfficiency'),
+                    current: Number(result.metrics?.barPath) || 0,
+                    target: 100, // Assuming 100% is ideal
+                    tolerance: 10, // Example tolerance
+                    unit: '%'
                   }
                 ].map((metric, idx) => {
                   const diff = Math.abs(metric.current - metric.target);
                   const passed = diff <= metric.tolerance;
-                  
+
                   return (
                     <div key={idx} className="flex items-center gap-4">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${passed ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
@@ -383,16 +387,16 @@ export const DeadliftReportView: React.FC<DeadliftReportViewProps> = ({
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2 relative">
-                          <div 
-                            className="absolute top-0 bottom-0 bg-gray-400/30" 
-                            style={{ 
-                              left: `${Math.max(0, 50 - (metric.tolerance/2))}%`, 
-                              width: `${metric.tolerance}%` 
+                          <div
+                            className="absolute top-0 bottom-0 bg-gray-400/30"
+                            style={{
+                              left: `${Math.max(0, 50 - (metric.tolerance / 2))}%`,
+                              width: `${metric.tolerance}%`
                             }}
                           ></div>
-                          <div 
+                          <div
                             className={`h-2 rounded-full absolute transition-all duration-500 ${passed ? 'bg-green-500' : 'bg-red-500'}`}
-                            style={{ 
+                            style={{
                               left: `${Math.min(100, (metric.current / (metric.target * 2 || 100)) * 100)}%`, // Simplified positioning logic
                               width: '10px'
                             }}

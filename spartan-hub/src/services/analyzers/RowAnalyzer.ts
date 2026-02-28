@@ -1,14 +1,5 @@
 import { BaseAnalyzer } from './BaseAnalyzer';
-import { Pose, FormAnalysisResult, ExerciseType, ExercisePattern } from '../../types/formAnalysis';
-
-export interface RowMetrics {
-    [key: string]: any;
-    elbowRetraction: number;
-    backStraightness: number;
-    shoulderBladeMovement: number;
-    torsoAngle: number;
-    gripWidth: number;
-}
+import { Pose, FormAnalysisResult, ExerciseType, ExercisePattern, RowMetrics } from '../../types/formAnalysis';
 
 export class RowAnalyzer extends BaseAnalyzer {
     pattern: ExercisePattern = 'pull';

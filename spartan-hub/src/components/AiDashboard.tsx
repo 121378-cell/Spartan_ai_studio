@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Activity, 
-  Server, 
-  Cpu, 
-  AlertTriangle, 
-  RefreshCw, 
-  CheckCircle, 
+import {
+  Activity,
+  Server,
+  Cpu,
+  AlertTriangle,
+  RefreshCw,
+  CheckCircle,
   XCircle,
   Database,
   Clock,
@@ -38,7 +38,7 @@ const AiDashboard: React.FC = () => {
   const [healthStatus, setHealthStatus] = useState<boolean | null>(null);
   const [queueStats, setQueueStats] = useState<QueueStats | null>(null);
   const [configReloadMessage, setConfigReloadMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-  
+
   // Mock data for visual demonstration until backend exposes detailed provider stats
   const [providers, setProviders] = useState<ProviderStatus[]>([
     { id: 'groq', name: 'Groq (Llama 3)', status: 'online', latency: 120, lastCheck: new Date().toISOString(), circuitBreaker: 'closed' },
@@ -50,7 +50,7 @@ const AiDashboard: React.FC = () => {
   const fetchData = async () => {
     try {
       setRefreshing(true);
-      
+
       // Parallel data fetching
       const [health, stats] = await Promise.all([
         BackendApiService.aiHealthCheck(),
@@ -59,12 +59,15 @@ const AiDashboard: React.FC = () => {
 
       setHealthStatus(health);
       if (stats) setQueueStats(stats);
-      
+
       // Update timestamps for mock data
       setProviders(prev => prev.map(p => ({ ...p, lastCheck: new Date().toISOString() })));
 
-    } catch (error) {
-      logger.error('Error fetching AI dashboard data', { context: 'AiDashboard', error });
+    } catch (err: any) {
+      logger.error('Error fetching AI dashboard data', {
+        context: 'AiDashboard',
+        metadata: err instanceof Error ? { message: err.message, stack: err.stack } : { message: String(err) }
+      });
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -122,7 +125,7 @@ const AiDashboard: React.FC = () => {
           <p className="text-gray-400 mt-1">Real-time monitoring of AI Infrastructure & Cascading Failover System</p>
         </div>
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={handleReloadConfig}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg border border-blue-600/30 transition-all"
             disabled={refreshing}
@@ -130,7 +133,7 @@ const AiDashboard: React.FC = () => {
             <Settings className="w-4 h-4" />
             Reload Config
           </button>
-          <button 
+          <button
             onClick={fetchData}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 transition-all"
             disabled={refreshing}
@@ -142,11 +145,10 @@ const AiDashboard: React.FC = () => {
       </div>
 
       {configReloadMessage && (
-        <div className={`p-4 rounded-lg border ${
-          configReloadMessage.type === 'success' 
-            ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+        <div className={`p-4 rounded-lg border ${configReloadMessage.type === 'success'
+            ? 'bg-green-500/10 border-green-500/30 text-green-400'
             : 'bg-red-500/10 border-red-500/30 text-red-400'
-        } mb-6 flex items-center gap-3`}>
+          } mb-6 flex items-center gap-3`}>
           {configReloadMessage.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
           {configReloadMessage.text}
         </div>
@@ -232,7 +234,7 @@ const AiDashboard: React.FC = () => {
             Auto-refresh: 30s
           </span>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -252,10 +254,9 @@ const AiDashboard: React.FC = () => {
                     {provider.name}
                   </td>
                   <td className="p-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-                      provider.status === 'online' ? 'bg-green-900/30 text-green-400' : 
-                      provider.status === 'offline' ? 'bg-red-900/30 text-red-400' : 'bg-yellow-900/30 text-yellow-400'
-                    }`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${provider.status === 'online' ? 'bg-green-900/30 text-green-400' :
+                        provider.status === 'offline' ? 'bg-red-900/30 text-red-400' : 'bg-yellow-900/30 text-yellow-400'
+                      }`}>
                       {provider.status}
                     </span>
                   </td>

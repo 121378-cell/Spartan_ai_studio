@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { VideoCaptureState, PoseFrame, FormAnalysisResult } from '../../types/pose';
 import { getPoseDetectionService } from '../../services/poseDetection';
-import { 
-  analyzeSquatForm, 
+import {
+  analyzeSquatForm,
   analyzeDeadliftForm,
   analyzePushUpForm,
   analyzePlankForm,
@@ -29,7 +29,7 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
   const animationRef = useRef<number | null>(null);
   const lastProcessedTimeRef = useRef<number>(0);
   const frameSkipCounterRef = useRef<number>(0);
-  
+
   // Mobile optimization state
   const { isMobile, isTablet, densityFactor } = useDevice();
   const [performanceLevel, setPerformanceLevel] = useState<'high' | 'medium' | 'low'>('high');
@@ -103,27 +103,27 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
         });
 
         streamRef.current = stream;
-    // Initialize canvas dimensions once when video metadata loads
-    const handleVideoMetadata = () => {
-      if (videoRef.current && canvasRef.current && overlayCanvasRef.current) {
-        const video = videoRef.current;
-        canvasRef.current.width = video.videoWidth;
-        canvasRef.current.height = video.videoHeight;
-        overlayCanvasRef.current.width = video.videoWidth;
-        overlayCanvasRef.current.height = video.videoHeight;
-        
-        video.play().then(() => startCapture()).catch(err => console.error("Play error:", err));
-      }
-    };
+        // Initialize canvas dimensions once when video metadata loads
+        const handleVideoMetadata = () => {
+          if (videoRef.current && canvasRef.current && overlayCanvasRef.current) {
+            const video = videoRef.current;
+            canvasRef.current.width = video.videoWidth;
+            canvasRef.current.height = video.videoHeight;
+            overlayCanvasRef.current.width = video.videoWidth;
+            overlayCanvasRef.current.height = video.videoHeight;
 
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-      videoRef.current.onloadedmetadata = handleVideoMetadata;
-    }
+            video.play().then(() => startCapture()).catch(err => console.error("Play error:", err));
+          }
+        };
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.onloadedmetadata = handleVideoMetadata;
+        }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : 'Failed to access camera';
-        
+
         // Handle specific permission errors
         if (error instanceof DOMException) {
           if (error.name === 'NotAllowedError') {
@@ -201,16 +201,16 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
     const processFrame = async () => {
       try {
         const currentTime = performance.now();
-        
+
         // Adaptive frame processing based on performance
         const timeSinceLastProcess = currentTime - lastProcessedTimeRef.current;
         // Mobile optimization: cap at 30fps max, 15fps min
-        const minProcessingInterval = isMobile ? 1000 / 15 : 1000 / 30; 
-        
+        const minProcessingInterval = isMobile ? 1000 / 15 : 1000 / 30;
+
         if (timeSinceLastProcess >= minProcessingInterval) {
           // Implement frame skipping for performance on mobile
           frameSkipCounterRef.current++;
-          
+
           if (frameSkipCounterRef.current % processingInterval === 0) {
             // OPTIMIZATION: Use detect() for video stream instead of detectImage()
             // Pass video element directly to avoid canvas draw overhead
@@ -221,18 +221,20 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
                 const updated = [...prev, poseFrame];
                 // Keep last 300 frames (10 seconds at 30fps)
                 const kept = updated.slice(-300);
-                
+
                 // Auto-analyze after 10 seconds of recording
                 if (recordingTime >= 300) {
                   completeAnalysis(kept);
                 }
-                
+
                 return kept;
               });
 
               // Draw landmarks on overlay canvas
               if (overlayCtx) {
-                overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+                if (overlayCanvas) {
+                  overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+                }
                 drawLandmarks(overlayCtx, poseFrame);
               }
 
@@ -251,7 +253,7 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
               });
 
               setRecordingTime((prev) => prev + 1);
-              
+
               // Update last processed time
               lastProcessedTimeRef.current = currentTime;
             }
@@ -266,16 +268,16 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
         // Don't stop capturing on transient errors, just log
         // But stop if critical
         if (error instanceof Error && error.message.includes('not initialized')) {
-             const errorMessage = error.message;
-             setCaptureState((prev) => ({
-               ...prev,
-               error: errorMessage,
-             }));
+          const errorMessage = error.message;
+          setCaptureState((prev) => ({
+            ...prev,
+            error: errorMessage,
+          }));
         } else {
-             // Continue loop
-             if (captureState.isActive) {
-               animationRef.current = requestAnimationFrame(processFrame);
-             }
+          // Continue loop
+          if (captureState.isActive) {
+            animationRef.current = requestAnimationFrame(processFrame);
+          }
         }
       }
     };
@@ -314,7 +316,7 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
 
     ctx.strokeStyle = connectionColor;
     ctx.lineWidth = lineWidth;
-    
+
     connections.forEach(([start, end]) => {
       const startLand = poseFrame.landmarks[start];
       const endLand = poseFrame.landmarks[end];
@@ -489,11 +491,10 @@ export const VideoCapture: React.FC<VideoCaptureProps> = ({
       {/* Performance indicator for mobile */}
       {isMobile && (
         <div className="flex justify-center">
-          <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-            performanceLevel === 'high' ? 'bg-green-100 text-green-800' : 
-            performanceLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-            'bg-red-100 text-red-800'
-          }`}>
+          <div className={`px-3 py-1 rounded-full text-xs font-medium ${performanceLevel === 'high' ? 'bg-green-100 text-green-800' :
+              performanceLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+            }`}>
             Rendimiento: {performanceLevel}
           </div>
         </div>

@@ -10,7 +10,11 @@
       "DOM.Iterable"
     ],
     "skipLibCheck": true,
-    "types": [],
+    "types": [
+      "jest",
+      "@testing-library/jest-dom",
+      "node"
+    ],
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
@@ -27,6 +31,10 @@
     "allowSyntheticDefaultImports": true,
     "strict": true
   },
+  "include": [
+    "src/**/*",
+    "src/global.d.ts"
+  ],
   "exclude": [
     "dist",
     "spartan-hub-dist",

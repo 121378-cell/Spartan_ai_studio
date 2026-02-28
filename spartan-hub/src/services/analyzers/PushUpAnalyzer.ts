@@ -1,13 +1,5 @@
 import { BaseAnalyzer } from './BaseAnalyzer';
-import { Pose, FormAnalysisResult, ExerciseType, ExercisePattern } from '../../types/formAnalysis';
-
-export interface PushUpMetrics {
-    [key: string]: any;
-    depth: number;
-    backStraightness: number;
-    elbowAngle: number;
-    armExtension: number;
-}
+import { Pose, FormAnalysisResult, ExerciseType, ExercisePattern, PushUpMetrics } from '../../types/formAnalysis';
 
 export class PushUpAnalyzer extends BaseAnalyzer {
     pattern: ExercisePattern = 'push';

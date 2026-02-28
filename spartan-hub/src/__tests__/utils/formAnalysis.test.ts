@@ -44,7 +44,7 @@ function createMockFrame(
  */
 function createPerfectSquatFrames(): PoseFrame[] {
   const frames: PoseFrame[] = [];
-  
+
   for (let i = 0; i < 20; i++) {
     frames.push(
       createMockFrame({
@@ -70,7 +70,7 @@ function createPerfectSquatFrames(): PoseFrame[] {
  */
 function createKneeCaveSquatFrames(): PoseFrame[] {
   const frames: PoseFrame[] = [];
-  
+
   for (let i = 0; i < 20; i++) {
     frames.push(
       createMockFrame({
@@ -205,6 +205,9 @@ describe('Squat Form Analysis', () => {
             minKneeExtension: 160,
             maxBarDeviation: 20,
           },
+          push_up: {} as any,
+          plank: {} as any,
+          row: {} as any,
         },
       };
 
@@ -238,7 +241,7 @@ describe('Squat Form Analysis', () => {
  */
 function createPerfectDeadliftFrames(): PoseFrame[] {
   const frames: PoseFrame[] = [];
-  
+
   for (let i = 0; i < 20; i++) {
     frames.push(
       createMockFrame({
@@ -262,7 +265,7 @@ function createPerfectDeadliftFrames(): PoseFrame[] {
  */
 function createRoundedBackDeadliftFrames(): PoseFrame[] {
   const frames: PoseFrame[] = [];
-  
+
   for (let i = 0; i < 20; i++) {
     frames.push(
       createMockFrame({
@@ -286,7 +289,7 @@ function createRoundedBackDeadliftFrames(): PoseFrame[] {
  */
 function createIncompleteDeadliftFrames(): PoseFrame[] {
   const frames: PoseFrame[] = [];
-  
+
   for (let i = 0; i < 20; i++) {
     frames.push(
       createMockFrame({
@@ -381,7 +384,7 @@ describe('Form Analysis Config', () => {
 
   test('should have threshold values in reasonable ranges', () => {
     const config = DEFAULT_FORM_ANALYSIS_CONFIG;
-    
+
     expect(config.thresholds.squat.minDepth).toBeGreaterThan(0);
     expect(config.thresholds.squat.minDepth).toBeLessThan(180);
     expect(config.thresholds.deadlift.maxBackRound).toBeGreaterThan(0);

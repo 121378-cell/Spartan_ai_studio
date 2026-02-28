@@ -1,0 +1,196 @@
+
+> cypress/e2e/authentication.cy.ts(38,10): error TS2339: Property 'or' does not exist on type 'Chainable<string>'.
+cypress/e2e/authentication.cy.ts(56,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/authentication.cy.ts(102,10): error TS2339: Property 'or' does not exist on type 'Chainable<string>'.
+cypress/e2e/authentication.cy.ts(160,10): error TS2339: Property 'or' does not exist on type 'Chainable<string>'.
+cypress/e2e/biometric-sync.cy.ts(32,10): error TS2339: Property 'or' does not exist on type 'Chainable<string>'.
+cypress/e2e/biometric-sync.cy.ts(53,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/biometric-sync.cy.ts(115,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/biometric-sync.cy.ts(157,10): error TS2339: Property 'or' does not exist on type 'Chainable<string>'.
+cypress/e2e/biometric-sync.cy.ts(214,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(23,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(35,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(46,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/dashboard-analytics.cy.ts(53,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/dashboard-analytics.cy.ts(60,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/dashboard-analytics.cy.ts(67,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/dashboard-analytics.cy.ts(74,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/dashboard-analytics.cy.ts(81,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/dashboard-analytics.cy.ts(88,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/dashboard-analytics.cy.ts(95,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/dashboard-analytics.cy.ts(107,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(113,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(155,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(210,10): error TS2339: Property 'or' does not exist on type 'Chainable<string>'.
+cypress/e2e/dashboard-analytics.cy.ts(224,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(248,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(259,19): error TS2345: Argument of type '"iphone-12"' is not assignable to parameter of type 'ViewportPreset'.
+cypress/e2e/dashboard-analytics.cy.ts(278,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLElement>>'.
+cypress/e2e/dashboard-analytics.cy.ts(296,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/video-form-analysis.cy.ts(20,10): error TS2339: Property 'or' does not exist on type 'Chainable<string>'.
+cypress/e2e/video-form-analysis.cy.ts(46,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/video-form-analysis.cy.ts(84,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/video-form-analysis.cy.ts(112,10): error TS2339: Property 'or' does not exist on type 'Chainable<JQuery<HTMLCanvasElement>>'.
+cypress/e2e/video-form-analysis.cy.ts(123,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/video-form-analysis.cy.ts(146,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/video-form-analysis.cy.ts(170,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/video-form-analysis.cy.ts(212,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+cypress/e2e/video-form-analysis.cy.ts(241,10): error TS2339: Property 'or' does not exist on type 'Chainable<undefined>'.
+src/__tests__/AiErrorScreen.test.tsx(40,18): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(64,54): error TS2339: Property 'toBeTruthy' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(67,110): error TS2339: Property 'toBeTruthy' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(68,82): error TS2339: Property 'toBeTruthy' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(71,44): error TS2339: Property 'toBeTruthy' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(74,65): error TS2339: Property 'toBeTruthy' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(75,67): error TS2339: Property 'toBeTruthy' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(91,90): error TS2339: Property 'toBeTruthy' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(94,97): error TS2339: Property 'toBeTruthy' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(111,25): error TS2339: Property 'toHaveBeenCalledTimes' does not exist on type 'Assertion'.
+src/__tests__/AiErrorScreen.test.tsx(128,26): error TS2339: Property 'toHaveBeenCalledTimes' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(85,57): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(97,64): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(109,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(121,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(131,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(146,25): error TS2339: Property 'toHaveBeenCalled' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(172,38): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(173,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(174,40): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(191,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(208,41): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(209,41): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(227,55): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(235,51): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(237,30): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(255,38): error TS2339: Property 'toHaveBeenCalled' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(268,40): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(269,37): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(270,40): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(283,51): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(299,42): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion'.
+src/__tests__/components/FormAnalysisModal.test.tsx(305,25): error TS2339: Property 'toHaveBeenCalled' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(40,33): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(46,33): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(51,33): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(56,33): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(61,33): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(73,38): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(86,33): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(99,36): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(114,51): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/components/VideoCapture.test.tsx(136,22): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(19,25): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(24,25): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(29,25): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(35,25): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(42,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(43,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(48,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(49,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(54,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(55,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(60,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(61,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(68,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(69,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(74,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(75,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(80,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(81,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(86,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(87,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(94,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(95,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(100,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(101,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(106,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(107,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(114,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(115,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(120,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(121,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(126,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/inputSanitizer.test.ts(127,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(26,23): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(27,23): error TS2551: Property 'toBeInstanceOf' does not exist on type 'Assertion'. Did you mean 'instanceOf'?
+src/__tests__/services/poseDetection.test.ts(32,35): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(33,33): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(34,37): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(35,27): error TS2339: Property 'toBeNull' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(42,10): error TS2551: Property 'toThrow' does not exist on type 'Assertion'. Did you mean 'throw'?
+src/__tests__/services/poseDetection.test.ts(50,35): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(55,38): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(60,38): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(75,35): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/services/poseDetection.test.ts(76,50): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(77,37): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(88,30): error TS2339: Property 'toBeGreaterThanOrEqual' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(89,30): error TS2339: Property 'toBeLessThanOrEqual' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(90,39): error TS2339: Property 'toBeGreaterThanOrEqual' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(91,39): error TS2339: Property 'toBeLessThanOrEqual' does not exist on type 'Assertion'.
+src/__tests__/services/poseDetection.test.ts(100,14): error TS2551: Property 'toThrow' does not exist on type 'Assertion'. Did you mean 'throw'?
+src/__tests__/utils/formAnalysis.test.ts(100,28): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(101,33): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(108,36): error TS2551: Property 'toBeLessThan' does not exist on type 'Assertion'. Did you mean 'lessThan'?
+src/__tests__/utils/formAnalysis.test.ts(115,42): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(116,34): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(126,33): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(136,34): error TS2551: Property 'toBeLessThan' does not exist on type 'Assertion'. Did you mean 'lessThan'?
+src/__tests__/utils/formAnalysis.test.ts(143,34): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(145,23): error TS2551: Property 'toMatch' does not exist on type 'Assertion'. Did you mean 'match'?
+src/__tests__/utils/formAnalysis.test.ts(154,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(155,36): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(156,41): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(163,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(164,36): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(179,28): error TS2551: Property 'toBeLessThan' does not exist on type 'Assertion'. Did you mean 'lessThan'?
+src/__tests__/utils/formAnalysis.test.ts(188,28): error TS2339: Property 'toBeGreaterThanOrEqual' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(189,28): error TS2339: Property 'toBeLessThanOrEqual' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(190,33): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(215,28): error TS2339: Property 'toBeGreaterThanOrEqual' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(216,33): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(225,30): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(226,37): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(227,33): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(234,33): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(317,33): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(318,28): error TS2339: Property 'toBeGreaterThanOrEqual' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(319,44): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(326,36): error TS2551: Property 'toBeLessThan' does not exist on type 'Assertion'. Did you mean 'lessThan'?
+src/__tests__/utils/formAnalysis.test.ts(327,28): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(334,42): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(344,33): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(352,33): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(362,34): error TS2551: Property 'toBeLessThan' does not exist on type 'Assertion'. Did you mean 'lessThan'?
+src/__tests__/utils/formAnalysis.test.ts(371,28): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(372,36): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(379,56): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(380,52): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(381,59): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(382,62): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/__tests__/utils/formAnalysis.test.ts(388,46): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/__tests__/utils/formAnalysis.test.ts(389,46): error TS2551: Property 'toBeLessThan' does not exist on type 'Assertion'. Did you mean 'lessThan'?
+src/__tests__/utils/formAnalysis.test.ts(390,53): error TS2551: Property 'toBeGreaterThan' does not exist on type 'Assertion'. Did you mean 'greaterThan'?
+src/services/__tests__/analyzers.test.ts(30,41): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/analyzers.test.ts(31,45): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/analyzers.test.ts(32,52): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/analyzers.test.ts(41,41): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/analyzers.test.ts(50,41): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(7,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(8,33): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(13,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(14,33): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(19,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(24,30): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(29,24): error TS2339: Property 'toBeNull' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(35,38): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(36,38): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/exerciseAnalysisMapper.test.ts(41,21): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/formAnalysisEngine.test.ts(11,24): error TS2339: Property 'toBeDefined' does not exist on type 'Assertion'.
+src/services/__tests__/formAnalysisEngine.test.ts(20,37): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/formAnalysisEngine.test.ts(24,41): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/formAnalysisEngine.test.ts(33,37): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/formAnalysisEngine.test.ts(34,34): error TS2339: Property 'toBe' does not exist on type 'Assertion'.
+src/services/__tests__/formAnalysisEngine.test.ts(35,36): error TS2551: Property 'toContain' does not exist on type 'Assertion'. Did you mean 'contain'?
+
+
