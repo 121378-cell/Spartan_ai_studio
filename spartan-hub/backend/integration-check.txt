@@ -1,0 +1,19 @@
+
+      hasPassword: true
+    DEBUG integration login passwordMatch true
+    2026-02-28T18:14:45.063Z [ERROR] [spartan-hub-backend] ÔØî Database operation failed (attempt 1/4): {"error":{}}
+    2026-02-28T18:14:46.073Z [ERROR] [spartan-hub-backend] ÔØî Database operation failed (attempt 2/4): {"error":{}}
+    2026-02-28T18:14:47.086Z [ERROR] [spartan-hub-backend] ÔØî Database operation failed (attempt 3/4): {"error":{}}
+    2026-02-28T18:14:48.096Z [ERROR] [spartan-hub-backend] ÔØî Database operation failed (attempt 4/4): {"error":{}}
+    2026-02-28T18:14:48.099Z [ERROR] [spartan-hub-backend] ÔØî All retry attempts failed for database operation {"error":{}}
+FAIL src/__tests__/integration.test.ts (24.376 s)
+    Failed to obtain server version. Unable to check client-server compatibility. Set checkCompatibility=false to skip version check.
+    2026-02-28T18:15:04.011Z [ERROR] [spartan-hub-backend] Embedding failed, using mock fallback {"error":"TypeError: Cannot read properties of undefined (reading 'ok')"}
+    2026-02-28T18:15:04.027Z [ERROR] [spartan-hub-backend] Embedding failed, using mock fallback {"error":"TypeError: Cannot read properties of undefined (reading 'ok')"}
+    2026-02-28T18:15:04.030Z [ERROR] [spartan-hub-backend] Embedding failed, using mock fallback {"error":"TypeError: Cannot read properties of undefined (reading 'ok')"}
+    2026-02-28T18:15:04.063Z [ERROR] [spartan-hub-backend] Embedding failed, using mock fallback {"error":"TypeError: Cannot read properties of undefined (reading 'ok')"}
+PASS src/services/__tests__/ragIntegration.test.ts (12.723 s)
+PASS src/__tests__/garmin-to-googlefit-integration.test.ts (12.689 s)
+Test Suites: 1 failed, 2 passed, 3 total
+Tests:       2 failed, 46 passed, 48 total
+

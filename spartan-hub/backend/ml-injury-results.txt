@@ -1,0 +1,12 @@
+
+> backend@1.0.0 test
+> node --max-old-space-size=4096 ./node_modules/jest/bin/jest.js --runInBand --testPathPatterns=mlInjuryPrediction
+
+No tests found, exiting with code 1
+Run with `--passWithNoTests` to exit with code 0
+In C:\Proyectos\Spartan hub 2.0 - codex - copia\spartan-hub\backend
+  455 files checked.
+  testMatch: **/__tests__/**/*.+(spec|test).+(ts|tsx|js), **/?(*.)+(spec|test).+(ts|tsx|js), !**/__tests__/e2e/**/*.test.ts, !**/__tests__/integration/**/*.test.ts, !**/__tests__/performance/**/*.test.ts - 103 matches
+  testPathIgnorePatterns: C:\\Proyectos\\Spartan hub 2.0 - codex - copia\\spartan-hub\\backend\\dist\\, C:\\Proyectos\\Spartan hub 2.0 - codex - copia\\spartan-hub\\backend\\node_modules\\, C:\\Proyectos\\Spartan hub 2.0 - codex - copia\\spartan-hub\\backend\\src\\routes\\mlInjuryPredictionRoutes.test.ts - 454 matches
+  testRegex:  - 0 matches
+Pattern: mlInjuryPrediction - 0 matches

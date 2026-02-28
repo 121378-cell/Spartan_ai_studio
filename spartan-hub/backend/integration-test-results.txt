@@ -1,0 +1,578 @@
+
+> backend@1.0.0 test
+> node --max-old-space-size=4096 ./node_modules/jest/bin/jest.js --runInBand --testPathPatterns=integration --forceExit
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ­ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒùé´©Å backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+PASS src/__tests__/garmin-to-googlefit-integration.test.ts (12.934 s)
+  Garmin to Google Fit Integration
+    Heart Rate Data Transformation
+      ÔêÜ should map Garmin heart rate data to standardized format (15 ms)
+      ÔêÜ should preserve heart rate range data (7 ms)
+    Sleep Data Transformation
+      ÔêÜ should map Garmin sleep data to standardized format (6 ms)
+      ÔêÜ should validate sleep data consistency (4 ms)
+    Activity Data Transformation
+      ÔêÜ should map Garmin activity data to standardized format (5 ms)
+      ÔêÜ should create multiple data points for activity metrics (3 ms)
+    Stress Data Transformation
+      ÔêÜ should map Garmin stress data to standardized format (4 ms)
+      ÔêÜ should validate stress values are within valid range (7 ms)
+    Data Type Alignment
+      ÔêÜ should use correct BiometricDataType enum values (7 ms)
+      ÔêÜ should maintain consistency across all data points (5 ms)
+    Timestamp Conversion
+      ÔêÜ should convert Garmin seconds to milliseconds correctly (7 ms)
+      ÔêÜ should handle date string conversion (6 ms)
+      ÔêÜ should preserve timestamp accuracy (6 ms)
+    Confidence Scoring
+      ÔêÜ should assign confidence 1.0 to Garmin API data (7 ms)
+      ÔêÜ should assign lower confidence to manual entries (5 ms)
+    Source Tracking
+      ÔêÜ should mark all Garmin API data with source=garmin (3 ms)
+      ÔêÜ should mark manual entries with source=garmin_manual (3 ms)
+      ÔêÜ should distinguish between data sources (4 ms)
+    Field Validation
+      ÔêÜ should validate required fields are present (4 ms)
+      ÔêÜ should validate field types (3 ms)
+    Data Integrity
+      ÔêÜ should maintain data integrity across transformation (3 ms)
+      ÔêÜ should handle edge case values (6 ms)
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: Ô£à audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=391bc4ec-8a1a-4292-99ed-e60b3091918f, email=integration-test-1772301422750@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=94368660-298f-4626-9dc4-dacf5b39f2ee, email=integration-test-1772301423289@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    DEBUG integration login userInDb {
+      email: 'integration-test-1772301423289@example.com',
+      hasPassword: true
+    }
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:93:15)
+
+  console.log
+    DEBUG integration login passwordMatch true
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:100:17)
+
+  console.log
+    DEBUG integration login response {
+      status: 200,
+      body: {
+        success: true,
+        message: 'Successfully logged in',
+        user: {
+          userId: 'ce45a0f2-a2a0-42af-90d4-2eeb2f9f3066',
+          name: 'Integration Test User',
+          email: 'integration-test-1772301423289@example.com',
+          role: 'user'
+        }
+      }
+    }
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:110:15)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=eadf0ab6-e3bf-4356-b954-206a3122ca97, email=integration-test-1772301424009@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=3e047920-9ebd-4736-91ad-2ad0c7bd8556, email=integration-test-1772301424524@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.error
+    2026-02-28T17:57:05.045Z [ERROR] [spartan-hub-backend] ÔØî Database operation failed (attempt 1/4): {"error":{}}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at executeAsyncWithReconnection (src/utils/reconnectionHandler.ts:174:14)
+      at checkDatabaseHealth (src/services/healthService.ts:67:16)
+          at async Promise.all (index 1)
+      at getSystemHealth (src/services/healthService.ts:280:26)
+      at getHealthStatus (src/controllers/healthController.ts:19:20)
+
+  console.error
+    2026-02-28T17:57:06.069Z [ERROR] [spartan-hub-backend] ÔØî Database operation failed (attempt 2/4): {"error":{}}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at executeAsyncWithReconnection (src/utils/reconnectionHandler.ts:174:14)
+      at checkDatabaseHealth (src/services/healthService.ts:67:16)
+          at async Promise.all (index 1)
+      at getSystemHealth (src/services/healthService.ts:280:26)
+      at getHealthStatus (src/controllers/healthController.ts:19:20)
+
+  console.error
+    2026-02-28T17:57:07.079Z [ERROR] [spartan-hub-backend] ÔØî Database operation failed (attempt 3/4): {"error":{}}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at executeAsyncWithReconnection (src/utils/reconnectionHandler.ts:174:14)
+      at checkDatabaseHealth (src/services/healthService.ts:67:16)
+          at async Promise.all (index 1)
+      at getSystemHealth (src/services/healthService.ts:280:26)
+      at getHealthStatus (src/controllers/healthController.ts:19:20)
+
+  console.error
+    2026-02-28T17:57:08.089Z [ERROR] [spartan-hub-backend] ÔØî Database operation failed (attempt 4/4): {"error":{}}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at executeAsyncWithReconnection (src/utils/reconnectionHandler.ts:174:14)
+      at checkDatabaseHealth (src/services/healthService.ts:67:16)
+          at async Promise.all (index 1)
+      at getSystemHealth (src/services/healthService.ts:280:26)
+      at getHealthStatus (src/controllers/healthController.ts:19:20)
+
+  console.error
+    2026-02-28T17:57:08.093Z [ERROR] [spartan-hub-backend] ÔØî All retry attempts failed for database operation {"error":{}}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at executeAsyncWithReconnection (src/utils/reconnectionHandler.ts:187:10)
+      at checkDatabaseHealth (src/services/healthService.ts:67:16)
+          at async Promise.all (index 1)
+      at getSystemHealth (src/services/healthService.ts:280:26)
+      at getHealthStatus (src/controllers/healthController.ts:19:20)
+
+  console.log
+    DEBUG: Health check failed: 503 {
+      success: true,
+      data: {
+        status: 'unhealthy',
+        timestamp: '2026-02-28T17:57:08.097Z',
+        services: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+        uptime: '0d 0h 0m 12s',
+        metrics: {
+          metrics: '# HELP http_request_duration_seconds Duration of HTTP requests in seconds\n' +
+            '# TYPE http_request_duration_seconds histogram\n' +
+            '\n' +
+            '# HELP http_requests_total Total number of HTTP requests\n' +
+            '# TYPE http_requests_total counter\n' +
+            '\n' +
+            '# HELP database_query_duration_seconds Duration of database queries in seconds\n' +
+            '# TYPE database_query_duration_seconds histogram\n' +
+            '\n' +
+            '# HELP database_queries_total Total number of database queries\n' +
+            '# TYPE database_queries_total counter\n' +
+            '\n' +
+            '# HELP active_connections Number of active HTTP connections\n' +
+            '# TYPE active_connections gauge\n' +
+            'active_connections 0\n' +
+            '\n' +
+            '# HELP cache_hit_ratio Cache hit ratio percentage\n' +
+            '# TYPE cache_hit_ratio gauge\n' +
+            'cache_hit_ratio 0\n' +
+            '\n' +
+            '# HELP ai_api_calls_total Total number of AI API calls\n' +
+            '# TYPE ai_api_calls_total counter\n' +
+            '\n' +
+            '# HELP ai_api_duration_seconds Duration of AI API calls in seconds\n' +
+            '# TYPE ai_api_duration_seconds histogram\n'
+        }
+      }
+    }
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:210:17)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=2c3e94a3-52b7-44c9-a6e4-578d08120248, email=integration-test-1772301428342@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=c26ecd82-e145-4050-9efc-756619b39587, email=integration-test-1772301429052@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=37b67b46-9250-4071-bfd5-4b890d0a73d6, email=integration-test-1772301429791@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=415d83e3-ba76-440d-8d64-98b9666160da, email=integration-test-1772301430261@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=f2e1ae5c-80e4-419b-8c83-f78a9d5fe1f8, email=integration-test-1772301430726@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=2b529eb2-ff69-41de-b838-87e164f3eca8, email=integration-test-1772301430961@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=fe473b2b-6c34-4222-a386-7e0fa47c854f, email=integration-test-1772301431201@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+  console.log
+    Ô£à Integration Test User created via DB: id=a5d0da98-6ac1-4de2-a8e5-53fea3fc85a2, email=integration-test-1772301431451@example.com
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:62:13)
+
+FAIL src/__tests__/integration.test.ts (25.196 s)
+  Integration Tests
+    Authentication Integration Tests
+      ÔêÜ should register a new user successfully (537 ms)
+      ÔêÜ should login successfully and return tokens (722 ms)
+      ├ù should get current user profile when authenticated (493 ms)
+    API Endpoints Integration Tests
+      ├ù GET /health should return 200 and system status (3842 ms)
+      ÔêÜ should get API info (718 ms)
+      ├ù should handle protected route with valid auth (726 ms)
+    Database Integration Tests
+      ÔêÜ should create and retrieve user from database (476 ms)
+      ÔêÜ should find user by email (468 ms)
+    External Service Integration Tests
+      ├ù should handle fitness API routes correctly (238 ms)
+      ├ù should handle nutrition API route correctly (235 ms)
+    Error Handling Integration Tests
+      ├ù should handle invalid route gracefully (243 ms)
+      ÔêÜ should handle invalid login gracefully (249 ms)
+
+  ÔùÅ Integration Tests ÔÇ║ Authentication Integration Tests ÔÇ║ should get current user profile when authenticated
+
+    expected 200 "OK", got 401 "Unauthorized"
+
+      146 |         .get('/auth/me')
+      147 |         .set('Cookie', cookies)
+    > 148 |         .expect(200);
+          |          ^
+      149 |
+      150 |       expect(response.body.success).toBe(true);
+      151 |       expect(response.body.user).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:148:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:309:14)
+      at node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (node_modules/supertest/lib/test.js:195:23)
+      at localAssert (node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (node_modules/supertest/lib/test.js:152:11)
+
+  ÔùÅ Integration Tests ÔÇ║ API Endpoints Integration Tests ÔÇ║ GET /health should return 200 and system status
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 503
+
+      211 |       }
+      212 |
+    > 213 |       expect(response.status).toBe(200);
+          |                               ^
+      214 |       expect(response.body.success).toBe(true);
+      215 |       expect(response.body.data.status).toBeDefined();
+      216 |     });
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:213:31)
+
+  ÔùÅ Integration Tests ÔÇ║ API Endpoints Integration Tests ÔÇ║ should handle protected route with valid auth
+
+    expected 200 "OK", got 401 "Unauthorized"
+
+      231 |         .get('/auth/me')
+      232 |         .set('Cookie', cookieArray)
+    > 233 |         .expect(200);
+          |          ^
+      234 |
+      235 |       expect(response.body.success).toBe(true);
+      236 |       expect(response.body.user).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:233:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:309:14)
+      at node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (node_modules/supertest/lib/test.js:195:23)
+      at localAssert (node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (node_modules/supertest/lib/test.js:152:11)
+
+  ÔùÅ Integration Tests ÔÇ║ External Service Integration Tests ÔÇ║ should handle fitness API routes correctly
+
+    expected 503 "Service Unavailable", got 404 "Not Found"
+
+      328 |       const response = await request(app)
+      329 |         .get('/fitness/exercises/muscle/chest')
+    > 330 |         .expect(503); // Service Unavailable because API keys are not configured in test
+          |          ^
+      331 |
+      332 |       // Response could be an array of exercises or an error if no API keys are configured
+      333 |       expect(response.body).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:330:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:309:14)
+      at node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (node_modules/supertest/lib/test.js:195:23)
+      at localAssert (node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (node_modules/supertest/lib/test.js:152:11)
+
+  ÔùÅ Integration Tests ÔÇ║ External Service Integration Tests ÔÇ║ should handle nutrition API route correctly
+
+    expected 503 "Service Unavailable", got 404 "Not Found"
+
+      341 |           foodItems: ['apple', 'banana']
+      342 |         })
+    > 343 |         .expect(503);
+          |          ^
+      344 |
+      345 |       // Response could be an array of nutrition data or an error if no API keys are configured
+      346 |       expect(response.body).toBeDefined();
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:343:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:309:14)
+      at node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (node_modules/supertest/lib/test.js:195:23)
+      at localAssert (node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (node_modules/supertest/lib/test.js:152:11)
+
+  ÔùÅ Integration Tests ÔÇ║ Error Handling Integration Tests ÔÇ║ should handle invalid route gracefully
+
+    expected 404 "Not Found", got 200 "OK"
+
+      352 |       const response = await request(app)
+      353 |         .get('/invalid/route/that/does/not/exist')
+    > 354 |         .expect(404);
+          |          ^
+      355 |
+      356 |       // Should return a proper error response
+      357 |       expect(response.status).toBe(404);
+
+      at Object.<anonymous> (src/__tests__/integration.test.ts:354:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:309:14)
+      at node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (node_modules/supertest/lib/test.js:195:23)
+      at localAssert (node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (node_modules/supertest/lib/test.js:152:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ­ƒøá´©Å  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöæ add access controls to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.warn
+    Failed to obtain server version. Unable to check client-server compatibility. Set checkCompatibility=false to skip version check.
+
+      at node_modules/@qdrant/js-client-rest/dist/cjs/qdrant-client.js:70:25
+
+  console.error
+    2026-02-28T17:57:24.124Z [ERROR] [spartan-hub-backend] Embedding failed, using mock fallback {"error":"TypeError: Cannot read properties of undefined (reading 'ok')"}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at VectorStoreService.embedText (src/services/vectorStoreService.ts:114:14)
+      at Object.<anonymous> (src/services/__tests__/ragIntegration.test.ts:94:22)
+
+  console.error
+    2026-02-28T17:57:24.140Z [ERROR] [spartan-hub-backend] Embedding failed, using mock fallback {"error":"TypeError: Cannot read properties of undefined (reading 'ok')"}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at VectorStoreService.embedText (src/services/vectorStoreService.ts:114:14)
+      at src/services/vectorStoreService.ts:126:22
+          at async Promise.all (index 0)
+
+  console.error
+    2026-02-28T17:57:24.143Z [ERROR] [spartan-hub-backend] Embedding failed, using mock fallback {"error":"TypeError: Cannot read properties of undefined (reading 'ok')"}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at VectorStoreService.embedText (src/services/vectorStoreService.ts:114:14)
+      at src/services/vectorStoreService.ts:126:22
+          at async Promise.all (index 1)
+
+  console.error
+    2026-02-28T17:57:24.169Z [ERROR] [spartan-hub-backend] Embedding failed, using mock fallback {"error":"TypeError: Cannot read properties of undefined (reading 'ok')"}
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at VectorStoreService.embedText (src/services/vectorStoreService.ts:114:14)
+      at Object.<anonymous> (src/services/__tests__/ragIntegration.test.ts:228:25)
+
+PASS src/services/__tests__/ragIntegration.test.ts (12.674 s)
+  RAG Services Integration
+    RAGDocumentService
+      ÔêÜ should initialize with database (6 ms)
+      ÔêÜ should chunk document content (4 ms)
+      ÔêÜ should extract metadata from document (3 ms)
+    VectorStoreService
+      ÔêÜ should initialize vector store (7 ms)
+      ÔêÜ should generate embeddings (11 ms)
+      ÔêÜ should calculate cosine similarity (5 ms)
+      ÔêÜ should batch embed texts (8 ms)
+    CitationService
+      ÔêÜ should initialize with database (3 ms)
+      ÔêÜ should format citations in APA style (4 ms)
+      ÔêÜ should format citations in Harvard style (3 ms)
+      ÔêÜ should validate citations (3 ms)
+      ÔêÜ should detect invalid citations (3 ms)
+    RAG Services Integration
+      ÔêÜ should integrate document, vector, and citation services (3 ms)
+      ÔêÜ should handle RAG workflow (6 ms)
+
+Test Suites: 1 failed, 2 passed, 3 total
+Tests:       6 failed, 42 passed, 48 total
+Snapshots:   0 total
+Time:        51.122 s
+Ran all test suites matching integration.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?

@@ -1,0 +1,66 @@
+
+> backend@1.0.0 test
+> node --max-old-space-size=4096 ./node_modules/jest/bin/jest.js --runInBand --testPathPatterns=mlPerformanceForecast
+
+  console.log
+    [dotenv@17.2.3] injecting env (35) from .env.test -- tip: ÔÜÖ´©Å  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ­ƒøá´©Å  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.error
+    2026-02-28T17:44:17.549Z [ERROR] [spartan-hub-backend] Error generating performance forecast
+
+    [0m [90m 125 |[39m     [36mswitch[39m (entry[33m.[39mlevel) {
+     [90m 126 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mERROR[39m[33m:[39m
+    [31m[1m>[22m[39m[90m 127 |[39m       console[33m.[39merror(fullLogMessage)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 128 |[39m       [36mbreak[39m[33m;[39m
+     [90m 129 |[39m     [36mcase[39m [33mLogLevel[39m[33m.[39m[33mWARN[39m[33m:[39m
+     [90m 130 |[39m       console[33m.[39mwarn(fullLogMessage)[33m;[39m[0m
+
+      at StructuredLogger.writeToConsole (src/utils/logger.ts:127:15)
+      at StructuredLogger.log (src/utils/logger.ts:318:10)
+      at StructuredLogger.error (src/utils/logger.ts:333:10)
+      at src/routes/mlPerformanceForecastRoutes.ts:90:12
+
+PASS src/routes/mlPerformanceForecastRoutes.test.ts (13.277 s)
+  ML Performance Forecast Routes E2E
+    POST /api/ml/performance-forecast
+      ÔêÜ should generate 12-week forecast with valid biometric data (43 ms)
+      ÔêÜ should return 400 when insufficient biometric data (13 ms)
+      ÔêÜ should handle improving trend correctly (6 ms)
+    POST /api/ml/performance-forecast/scenario
+      ÔêÜ should analyze increased-volume scenario (6 ms)
+      ÔêÜ should validate scenario parameter (5 ms)
+      ÔêÜ should handle recovery-focus scenario (7 ms)
+    GET /api/ml/performance-forecast/trend-summary
+      ÔêÜ should return trend summary with recent data (5 ms)
+      ÔêÜ should return 400 when no recent data (4 ms)
+      ÔêÜ should categorize improving trend correctly (6 ms)
+    POST /api/ml/performance-forecast/feedback
+      ÔêÜ should record forecast feedback (5 ms)
+      ÔêÜ should validate performance score range (4 ms)
+      ÔêÜ should require all mandatory fields (5 ms)
+    Anomaly Detection
+      ÔêÜ should detect performance decline anomaly (4 ms)
+    Error Handling
+      ÔêÜ should handle model prediction errors (17 ms)
+      ÔêÜ should include timestamp in all responses (4 ms)
+    Response Format Validation
+      ÔêÜ should return properly formatted forecast (5 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       16 passed, 16 total
+Snapshots:   0 total
+Time:        13.624 s
+Ran all test suites matching mlPerformanceForecast.

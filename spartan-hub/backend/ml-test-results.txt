@@ -1,0 +1,13 @@
+
+> backend@1.0.0 test
+> node --max-old-space-size=4096 ./node_modules/jest/bin/jest.js --runInBand --testPathPattern=mlPerformanceForecast|mlInjuryPrediction --verbose
+
+testPathPattern:
+
+  Option "testPathPattern" was replaced by "--testPathPatterns". "--testPathPatterns" is only available as a command-line option.
+  
+  Please update your configuration.
+
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
+
