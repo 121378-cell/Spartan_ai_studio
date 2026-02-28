@@ -78,8 +78,9 @@ const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({ onClose, initialE
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Analysis View */}
                     <div className="lg:col-span-2 space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex p-1 bg-black/40 rounded-lg border border-white/5 gap-1">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            {/* Exercise Selector with Enhanced Touch Targets */}
+                            <div className="flex flex-wrap p-1 bg-black/40 rounded-lg border border-white/5 gap-1" role="group" aria-label="Selector de ejercicios">
                                 {['squat', 'deadlift', 'push_up', 'row', 'lunge'].map((ex: any) => (
                                     <button
                                         key={ex}
@@ -89,14 +90,22 @@ const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({ onClose, initialE
                                             if (meta) setPattern(meta.pattern);
                                             reset();
                                         }}
-                                        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all capitalize ${exercise === ex ? 'bg-spartan-gold text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                                        className={`min-h-[44px] min-w-[44px] px-4 py-2 md:px-3 md:py-1.5 rounded-md text-xs md:text-xs font-medium transition-all capitalize touch-manipulation active:scale-95 ${
+                                            exercise === ex 
+                                                ? 'bg-spartan-gold text-black shadow-lg' 
+                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                        aria-pressed={exercise === ex}
                                     >
                                         {ex.replace('_', ' ')}
                                     </button>
                                 ))}
                             </div>
-                            <div className="text-xs font-mono text-gray-500">
-                                Latencia: <span className="text-green-400">~12ms</span>
+                            
+                            {/* Latency Indicator */}
+                            <div className="flex items-center gap-2 text-xs font-mono text-gray-500 bg-black/30 px-3 py-2 rounded-lg">
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                Latencia: <span className="text-green-400 font-bold">~12ms</span>
                             </div>
                         </div>
 
