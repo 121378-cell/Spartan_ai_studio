@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { VideoCapture } from './VideoCapture';
-import PoseOverlay from './PoseOverlay';
-import GhostFrame from './GhostFrame';
-import FormScoreCard from './FormScoreCard';
-import FormTrends from './FormTrends';
-import FormHistoryList from './FormHistoryList';
+// Lazy load non-critical components for better initial load performance
+const PoseOverlay = lazy(() => import('./PoseOverlay'));
+const GhostFrame = lazy(() => import('./GhostFrame'));
+const FormScoreCard = lazy(() => import('./FormScoreCard'));
+const FormTrends = lazy(() => import('./FormTrends'));
+const FormHistoryList = lazy(() => import('./FormHistoryList'));
 import { useFormAnalysis } from '../../hooks/useFormAnalysis';
 import { useAuth } from '../../hooks/useAuth';
 import { ExerciseType, ExercisePattern } from '../../types/formAnalysis';
@@ -130,12 +131,12 @@ const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({ onClose, initialE
 
                             {isReady && (
                                 <>
-                                    <VideoCapture 
-                                        exerciseType={exercise} 
-                                        onFrame={onFrame} 
+                                    <VideoCapture
+                                        exerciseType={exercise}
+                                        onFrame={onFrame}
                                     />
                                     {isRecording && (
-                                        <div 
+                                        <div
                                             className="absolute top-4 left-4 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-xl border border-spartan-gold/30 rounded-2xl p-4 min-w-[80px] shadow-2xl animate-scaleIn"
                                             role="status"
                                             aria-live="assertive"
@@ -144,11 +145,22 @@ const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({ onClose, initialE
                                             <span className="text-5xl font-black text-white leading-none tabular-nums">{repCount}</span>
                                         </div>
                                     )}
-                                    <GhostFrame
-                                        isVisible={!isRecording && isReady}
-                                        imageUrl={ExerciseAnalysisMapper.getGhostFrameUrl(pattern, metadata?.suggestedView || 'lateral')}
-                                    />
-                                    <PoseOverlay pose={currentPose} result={lastResult} width={640} height={480} />
+                                    
+                                    {/* Lazy loaded components with Suspense */}
+                                    <Suspense fallback={
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-40">
+                                            <div className="flex flex-col items-center gap-3">
+                                                <div className="w-12 h-12 border-4 border-spartan-gold border-t-transparent rounded-full animate-spin" />
+                                                <p className="text-xs font-medium text-spartan-gold animate-pulse">Cargando overlay...</p>
+                                            </div>
+                                        </div>
+                                    }>
+                                        <GhostFrame
+                                            isVisible={!isRecording && isReady}
+                                            imageUrl={ExerciseAnalysisMapper.getGhostFrameUrl(pattern, metadata?.suggestedView || 'lateral')}
+                                        />
+                                        <PoseOverlay pose={currentPose} result={lastResult} width={640} height={480} />
+                                    </Suspense>
                                 </>
                             )}
                         </div>
@@ -177,7 +189,18 @@ const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({ onClose, initialE
                     {/* Metrics & Feedback */}
                     <div className="space-y-6">
                         {lastResult ? (
-                            <FormScoreCard result={lastResult} />
+                            <Suspense fallback={
+                                <div className="spartan-card p-6 border border-spartan-border animate-pulse">
+                                    <div className="h-32 bg-gradient-to-br from-spartan-surface to-black/40 rounded-xl flex items-center justify-center">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="w-8 h-8 border-2 border-spartan-gold/50 border-t-transparent rounded-full animate-spin" />
+                                            <p className="text-xs text-gray-500">Cargando score...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }>
+                                <FormScoreCard result={lastResult} />
+                            </Suspense>
                         ) : (
                             <div className="spartan-card p-12 flex flex-col items-center justify-center text-center space-y-4 bg-gradient-to-br from-spartan-surface to-black/40 border border-dashed border-spartan-border">
                                 <div className="p-4 bg-spartan-primary/10 rounded-full">
@@ -190,12 +213,17 @@ const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({ onClose, initialE
                             </div>
                         )}
 
-                        {/* Trend Visualization */}
+                        {/* Trend Visualization - Lazy loaded */}
                         {user && (
-                            <>
+                            <Suspense fallback={
+                                <div className="space-y-4">
+                                    <div className="h-48 bg-spartan-surface/50 rounded-xl animate-pulse border border-spartan-border" />
+                                    <div className="h-32 bg-spartan-surface/50 rounded-xl animate-pulse border border-spartan-border" />
+                                </div>
+                            }>
                                 <FormTrends userId={user.userId} exerciseType={exercise} />
                                 <FormHistoryList userId={user.userId} exerciseType={exercise} />
-                            </>
+                            </Suspense>
                         )}
                     </div>
                 </div>
