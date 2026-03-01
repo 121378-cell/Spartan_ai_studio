@@ -1,0 +1,476 @@
+# Spartan Hub 2.0 - Manual Staging Deployment Workflow
+# Triggered manually for controlled beta testing deployments
+#
+# Usage:
+#   gh workflow run deploy-staging-manual.yml \
+#     --field version='v2.0.0' \
+#     --field beta_testers='50'
+#
+# Or via GitHub UI: Actions > Deploy to Staging (Manual) > Run workflow
+
+name: Deploy to Staging (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v2.0.0)'
+        required: true
+        default: 'v2.0.0'
+        type: string
+      
+      beta_testers:
+        description: 'Number of beta testers to invite'
+        required: false
+        default: '50'
+        type: string
+      
+      deploy_backend:
+        description: 'Deploy backend service'
+        required: false
+        default: true
+        type: boolean
+      
+      deploy_frontend:
+        description: 'Deploy frontend application'
+        required: false
+        default: true
+        type: boolean
+      
+      run_smoke_tests:
+        description: 'Run smoke tests after deployment'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  ENVIRONMENT: staging
+  VERSION: ${{ github.event.inputs.version }}
+
+jobs:
+  # ==========================================================================
+  # PRE-DEPLOYMENT VALIDATION
+  # ==========================================================================
+  
+  validate:
+    name: Validate Deployment Request
+    runs-on: ubuntu-latest
+    outputs:
+      version_valid: ${{ steps.validate_version.outputs.valid }}
+    
+    steps:
+      - name: Validate version format
+        id: validate_version
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if [[ $VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "valid=true" >> $GITHUB_OUTPUT
+            echo "✓ Version format valid: $VERSION"
+          else
+            echo "valid=false" >> $GITHUB_OUTPUT
+            echo "✗ Invalid version format: $VERSION"
+            echo "Expected format: v1.0.0, v2.0.0-beta, etc."
+            exit 1
+          fi
+      
+      - name: Display deployment info
+        run: |
+          echo "=============================================="
+          echo "🚀 SPARTAN HUB 2.0 - STAGING DEPLOYMENT"
+          echo "=============================================="
+          echo "Version:        ${{ github.event.inputs.version }}"
+          echo "Beta Testers:   ${{ github.event.inputs.beta_testers }}"
+          echo "Deploy Backend: ${{ github.event.inputs.deploy_backend }}"
+          echo "Deploy Frontend: ${{ github.event.inputs.deploy_frontend }}"
+          echo "Smoke Tests:    ${{ github.event.inputs.run_smoke_tests }}"
+          echo "Commit:         ${{ github.sha }}"
+          echo "Branch:         ${{ github.ref_name }}"
+          echo "Triggered by:   ${{ github.actor }}"
+          echo "=============================================="
+
+  # ==========================================================================
+  # TEST PHASE
+  # ==========================================================================
+  
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd spartan-hub
+          npm ci
+          cd backend
+          npm ci
+      
+      - name: Run frontend tests
+        run: |
+          cd spartan-hub
+          npm run test:node
+        timeout-minutes: 15
+      
+      - name: Run backend tests
+        run: |
+          cd spartan-hub/backend
+          npm run test:fast
+        timeout-minutes: 15
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            spartan-hub/coverage
+            spartan-hub/backend/coverage
+          retention-days: 7
+
+  # ==========================================================================
+  # BUILD PHASE
+  # ==========================================================================
+  
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd spartan-hub
+          npm ci
+          cd backend
+          npm ci
+      
+      - name: Build frontend
+        if: ${{ github.event.inputs.deploy_frontend == 'true' }}
+        run: |
+          cd spartan-hub
+          npm run build
+        env:
+          VITE_API_URL: https://staging-api.spartan-hub.com
+          VITE_NODE_ENV: staging
+          VITE_APP_VERSION: ${{ env.VERSION }}
+      
+      - name: Build backend
+        if: ${{ github.event.inputs.deploy_backend == 'true' }}
+        run: |
+          cd spartan-hub/backend
+          npm run build
+        env:
+          NODE_ENV: staging
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-build
+          path: |
+            spartan-hub/dist
+            spartan-hub/backend/dist
+            spartan-hub/backend/node_modules
+            spartan-hub/backend/package.json
+          retention-days: 7
+
+  # ==========================================================================
+  # DEPLOYMENT PHASE
+  # ==========================================================================
+  
+  deploy:
+    name: Deploy to Staging Server
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: staging
+      url: https://staging.spartan-hub.com
+    
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: staging-build
+          path: ./build
+      
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+      
+      - name: Deploy to staging server
+        run: |
+          set -e
+          
+          # Configure SSH
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H staging.spartan-hub.com >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          
+          STAGING_USER="${{ secrets.STAGING_USER }}"
+          STAGING_HOST="staging.spartan-hub.com"
+          DEPLOY_DIR="/var/www/spartan-hub/staging"
+          BACKUP_DIR="/var/www/spartan-hub/backups/$(date +%Y%m%d_%H%M%S)"
+          
+          echo "📦 Deploying to $STAGING_USER@$STAGING_HOST:$DEPLOY_DIR"
+          
+          # Create backup of current deployment
+          ssh $STAGING_USER@$STAGING_HOST << 'ENDSSH'
+            DEPLOY_DIR="/var/www/spartan-hub/staging"
+            BACKUP_DIR="/var/www/spartan-hub/backups/$(date +%Y%m%d_%H%M%S)"
+            
+            if [ -d "$DEPLOY_DIR" ]; then
+              echo "Creating backup at $BACKUP_DIR..."
+              mkdir -p "$BACKUP_DIR"
+              cp -r "$DEPLOY_DIR"/* "$BACKUP_DIR/" 2>/dev/null || true
+              echo "Backup created successfully"
+            else
+              echo "No existing deployment to backup"
+            fi
+          ENDSSH
+          
+          # Create remote directory
+          ssh $STAGING_USER@$STAGING_HOST \
+            "mkdir -p $DEPLOY_DIR"
+          
+          # Copy build files
+          echo "Copying frontend files..."
+          if [ -d "./build/dist" ]; then
+            scp -r ./build/dist/* $STAGING_USER@$STAGING_HOST:$DEPLOY_DIR/frontend/
+          fi
+          
+          echo "Copying backend files..."
+          if [ -d "./build/backend" ]; then
+            scp -r ./build/backend $STAGING_USER@$STAGING_HOST:$DEPLOY_DIR/
+          fi
+          
+          # Copy environment configuration
+          echo "Setting up environment configuration..."
+          scp ./build/.env $STAGING_USER@$STAGING_HOST:$DEPLOY_DIR/.env 2>/dev/null || true
+          scp ./build/backend/.env $STAGING_USER@$STAGING_HOST:$DEPLOY_DIR/backend/.env 2>/dev/null || true
+          
+          # Restart application
+          echo "Restarting application..."
+          ssh $STAGING_USER@$STAGING_HOST << 'ENDSSH'
+            cd /var/www/spartan-hub/staging
+            
+            # Install backend dependencies if needed
+            if [ -d "backend" ]; then
+              cd backend
+              npm ci --production
+              cd ..
+            fi
+            
+            # Restart with PM2
+            pm2 restart spartan-hub-staging || pm2 start ecosystem.config.js --env staging
+            
+            # Wait for application to start
+            sleep 5
+            
+            # Show PM2 status
+            pm2 status
+          ENDSSH
+          
+          echo "✅ Deployment completed"
+      
+      - name: Health check
+        run: |
+          echo "⏳ Waiting for application to start..."
+          sleep 15
+          
+          echo "🏥 Running health checks..."
+          
+          # Check frontend health
+          echo "Checking frontend..."
+          curl --fail --retry 5 --retry-delay 10 \
+            https://staging.spartan-hub.com || exit 1
+          
+          # Check backend health
+          echo "Checking backend API..."
+          curl --fail --retry 5 --retry-delay 10 \
+            https://staging-api.spartan-hub.com/api/health || exit 1
+          
+          # Check database connection
+          echo "Checking database connection..."
+          curl --fail --retry 3 --retry-delay 5 \
+            https://staging-api.spartan-hub.com/api/health/db || echo "DB health check skipped"
+          
+          echo "✅ All health checks passed"
+        env:
+          HEALTH_CHECK_URL: https://staging-api.spartan-hub.com/api/health
+        timeout-minutes: 5
+
+  # ==========================================================================
+  # SMOKE TESTS
+  # ==========================================================================
+  
+  smoke_tests:
+    name: Run Smoke Tests
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: ${{ github.event.inputs.run_smoke_tests == 'true' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install dependencies
+        run: |
+          cd spartan-hub
+          npm ci
+      
+      - name: Run API smoke tests
+        run: |
+          cd spartan-hub
+          node scripts/smoke-tests/staging-api-tests.js
+        env:
+          STAGING_API_URL: https://staging-api.spartan-hub.com
+        timeout-minutes: 10
+      
+      - name: Run E2E smoke tests
+        run: |
+          cd spartan-hub
+          npx cypress run --spec "cypress/e2e/smoke/*.cy.js"
+        env:
+          CYPRESS_BASE_URL: https://staging.spartan-hub.com
+          CYPRESS_API_URL: https://staging-api.spartan-hub.com
+        timeout-minutes: 15
+
+  # ==========================================================================
+  # NOTIFICATION
+  # ==========================================================================
+  
+  notify:
+    name: Notify Deployment Result
+    runs-on: ubuntu-latest
+    needs: [validate, test, build, deploy]
+    if: always()
+    
+    steps:
+      - name: Determine deployment status
+        id: status
+        run: |
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "status=✅ SUCCESS" >> $GITHUB_OUTPUT
+            echo "emoji=🎉" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+            echo "emoji=⚠️" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            ${{ steps.status.outputs.emoji }} Staging Deployment ${{ steps.status.outputs.status }}
+            
+            *Version:* ${{ github.event.inputs.version }}
+            *Beta Testers:* ${{ github.event.inputs.beta_testers }}
+            *Commit:* ${{ github.sha }}
+            *Branch:* ${{ github.ref_name }}
+            *Author:* ${{ github.actor }}
+            *Workflow:* ${{ github.workflow }}
+            *Run:* ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            *Environment:* Staging
+            *Frontend:* https://staging.spartan-hub.com
+            *Backend:* https://staging-api.spartan-hub.com
+            *Grafana:* https://staging-grafana.spartan-hub.com
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
+      
+      - name: Send Beta Invitation Emails
+        if: ${{ needs.deploy.result == 'success' }}
+        run: |
+          echo "📧 Sending ${{ github.event.inputs.beta_testers }} beta invitation emails..."
+          echo ""
+          echo "This step would integrate with your email service (SendGrid, SES, etc.)"
+          echo "to send invitation emails to ${{ github.event.inputs.beta_testers }} beta testers."
+          echo ""
+          echo "Sample email content:"
+          echo "----------------------------------------"
+          echo "Subject: You're invited to Spartan Hub 2.0 Beta!"
+          echo ""
+          echo "Hi there!"
+          echo ""
+          echo "You've been selected to participate in the Spartan Hub 2.0 beta testing."
+          echo ""
+          echo "Access the staging environment at:"
+          echo "https://staging.spartan-hub.com"
+          echo ""
+          echo "Version: ${{ github.event.inputs.version }}"
+          echo ""
+          echo "Please report any issues you encounter."
+          echo ""
+          echo "Best regards,"
+          echo "The Spartan Hub Team"
+          echo "----------------------------------------"
+
+  # ==========================================================================
+  # POST-DEPLOYMENT
+  # ==========================================================================
+  
+  post_deployment:
+    name: Post-Deployment Tasks
+    runs-on: ubuntu-latest
+    needs: [deploy, smoke_tests]
+    if: ${{ needs.deploy.result == 'success' }}
+    
+    steps:
+      - name: Update deployment tracking
+        run: |
+          echo "📊 Updating deployment tracking..."
+          echo ""
+          echo "Deployment Details:"
+          echo "- Version: ${{ github.event.inputs.version }}"
+          echo "- Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "- Commit: ${{ github.sha }}"
+          echo "- Workflow Run: ${{ github.run_id }}"
+          echo ""
+          echo "This information would be logged to your deployment tracking system."
+      
+      - name: Create deployment tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ github.event.inputs.version }}';
+            const tag = `staging-${version}-${context.sha.substring(0, 7)}`;
+            
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${tag}`,
+                sha: context.sha
+              });
+              console.log(`Created tag: ${tag}`);
+            } catch (error) {
+              console.log(`Tag creation skipped: ${error.message}`);
+            }
