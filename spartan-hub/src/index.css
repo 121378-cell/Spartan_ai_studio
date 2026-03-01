@@ -1,6 +1,8 @@
-/* Enhanced Spartan Hub Styles */
+/* Enhanced Spartan Hub Styles - Mobile Optimized */
 
-/* Base styles */
+/* ============================================
+   BASE STYLES
+   ============================================ */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   background-color: #121212;
@@ -8,16 +10,119 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Layout improvements */
+/* ============================================
+   SAFE AREA INSETS (iOS Notch Support)
+   ============================================ */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+  
+  /* Touch target minimum size (WCAG AAA) */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+}
+
+/* Safe area utility classes */
+.safe-top {
+  padding-top: var(--safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+.safe-left {
+  padding-left: var(--safe-area-inset-left);
+}
+
+.safe-right {
+  padding-right: var(--safe-area-inset-right);
+}
+
+.safe-all {
+  padding-top: var(--safe-area-inset-top);
+  padding-bottom: var(--safe-area-inset-bottom);
+  padding-left: var(--safe-area-inset-left);
+  padding-right: var(--safe-area-inset-right);
+}
+
+/* ============================================
+   TOUCH-FRIENDLY INTERACTIONS
+   ============================================ */
+
+/* Ensure all interactive elements meet WCAG AAA touch target requirements */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[role="link"],
+.touch-target {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  
+  /* Comfortable spacing between touch targets */
+  margin: 2px;
+  
+  /* Visual feedback for touch */
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  
+  /* Prevent zoom on double-tap */
+  touch-action: manipulation;
+}
+
+/* Active state feedback */
+button:active,
+[role="button"]:active,
+.touch-target:active {
+  transform: scale(0.95);
+}
+
+/* Focus visible for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid #D4AF37;
+  outline-offset: 2px;
+}
+
+/* Haptic feedback simulation (visual) */
+@keyframes haptic-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+}
+
+.haptic-feedback:active {
+  animation: haptic-pulse 0.1s ease;
+}
+
+/* ============================================
+   LAYOUT IMPROVEMENTS
+   ============================================ */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-/* Card enhancements */
+/* Mobile-first container padding */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+}
+
+/* ============================================
+   CARD ENHANCEMENTS
+   ============================================ */
 .spartan-card {
   background: linear-gradient(145deg, #1E1E1E, #2A2A2A);
   border-radius: 12px;
@@ -50,17 +155,35 @@ body {
   padding: 1.5rem;
 }
 
-/* Button enhancements */
+/* Mobile card adjustments */
+@media (max-width: 768px) {
+  .spartan-card-content {
+    padding: 1rem;
+  }
+  
+  .spartan-card-header {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* ============================================
+   BUTTON ENHANCEMENTS - TOUCH FRIENDLY
+   ============================================ */
 .spartan-button {
   background: linear-gradient(135deg, #D4AF37, #B8860B);
   color: #121212;
   border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  padding: 0.875rem 1.5rem;
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  
+  /* Touch target requirements */
+  min-height: var(--touch-target-comfortable);
+  min-width: var(--touch-target-comfortable);
 }
 
 .spartan-button:hover {
@@ -70,14 +193,14 @@ body {
 }
 
 .spartan-button:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.97);
   box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
 }
 
 .spartan-button-secondary {
   background: rgba(255, 255, 255, 0.1);
   color: #E0E0E0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .spartan-button-secondary:hover {
@@ -85,7 +208,18 @@ body {
   border-color: rgba(212, 175, 55, 0.5);
 }
 
-/* Alert enhancements */
+/* Mobile button sizing */
+@media (max-width: 768px) {
+  .spartan-button {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 12px;
+  }
+}
+
+/* ============================================
+   ALERT ENHANCEMENTS
+   ============================================ */
 .spartan-alert {
   border-radius: 12px;
   padding: 1.5rem;
@@ -117,7 +251,22 @@ body {
   height: 2.5rem;
 }
 
-/* Typography improvements */
+/* Mobile alert layout */
+@media (max-width: 768px) {
+  .spartan-alert {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.25rem;
+  }
+  
+  .spartan-alert-icon {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ============================================
+   TYPOGRAPHY IMPROVEMENTS
+   ============================================ */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.2;
@@ -144,15 +293,36 @@ h3 {
   color: #D4AF37;
 }
 
-/* Form elements */
+/* Mobile typography */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
 .spartan-input {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
   color: #E0E0E0;
   width: 100%;
   transition: all 0.3s ease;
+  
+  /* Touch-friendly sizing */
+  min-height: var(--touch-target-min);
+  font-size: 1rem;
 }
 
 .spartan-input:focus {
@@ -162,7 +332,16 @@ h3 {
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* Progress bars */
+/* Prevent zoom on iOS when focusing inputs */
+@media (max-width: 768px) {
+  .spartan-input {
+    font-size: 16px; /* iOS won't zoom if font-size >= 16px */
+  }
+}
+
+/* ============================================
+   PROGRESS BARS
+   ============================================ */
 .spartan-progress-container {
   height: 12px;
   background: rgba(255, 255, 255, 0.1);
@@ -180,12 +359,23 @@ h3 {
   background: linear-gradient(90deg, #D4AF37, #B8860B);
 }
 
-/* Grid improvements */
+/* ============================================
+   GRID IMPROVEMENTS
+   ============================================ */
 .grid-gap {
   gap: 1.5rem;
 }
 
-/* Animation enhancements */
+/* Responsive grid */
+@media (max-width: 768px) {
+  .grid-gap {
+    gap: 1rem;
+  }
+}
+
+/* ============================================
+   ANIMATION ENHANCEMENTS
+   ============================================ */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -195,16 +385,47 @@ h3 {
   animation: float 3s ease-in-out infinite;
 }
 
-/* Responsive improvements */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   RESPONSIVE IMPROVEMENTS
+   ============================================ */
+
+/* Mobile breakpoints */
+@media (max-width: 320px) {
+  /* Very small devices (iPhone SE, small Android) */
+  :root {
+    --touch-target-min: 44px;
+  }
+  
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  
+  .container {
+    padding: 0 0.5rem;
+  }
+}
+
 @media (max-width: 768px) {
-  h1 {
-    font-size: 2rem;
-  }
-  
-  h2 {
-    font-size: 1.75rem;
-  }
-  
+  /* Tablets and large phones in portrait */
   .spartan-card-content {
     padding: 1rem;
   }
@@ -215,7 +436,33 @@ h3 {
   }
 }
 
-/* Custom scrollbar */
+@media (max-width: 1024px) {
+  /* Tablets and small laptops */
+  .card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+/* Landscape mode optimization */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Mobile landscape mode */
+  .video-container {
+    aspect-ratio: 16/9;
+    max-height: 80vh;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .modal-content {
+    max-height: 95vh;
+  }
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -235,7 +482,17 @@ h3 {
   background: #D4AF37;
 }
 
-/* Loading spinner enhancement */
+/* Touch-friendly scrollbar on mobile */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* ============================================
+   LOADING SPINNER ENHANCEMENT
+   ============================================ */
 .spartan-spinner {
   width: 2rem;
   height: 2rem;
@@ -250,19 +507,51 @@ h3 {
   100% { transform: rotate(360deg); }
 }
 
-/* Modal improvements */
+/* Mobile spinner sizing */
+@media (max-width: 768px) {
+  .spartan-spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+/* ============================================
+   MODAL IMPROVEMENTS
+   ============================================ */
 .spartan-modal-overlay {
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(4px);
+  
+  /* Safe area support */
+  padding-top: var(--safe-area-inset-top);
+  padding-bottom: var(--safe-area-inset-bottom);
 }
 
 .spartan-modal-content {
   border-radius: 16px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(212, 175, 55, 0.3);
+  
+  /* Safe area support */
+  margin: env(safe-area-inset-top) env(safe-area-inset-right) 
+          env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-/* Dashboard specific improvements */
+/* Mobile modal adjustments */
+@media (max-width: 768px) {
+  .spartan-modal-content {
+    border-radius: 12px;
+    max-height: calc(100vh - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+  
+  .spartan-modal-overlay {
+    padding: 1rem;
+  }
+}
+
+/* ============================================
+   DASHBOARD SPECIFIC IMPROVEMENTS
+   ============================================ */
 .dashboard-header {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
@@ -280,7 +569,24 @@ h3 {
   color: #A0A0A0;
 }
 
-/* Card grid improvements */
+/* Mobile dashboard */
+@media (max-width: 768px) {
+  .dashboard-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .dashboard-welcome {
+    font-size: 1.75rem;
+  }
+  
+  .dashboard-date {
+    font-size: 0.875rem;
+  }
+}
+
+/* ============================================
+   CARD GRID IMPROVEMENTS
+   ============================================ */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -288,14 +594,35 @@ h3 {
   margin-top: 1.5rem;
 }
 
-/* Badge improvements */
+/* Mobile card grid */
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}
+
+/* Tablet card grid */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================
+   BADGE IMPROVEMENTS
+   ============================================ */
 .spartan-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.75rem;
+  padding: 0.375rem 0.875rem;
   border-radius: 20px;
   font-size: 0.875rem;
   font-weight: 600;
+  
+  /* Touch-friendly minimum */
+  min-height: 32px;
 }
 
 .spartan-badge-gold {
@@ -314,4 +641,118 @@ h3 {
   background: rgba(16, 185, 129, 0.2);
   color: #10B981;
   border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+/* ============================================
+   VIDEO CONTAINER - ASPECT RATIO
+   ============================================ */
+.video-container {
+  position: relative;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.video-container.aspect-portrait {
+  aspect-ratio: 9/16;
+}
+
+.video-container.aspect-video {
+  aspect-ratio: 16/9;
+}
+
+/* Mobile video container */
+@media (max-width: 768px) {
+  .video-container {
+    border-radius: 10px;
+  }
+  
+  .video-container.aspect-portrait {
+    max-height: 70vh;
+  }
+}
+
+/* ============================================
+   LANDSCAPE MODE OPTIMIZATION
+   ============================================ */
+@media (orientation: landscape) and (max-height: 600px) {
+  /* Optimize for mobile landscape */
+  body {
+    font-size: 14px;
+  }
+  
+  .dashboard-welcome {
+    font-size: 1.5rem;
+  }
+  
+  .spartan-card-content {
+    padding: 0.75rem;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .spartan-button {
+    border: 2px solid currentColor;
+  }
+  
+  .spartan-card {
+    border-width: 2px;
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* GPU acceleration for animations */
+.will-animate {
+  will-change: transform, opacity;
+}
+
+/* Contain layout for complex components */
+.contain-layout {
+  contain: layout;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Touch-friendly spacing */
+.touch-space-y > * + * {
+  margin-top: 0.5rem;
+}
+
+.touch-space-x > * + * {
+  margin-left: 0.5rem;
+}
+
+/* Prevent text selection on interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Force hardware acceleration */
+.hw-accel {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
