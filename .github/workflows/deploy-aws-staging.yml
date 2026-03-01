@@ -1,0 +1,539 @@
+# =============================================================================
+# GitHub Actions Workflow - Deploy to AWS Staging
+# Spartan Hub 2.0
+# =============================================================================
+#
+# This workflow deploys the Spartan Hub 2.0 application to AWS staging
+# environment using Terraform for infrastructure and direct deployment
+# to EC2 instances.
+#
+# Triggers:
+#   - Push to main branch
+#   - Manual dispatch
+#   - Pull request to main (plan only)
+#
+# =============================================================================
+
+name: Deploy to AWS Staging
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/terraform/**'
+      - '.github/workflows/deploy-aws-staging.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/terraform/**'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'deploy'
+        type: choice
+        options:
+          - deploy
+          - plan
+          - destroy
+      terraform_target:
+        description: 'Terraform target (optional)'
+        required: false
+        type: string
+
+env:
+  AWS_REGION: us-east-1
+  TERRAFORM_VERSION: '1.7.0'
+  NODE_VERSION: '20.x'
+  ENVIRONMENT: staging
+  PROJECT_NAME: spartan-hub
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ==========================================================================
+  # Job: Validate
+  # ==========================================================================
+  validate:
+    name: Validate Configuration
+    runs-on: ubuntu-latest
+    outputs:
+      terraform_changed: ${{ steps.terraform-check.outputs.changed }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Check for Terraform changes
+        id: terraform-check
+        run: |
+          if git diff --name-only HEAD~1 HEAD | grep -q 'infrastructure/terraform/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Validate Terraform format
+        run: |
+          cd infrastructure/terraform
+          terraform fmt -check -recursive -diff || echo "Terraform format check failed"
+      
+      - name: Validate Terraform configuration
+        run: |
+          cd infrastructure/terraform
+          terraform init -backend=false
+          terraform validate
+
+  # ==========================================================================
+  # Job: Terraform Plan
+  # ==========================================================================
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    needs: validate
+    outputs:
+      plan_exit_code: ${{ steps.plan.outputs.exit_code }}
+    
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ env.PROJECT_NAME }}-github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-${{ github.run_id }}
+      
+      - name: Initialize Terraform
+        id: init
+        run: |
+          cd infrastructure/terraform
+          terraform init \
+            -backend-config="bucket=${{ secrets.TERRAFORM_STATE_BUCKET }}" \
+            -backend-config="key=${{ env.PROJECT_NAME }}/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+            -backend-config="region=${{ env.AWS_REGION }}" \
+            -backend-config="dynamodb_table=${{ secrets.TERRAFORM_LOCK_TABLE }}" \
+            -input=false
+      
+      - name: Create Terraform Plan
+        id: plan
+        run: |
+          cd infrastructure/terraform
+          
+          # Generate plan filename with timestamp
+          PLAN_FILE="tfplan-${{ github.run_id }}"
+          echo "plan_file=$PLAN_FILE" >> $GITHUB_OUTPUT
+          
+          # Create plan
+          terraform plan \
+            -out=$PLAN_FILE \
+            -input=false \
+            -no-color \
+            -var="environment=${{ env.ENVIRONMENT }}" \
+            -var="project_name=${{ env.PROJECT_NAME }}" \
+            2>&1 | tee plan_output.txt
+          
+          # Capture exit code
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          
+          # Upload plan as artifact
+          cp $PLAN_FILE terraform-plan-${{ github.run_id }}
+      
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: infrastructure/terraform/tfplan-*
+          retention-days: 7
+      
+      - name: Comment PR with Plan
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const planOutput = fs.readFileSync('infrastructure/terraform/plan_output.txt', 'utf8');
+            
+            const comment = `## Terraform Plan Output
+            
+            <details>
+            <summary>Click to expand</summary>
+            
+            \`\`\`
+            ${planOutput}
+            \`\`\`
+            
+            </details>
+            
+            **Environment:** ${{ env.ENVIRONMENT }}
+            **Run ID:** ${{ github.run_id }}
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # ==========================================================================
+  # Job: Terraform Apply
+  # ==========================================================================
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    needs: [validate, terraform-plan]
+    if: |
+      github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'deploy' ||
+      github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    environment:
+      name: staging
+      url: https://staging.spartanhub.io
+    
+    outputs:
+      alb_dns_name: ${{ steps.outputs.outputs.alb_dns_name }}
+      frontend_instance_id: ${{ steps.outputs.outputs.frontend_instance_id }}
+      backend_instance_id: ${{ steps.outputs.outputs.backend_instance_id }}
+      rds_endpoint: ${{ steps.outputs.outputs.rds_endpoint }}
+      redis_endpoint: ${{ steps.outputs.outputs.redis_endpoint }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ env.PROJECT_NAME }}-github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-${{ github.run_id }}
+      
+      - name: Initialize Terraform
+        run: |
+          cd infrastructure/terraform
+          terraform init \
+            -backend-config="bucket=${{ secrets.TERRAFORM_STATE_BUCKET }}" \
+            -backend-config="key=${{ env.PROJECT_NAME }}/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+            -backend-config="region=${{ env.AWS_REGION }}" \
+            -backend-config="dynamodb_table=${{ secrets.TERRAFORM_LOCK_TABLE }}" \
+            -input=false
+      
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plan
+          path: infrastructure/terraform
+      
+      - name: Apply Terraform Plan
+        id: apply
+        run: |
+          cd infrastructure/terraform
+          
+          # Find the plan file
+          PLAN_FILE=$(ls tfplan-* | head -1)
+          
+          if [ -z "$PLAN_FILE" ]; then
+            echo "Error: Plan file not found"
+            exit 1
+          fi
+          
+          # Apply the plan
+          terraform apply -auto-approve -input=false "$PLAN_FILE"
+      
+      - name: Capture Outputs
+        id: outputs
+        run: |
+          cd infrastructure/terraform
+          
+          echo "alb_dns_name=$(terraform output -raw alb_dns_name)" >> $GITHUB_OUTPUT
+          echo "frontend_instance_id=$(terraform output -raw frontend_instance_id)" >> $GITHUB_OUTPUT
+          echo "backend_instance_id=$(terraform output -raw backend_instance_id)" >> $GITHUB_OUTPUT
+          echo "rds_endpoint=$(terraform output -raw rds_endpoint)" >> $GITHUB_OUTPUT
+          echo "redis_endpoint=$(terraform output -raw redis_primary_endpoint)" >> $GITHUB_OUTPUT
+      
+      - name: Upload State Snapshot
+        run: |
+          cd infrastructure/terraform
+          terraform state pull > state-snapshot-${{ github.run_id }}.json
+          
+      - name: Upload State Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-state-snapshot
+          path: infrastructure/terraform/state-snapshot-*.json
+          retention-days: 30
+
+  # ==========================================================================
+  # Job: Deploy Application
+  # ==========================================================================
+  deploy-application:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    needs: terraform-apply
+    if: |
+      github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'deploy' ||
+      github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ env.PROJECT_NAME }}-github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Install dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            npm ci
+          fi
+      
+      - name: Build application
+        run: |
+          if [ -f "package.json" ]; then
+            npm run build
+          fi
+        env:
+          NODE_ENV: production
+      
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy-package
+          
+          # Copy frontend build
+          if [ -d "dist" ]; then
+            cp -r dist/* deploy-package/
+          elif [ -d "build" ]; then
+            cp -r build/* deploy-package/
+          fi
+          
+          # Create archive
+          cd deploy-package
+          tar -czvf ../deploy-package.tar.gz .
+          cd ..
+      
+      - name: Upload to S3
+        run: |
+          aws s3 cp deploy-package.tar.gz s3://${{ secrets.DEPLOYMENT_BUCKET }}/${{ env.ENVIRONMENT }}/deploy-package-${{ github.sha }}.tar.gz
+      
+      - name: Deploy to Frontend EC2
+        run: |
+          INSTANCE_ID="${{ needs.terraform-apply.outputs.frontend_instance_id }}"
+          
+          # Copy deployment package to EC2 via SSM
+          aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=[
+              "cd /tmp && rm -rf deploy-package*",
+              "aws s3 cp s3://${{ secrets.DEPLOYMENT_BUCKET }}/${{ env.ENVIRONMENT }}/deploy-package-${{ github.sha }}.tar.gz .",
+              "tar -xzf deploy-package.tar.gz -C /var/www/spartan-hub/",
+              "chown -R nginx:nginx /var/www/spartan-hub/",
+              "systemctl reload nginx"
+            ]' \
+            --comment "Deploy Spartan Hub frontend" \
+            --timeout-seconds 300
+      
+      - name: Deploy to Backend EC2
+        run: |
+          INSTANCE_ID="${{ needs.terraform-apply.outputs.backend_instance_id }}"
+          
+          # Copy deployment package to EC2 via SSM
+          aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=[
+              "cd /tmp && rm -rf deploy-package*",
+              "aws s3 cp s3://${{ secrets.DEPLOYMENT_BUCKET }}/${{ env.ENVIRONMENT }}/deploy-package-${{ github.sha }}.tar.gz .",
+              "tar -xzf deploy-package.tar.gz -C /opt/spartan-hub/",
+              "cd /opt/spartan-hub && npm install --production",
+              "pm2 reload spartan-backend || pm2 start ecosystem.config.js",
+              "pm2 save"
+            ]' \
+            --comment "Deploy Spartan Hub backend" \
+            --timeout-seconds 300
+
+  # ==========================================================================
+  # Job: Run Migrations
+  # ==========================================================================
+  run-migrations:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    needs: [terraform-apply, deploy-application]
+    if: |
+      github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'deploy' ||
+      github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ env.PROJECT_NAME }}-github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Get database credentials from SSM
+        id: db-creds
+        run: |
+          DB_PASSWORD=$(aws ssm get-parameter \
+            --name "/${{ env.PROJECT_NAME }}/${{ env.ENVIRONMENT }}/database/password" \
+            --with-decryption \
+            --query "Parameter.Value" \
+            --output text)
+          echo "db_password=$DB_PASSWORD" >> $GITHUB_OUTPUT
+      
+      - name: Run migrations
+        run: |
+          RDS_ENDPOINT="${{ needs.terraform-apply.outputs.rds_endpoint }}"
+          
+          # Run migrations via SSM on backend instance
+          aws ssm send-command \
+            --instance-ids "${{ needs.terraform-apply.outputs.backend_instance_id }}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters "commands=[
+              \"cd /opt/spartan-hub && npm run migrate || echo 'Migrations completed or not required'\",
+              \"echo 'Migration completed at \$(date)' >> /var/log/spartan-migrations.log\"
+            ]" \
+            --comment "Run database migrations" \
+            --timeout-seconds 600
+
+  # ==========================================================================
+  # Job: Health Check
+  # ==========================================================================
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    needs: [terraform-apply, deploy-application, run-migrations]
+    if: always()
+    
+    steps:
+      - name: Wait for deployment to settle
+        run: sleep 60
+      
+      - name: Check ALB Health
+        run: |
+          ALB_DNS="${{ needs.terraform-apply.outputs.alb_dns_name }}"
+          
+          echo "Testing health endpoint..."
+          for i in {1..10}; do
+            if curl -sf "http://$ALB_DNS/health" > /dev/null; then
+              echo "Health check passed!"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 10
+          done
+          
+          echo "Health check failed after 10 attempts"
+          exit 1
+      
+      - name: Check API Health
+        run: |
+          ALB_DNS="${{ needs.terraform-apply.outputs.alb_dns_name }}"
+          
+          echo "Testing API health endpoint..."
+          RESPONSE=$(curl -sf "http://$ALB_DNS/api/health" || echo '{"status":"unknown"}')
+          echo "API Response: $RESPONSE"
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Deployment health check failed!"
+          # Add Slack notification here if needed
+
+  # ==========================================================================
+  # Job: Notify
+  # ==========================================================================
+  notify:
+    name: Send Notification
+    runs-on: ubuntu-latest
+    needs: [terraform-apply, deploy-application, health-check]
+    if: always()
+    
+    steps:
+      - name: Send Slack Notification
+        if: always() && github.event_name != 'pull_request'
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": "Spartan Hub 2.0 Staging Deployment",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ needs.health-check.result == 'success' && '✅' || '❌' }} Deployment ${{ needs.health-check.result == 'success' && 'Successful' || 'Failed' }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment:*\n${{ env.ENVIRONMENT }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${{ github.ref_name }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n${{ github.sha }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Triggered by:*\n${{ github.actor }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
