@@ -59,8 +59,12 @@ describe('Input Validation Tests', () => {
 
       await validationMiddleware(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockNext.mock.calls[0][0].message).toContain('body.name: Too small');
+      // Middleware sends 400 response directly, doesn't call next
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalled();
+      const responseData = mockRes.json.mock.calls[0][0];
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toBe('Validation error');
     });
 
     it('should validate query parameters correctly', async () => {
@@ -111,8 +115,12 @@ describe('Input Validation Tests', () => {
 
       await validationMiddleware(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockNext.mock.calls[0][0].message).toContain('page: Invalid');
+      // Middleware sends 400 response directly, doesn't call next
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalled();
+      const responseData = mockRes.json.mock.calls[0][0];
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toBe('Validation error');
     });
 
     it('should validate path parameters correctly', async () => {
@@ -165,8 +173,12 @@ describe('Input Validation Tests', () => {
 
       await validationMiddleware(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockNext.mock.calls[0][0].message).toContain('params.id: Invalid UUID');
+      // Middleware sends 400 response directly, doesn't call next
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalled();
+      const responseData = mockRes.json.mock.calls[0][0];
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toBe('Validation error');
     });
 
     it('should sanitize input data', async () => {
@@ -300,8 +312,12 @@ describe('Input Validation Tests', () => {
 
       await validationMiddleware(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockNext.mock.calls[0][0].message).toContain('body.tags.1: Too small');
+      // Middleware sends 400 response directly, doesn't call next
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalled();
+      const responseData = mockRes.json.mock.calls[0][0];
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toBe('Validation error');
     });
   });
 

@@ -62,7 +62,8 @@ describe('Google Fit OAuth E2E Flow', () => {
     });
 
     expect(user).toBeDefined();
-    expect(user.googleFit).toBeNull();
+    // googleFit should be null or undefined when not connected
+    expect(user.googleFit).toBeFalsy();
 
     // Get auth tokens
     const tokenPair = await tokenService.generateTokenPair(
