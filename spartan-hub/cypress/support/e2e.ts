@@ -1,20 +1,43 @@
-// ***********************************************************
-// This example support/e2e.ts is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
+/**
+ * Cypress E2E Support File
+ * Phase A: Video Form Analysis MVP
+ */
 
-// Import commands.js using ES2015 syntax:
-import './commands'
+// Import commands
+import './commands';
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+// Global hooks
+beforeEach(() => {
+  // Clear localStorage before each test
+  cy.clearLocalStorage();
+  
+  // Clear cookies
+  cy.clearCookies();
+  
+  // Set viewport to desktop by default
+  cy.viewport(1280, 720);
+});
+
+// Global error handling
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // Ignore specific errors that don't affect tests
+  if (err.message.includes('ResizeObserver')) {
+    return false;
+  }
+  
+  // Fail on other errors
+  return true;
+});
+
+// Add custom command types
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      login(email: string, password: string): Chainable<void>;
+      logout(): Chainable<void>;
+      startRecording(exerciseType: string): Chainable<void>;
+      stopRecording(): Chainable<void>;
+      mockFormAnalysisResponse(): Chainable<void>;
+    }
+  }
+}
