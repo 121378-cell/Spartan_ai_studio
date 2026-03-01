@@ -1,0 +1,289 @@
+# Spartan Hub 2.0 - Production Deployment Workflow
+# This workflow deploys to production environment on release tags or manual trigger
+
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v2.0.0)'
+        required: true
+        type: string
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+
+env:
+  NODE_VERSION: '18'
+  ENVIRONMENT: production
+
+jobs:
+  test:
+    name: Run All Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd spartan-hub
+          npm ci
+          cd backend
+          npm ci
+      
+      - name: Run frontend tests
+        run: |
+          cd spartan-hub
+          npm run test:node
+      
+      - name: Run backend tests
+        run: |
+          cd spartan-hub/backend
+          npm run test:fast
+      
+      - name: Run security tests
+        run: |
+          cd spartan-hub/backend
+          npm run test:security
+  
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run npm audit
+        run: |
+          cd spartan-hub/backend
+          npm audit --audit-level=high
+        continue-on-error: true
+      
+      - name: Run CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          languages: javascript-typescript
+  
+  build:
+    name: Build Production Application
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd spartan-hub
+          npm ci
+          cd backend
+          npm ci
+      
+      - name: Build frontend
+        run: |
+          cd spartan-hub
+          npm run build
+        env:
+          VITE_API_URL: https://api.your-domain.com
+          VITE_NODE_ENV: production
+      
+      - name: Build backend
+        run: |
+          cd spartan-hub/backend
+          npm run build
+      
+      - name: Create production package
+        run: |
+          mkdir -p ./production-package
+          cp -r spartan-hub/dist ./production-package/frontend
+          cp -r spartan-hub/backend/dist ./production-package/backend
+          cp -r spartan-hub/backend/node_modules ./production-package/backend
+          cp spartan-hub/backend/package.json ./production-package/backend
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: ./production-package
+  
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [test, security-scan, build]
+    environment:
+      name: production
+      url: https://your-domain.com
+    
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: ./build
+      
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+      
+      - name: Pre-deployment health check
+        run: |
+          echo "Checking current production health..."
+          curl --fail --retry 3 --retry-delay 5 \
+            https://api.your-domain.com/api/health || echo "Warning: Current production may be down"
+      
+      - name: Deploy to production server (Blue-Green)
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan your-production-server.com >> ~/.ssh/known_hosts
+          
+          # Deploy to green environment (inactive)
+          ssh ${{ secrets.PRODUCTION_USER }}@your-production-server.com << 'ENDSSH'
+            cd /var/www/spartan-hub
+            
+            # Create new release directory
+            RELEASE_DIR=$(date +%Y%m%d_%H%M%S)
+            mkdir -p releases/$RELEASE_DIR
+            
+            # Copy new build
+            cp -r /tmp/build/* releases/$RELEASE_DIR/
+            
+            # Install production dependencies
+            cd releases/$RELEASE_DIR/backend
+            npm ci --production
+            
+            # Run database migrations
+            cd /var/www/spartan-hub
+            npm run migrate --prefix releases/$RELEASE_DIR/backend
+            
+            # Update symlink to point to new release (green)
+            ln -sfn releases/$RELEASE_DIR current-green
+            
+            # Test green environment
+            pm2 restart spartan-hub-green
+            
+            # Wait for health check
+            sleep 10
+            for i in {1..10}; do
+              if curl -f http://localhost:3002/api/health; then
+                echo "Green environment healthy"
+                break
+              fi
+              echo "Waiting for green environment... attempt $i"
+              sleep 5
+            done
+          ENDSSH
+      
+      - name: Switch traffic to green
+        run: |
+          ssh ${{ secrets.PRODUCTION_USER }}@your-production-server.com << 'ENDSSH'
+            cd /var/www/spartan-hub
+            
+            # Update NGINX to point to green
+            sudo ln -sfn /var/www/spartan-hub/current-green /var/www/spartan-hub/current
+            sudo nginx -t && sudo systemctl reload nginx
+            
+            # Stop blue environment
+            pm2 stop spartan-hub-blue || true
+          ENDSSH
+      
+      - name: Post-deployment health check
+        run: |
+          echo "Waiting for production to stabilize..."
+          sleep 15
+          
+          # Comprehensive health check
+          curl --fail --retry 10 --retry-delay 5 \
+            https://api.your-domain.com/api/health || exit 1
+          
+          # Check frontend
+          curl --fail --retry 5 --retry-delay 5 \
+            https://your-domain.com || exit 1
+          
+          echo "Production deployment successful!"
+  
+  rollback:
+    name: Rollback (if needed)
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: failure()
+    
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+      
+      - name: Rollback to blue
+        run: |
+          ssh ${{ secrets.PRODUCTION_USER }}@your-production-server.com << 'ENDSSH'
+            cd /var/www/spartan-hub
+            
+            # Switch back to blue
+            sudo ln -sfn /var/www/spartan-hub/current-blue /var/www/spartan-hub/current
+            sudo nginx -t && sudo systemctl reload nginx
+            
+            # Restart blue environment
+            pm2 restart spartan-hub-blue
+            
+            echo "Rolled back to blue environment"
+          ENDSSH
+      
+      - name: Notify rollback
+        run: |
+          echo "::error::Production deployment failed. Rolled back to previous version."
+  
+  notify:
+    name: Notify Deployment Result
+    runs-on: ubuntu-latest
+    needs: [test, security-scan, build, deploy]
+    if: always()
+    
+    steps:
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Production Deployment ${{ job.status }}
+            Version: ${{ github.event.inputs.version || github.ref_name }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false

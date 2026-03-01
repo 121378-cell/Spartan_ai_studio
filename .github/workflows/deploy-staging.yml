@@ -1,0 +1,171 @@
+# Spartan Hub 2.0 - Staging Deployment Workflow
+# This workflow deploys to staging environment on push to develop branch
+
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+
+env:
+  NODE_VERSION: '18'
+  ENVIRONMENT: staging
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd spartan-hub
+          npm ci
+          cd backend
+          npm ci
+      
+      - name: Run frontend tests
+        run: |
+          cd spartan-hub
+          npm run test:node
+      
+      - name: Run backend tests
+        run: |
+          cd spartan-hub/backend
+          npm run test:fast
+  
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd spartan-hub
+          npm ci
+          cd backend
+          npm ci
+      
+      - name: Build frontend
+        run: |
+          cd spartan-hub
+          npm run build
+        env:
+          VITE_API_URL: https://staging-api.your-domain.com
+          VITE_NODE_ENV: staging
+      
+      - name: Build backend
+        run: |
+          cd spartan-hub/backend
+          npm run build
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-build
+          path: |
+            spartan-hub/dist
+            spartan-hub/backend/dist
+            spartan-hub/backend/node_modules
+            spartan-hub/node_modules
+  
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: staging
+      url: https://staging.your-domain.com
+    
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: staging-build
+          path: ./build
+      
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+      
+      - name: Deploy to staging server
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan your-staging-server.com >> ~/.ssh/known_hosts
+          
+          # Create remote directory
+          ssh ${{ secrets.STAGING_USER }}@your-staging-server.com \
+            "mkdir -p /var/www/spartan-hub/staging"
+          
+          # Copy build files
+          scp -r ./build/* ${{ secrets.STAGING_USER }}@your-staging-server.com:/var/www/spartan-hub/staging
+          
+          # Restart application
+          ssh ${{ secrets.STAGING_USER }}@your-staging-server.com << 'ENDSSH'
+            cd /var/www/spartan-hub/staging
+            pm2 restart spartan-hub-staging || pm2 start ecosystem.config.js --env staging
+          ENDSSH
+      
+      - name: Health check
+        run: |
+          echo "Waiting for application to start..."
+          sleep 10
+          
+          # Check health endpoint
+          curl --fail --retry 5 --retry-delay 5 \
+            https://staging-api.your-domain.com/api/health || exit 1
+        
+        env:
+          HEALTH_CHECK_URL: https://staging-api.your-domain.com/api/health
+  
+  notify:
+    name: Notify Deployment Result
+    runs-on: ubuntu-latest
+    needs: [test, build, deploy]
+    if: always()
+    
+    steps:
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Staging Deployment ${
+              {job.status}}
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
+            Author: ${{ github.actor }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
