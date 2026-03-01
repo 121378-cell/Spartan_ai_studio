@@ -1,0 +1,274 @@
+# Docker Compose for NGINX Load Balancer - Spartan Hub 2.0
+# Production-ready reverse proxy configuration
+# Last Updated: March 1, 2026
+
+version: '3.8'
+
+services:
+  # ===========================================================================
+  # NGINX Reverse Proxy
+  # ===========================================================================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: spartan-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # NGINX Configuration
+      - ./nginx.production.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      
+      # SSL Certificates
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./ssl/certbot/www:/var/www/certbot:ro
+      
+      # Logs
+      - ./logs/nginx/access.log:/var/log/nginx/access.log
+      - ./logs/nginx/error.log:/var/log/nginx/error.log
+      
+      # Static assets cache
+      - nginx-cache:/var/cache/nginx
+      
+      # Error pages
+      - ./nginx/error-pages:/usr/share/nginx/html/errors:ro
+    environment:
+      - NGINX_HOST=spartan-hub.com
+      - NGINX_PORT=443
+    networks:
+      - spartan-network
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    labels:
+      - "com.spartan-hub.service=nginx"
+      - "com.spartan-hub.environment=production"
+
+  # ===========================================================================
+  # Backend Application (Multiple Instances for Load Balancing)
+  # ===========================================================================
+  backend-1:
+    image: spartan-hub-backend:latest
+    container_name: spartan-backend-1
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env.production
+    environment:
+      - PORT=3001
+      - INSTANCE_ID=backend-1
+    volumes:
+      - ./backend/logs:/app/logs
+      - ./backend/uploads:/app/uploads
+    networks:
+      - spartan-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    labels:
+      - "com.spartan-hub.service=backend"
+      - "com.spartan-hub.environment=production"
+
+  backend-2:
+    image: spartan-hub-backend:latest
+    container_name: spartan-backend-2
+    restart: unless-stopped
+    ports:
+      - "3002:3001"
+    env_file:
+      - .env.production
+    environment:
+      - PORT=3001
+      - INSTANCE_ID=backend-2
+    volumes:
+      - ./backend/logs:/app/logs
+      - ./backend/uploads:/app/uploads
+    networks:
+      - spartan-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    labels:
+      - "com.spartan-hub.service=backend"
+      - "com.spartan-hub.environment=production"
+
+  # ===========================================================================
+  # Frontend Application
+  # ===========================================================================
+  frontend:
+    image: spartan-hub-frontend:latest
+    container_name: spartan-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - spartan-network
+    depends_on:
+      - backend-1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    labels:
+      - "com.spartan-hub.service=frontend"
+      - "com.spartan-hub.environment=production"
+
+  # ===========================================================================
+  # PostgreSQL Database
+  # ===========================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: spartan-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./postgres/backups:/backups
+    environment:
+      - POSTGRES_DB=spartan_hub_production
+      - POSTGRES_USER=spartan_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-spartan_secure_password_change_me}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    networks:
+      - spartan-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spartan_user -d spartan_hub_production"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    labels:
+      - "com.spartan-hub.service=postgres"
+      - "com.spartan-hub.environment=production"
+
+  # ===========================================================================
+  # Redis Cache
+  # ===========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: spartan-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-spartan_redis_password_change_me}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - spartan-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--pass", "${REDIS_PASSWORD:-spartan_redis_password_change_me}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    labels:
+      - "com.spartan-hub.service=redis"
+      - "com.spartan-hub.environment=production"
+
+  # ===========================================================================
+  # Certbot for SSL Certificate Management
+  # ===========================================================================
+  certbot:
+    image: certbot/certbot:latest
+    container_name: spartan-certbot
+    volumes:
+      - ./ssl/certbot/www:/var/www/certbot:rw
+      - ./ssl/certbot/conf:/etc/letsencrypt:rw
+      - ./ssl/certbot/logs:/var/log/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - spartan-network
+
+networks:
+  spartan-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+volumes:
+  nginx-cache:
+    driver: local
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local

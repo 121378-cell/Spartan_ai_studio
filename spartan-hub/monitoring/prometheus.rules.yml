@@ -1,0 +1,688 @@
+# Prometheus Alert Rules for Spartan Hub 2.0
+# Production-Ready Alerting Configuration
+# Last Updated: March 1, 2026
+
+groups:
+  # =============================================================================
+  # SYSTEM HEALTH ALERTS
+  # =============================================================================
+  - name: system-health
+    interval: 30s
+    rules:
+      # Service Availability
+      - alert: BackendServiceDown
+        expr: up{job="spartan-hub-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Backend service is down"
+          description: "Spartan Hub backend service has been unreachable for more than 1 minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/backend-down"
+          dashboard: "http://grafana:3000/d/spartan-hub-perf"
+
+      - alert: FrontendServiceDown
+        expr: up{job="spartan-hub-frontend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Frontend service is down"
+          description: "Spartan Hub frontend service has been unreachable for more than 1 minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/frontend-down"
+
+      - alert: AIServiceDown
+        expr: up{job="ai-microservice"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI microservice is down"
+          description: "AI service has been unreachable for more than 2 minutes"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/ai-service-down"
+
+  # =============================================================================
+  # PERFORMANCE ALERTS
+  # =============================================================================
+  - name: performance-alerts
+    interval: 30s
+    rules:
+      # High Error Rate
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | printf \"%.2f%%\" }} (threshold: 5%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-error-rate"
+
+      - alert: ElevatedErrorRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Elevated error rate detected"
+          description: "Error rate is {{ $value | printf \"%.2f%%\" }} (threshold: 1%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/elevated-error-rate"
+
+      # High Response Time
+      - alert: HighResponseTimeP99
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Critical: P99 response time too high"
+          description: "99th percentile response time is {{ $value | printf \"%.2f\" }}s (threshold: 5s)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-latency"
+
+      - alert: HighResponseTimeP95
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 2m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Warning: P95 response time elevated"
+          description: "95th percentile response time is {{ $value | printf \"%.2f\" }}s (threshold: 2s)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-latency"
+
+      - alert: HighResponseTimeP90
+        expr: histogram_quantile(0.90, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          team: performance
+        annotations:
+          summary: "P90 response time elevated"
+          description: "90th percentile response time is {{ $value | printf \"%.2f\" }}s (threshold: 1s)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-latency"
+
+      # High Request Rate (potential DDoS or traffic spike)
+      - alert: HighRequestRate
+        expr: sum(rate(http_requests_total[1m])) > 1000
+        for: 2m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High request rate detected"
+          description: "Request rate is {{ $value | printf \"%.0f\" }} req/s (threshold: 1000 req/s)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-traffic"
+
+  # =============================================================================
+  # DATABASE ALERTS
+  # =============================================================================
+  - name: database-alerts
+    interval: 30s
+    rules:
+      # Database Connectivity
+      - alert: DatabaseDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "Database has been unreachable for more than 1 minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/database-down"
+
+      - alert: DatabaseConnectionPoolExhaustion
+        expr: database_connections_active / database_connections_max > 0.9
+        for: 2m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: "Connection pool utilization is {{ $value | printf \"%.1f%%\" }} (threshold: 90%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/connection-pool-exhaustion"
+
+      - alert: DatabaseConnectionPoolWarning
+        expr: database_connections_active / database_connections_max > 0.7
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Database connection pool utilization high"
+          description: "Connection pool utilization is {{ $value | printf \"%.1f%%\" }} (threshold: 70%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/connection-pool-warning"
+
+      # Database Performance
+      - alert: SlowDatabaseQueries
+        expr: histogram_quantile(0.95, rate(database_query_duration_seconds_bucket[5m])) > 1
+        for: 2m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Slow database queries detected"
+          description: "95th percentile query time is {{ $value | printf \"%.2f\" }}s (threshold: 1s)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/slow-queries"
+
+      - alert: DatabaseDeadlocks
+        expr: rate(database_deadlocks_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Database deadlocks detected"
+          description: "{{ $value | printf \"%.1f\" }} deadlocks per minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/database-deadlocks"
+
+      - alert: DatabaseReplicationLag
+        expr: database_replication_lag_seconds > 30
+        for: 2m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Database replication lag critical"
+          description: "Replication lag is {{ $value | printf \"%.0f\" }}s (threshold: 30s)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/replication-lag"
+
+      # Database Resources
+      - alert: DatabaseDiskSpaceLow
+        expr: (database_disk_total_bytes - database_disk_used_bytes) / database_disk_total_bytes < 0.1
+        for: 5m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Database disk space critically low"
+          description: "Only {{ $value | printf \"%.1f%%\" }} disk space remaining"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/disk-space-low"
+
+  # =============================================================================
+  # REDIS ALERTS
+  # =============================================================================
+  - name: redis-alerts
+    interval: 30s
+    rules:
+      # Redis Connectivity
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis has been unreachable for more than 1 minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/redis-down"
+
+      - alert: RedisConnectionHigh
+        expr: redis_connected_clients / redis_maxclients > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Redis connections high"
+          description: "Redis connection utilization is {{ $value | printf \"%.1f%%\" }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/redis-connections"
+
+      # Redis Memory
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Redis memory usage high"
+          description: "Redis memory utilization is {{ $value | printf \"%.1f%%\" }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/redis-memory"
+
+      - alert: RedisMemoryCritical
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 2m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Redis memory critically high"
+          description: "Redis memory utilization is {{ $value | printf \"%.1f%%\" }} - eviction may occur"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/redis-memory-critical"
+
+      # Redis Performance
+      - alert: RedisSlowCommands
+        expr: rate(redis_slowlog_length[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Redis slow commands detected"
+          description: "{{ $value | printf \"%.0f\" }} slow commands in the last 5 minutes"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/redis-slow-commands"
+
+      - alert: RedisCacheHitRatioLow
+        expr: redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total) < 0.8
+        for: 10m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Redis cache hit ratio low"
+          description: "Cache hit ratio is {{ $value | printf \"%.1f%%\" }} (threshold: 80%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/cache-hit-ratio"
+
+      # Redis Persistence
+      - alert: RedisLastSaveAgo
+        expr: time() - redis_last_save_time > 3600
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Redis last save was more than 1 hour ago"
+          description: "Last successful save was {{ $value | printf \"%.0f\" }} seconds ago"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/redis-persistence"
+
+  # =============================================================================
+  # RESOURCE ALERTS (System)
+  # =============================================================================
+  - name: resource-alerts
+    interval: 30s
+    rules:
+      # Memory Usage
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 5m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Critical: System memory usage above 90%"
+          description: "Memory usage is {{ $value | printf \"%.1f%%\" }} on {{ $labels.instance }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-memory"
+
+      - alert: ElevatedMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.75
+        for: 10m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Warning: System memory usage above 75%"
+          description: "Memory usage is {{ $value | printf \"%.1f%%\" }} on {{ $labels.instance }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-memory"
+
+      # Application Memory
+      - alert: ApplicationMemoryHigh
+        expr: process_resident_memory_bytes{job="spartan-hub-backend"} / 1024 / 1024 / 1024 > 1.5
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Application memory usage high"
+          description: "Backend memory usage is {{ $value | printf \"%.2f\" }} GB"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/app-memory"
+
+      # CPU Usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value | printf \"%.1f%%\" }} on {{ $labels.instance }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-cpu"
+
+      - alert: CriticalCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+        for: 2m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Critical: CPU usage above 95%"
+          description: "CPU usage is {{ $value | printf \"%.1f%%\" }} on {{ $labels.instance }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-cpu"
+
+      # Disk Space
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "Critical: Disk space below 10%"
+          description: "Disk space is {{ $value | printf \"%.1f%%\" }} on {{ $labels.mountpoint }} ({{ $labels.instance }})"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/disk-space"
+
+      - alert: DiskSpaceWarning
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 20
+        for: 10m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Warning: Disk space below 20%"
+          description: "Disk space is {{ $value | printf \"%.1f%%\" }} on {{ $labels.mountpoint }} ({{ $labels.instance }})"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/disk-space"
+
+      # Disk I/O
+      - alert: HighDiskIO
+        expr: rate(node_disk_io_time_seconds_total[5m]) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High disk I/O utilization"
+          description: "Disk I/O utilization is {{ $value | printf \"%.1f%%\" }} on {{ $labels.device }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-disk-io"
+
+      # Network
+      - alert: HighNetworkTraffic
+        expr: sum(rate(node_network_receive_bytes_total{device!="lo"}[5m])) > 100 * 1024 * 1024
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High network receive traffic"
+          description: "Network receive is {{ $value | humanize }}B/s"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/high-network"
+
+  # =============================================================================
+  # SLA ALERTS
+  # =============================================================================
+  - name: sla-alerts
+    interval: 1m
+    rules:
+      # Uptime SLA
+      - alert: SLAUptimeBreach
+        expr: avg(avg_over_time(up{job="spartan-hub-backend"}[7d])) < 0.999
+        for: 5m
+        labels:
+          severity: critical
+          team: ops
+          page: "true"
+        annotations:
+          summary: "SLA uptime breach (99.9% requirement)"
+          description: "7-day uptime is {{ $value | printf \"%.3f%%\" }} (target: 99.9%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/sla-breach"
+
+      - alert: SLAUptimeWarning
+        expr: avg(avg_over_time(up{job="spartan-hub-backend"}[24h])) < 0.9995
+        for: 10m
+        labels:
+          severity: warning
+          team: ops
+        annotations:
+          summary: "SLA uptime warning (24h below 99.95%)"
+          description: "24-hour uptime is {{ $value | printf \"%.4f%%\" }} (target: 99.95%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/sla-warning"
+
+      # Response Time SLA
+      - alert: SLAResponseTimeBreach
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[1h])) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+          team: performance
+        annotations:
+          summary: "SLA response time breach (P95 > 500ms)"
+          description: "Hourly P95 response time is {{ $value | printf \"%.2f\" }}s (target: 500ms)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/sla-response"
+
+      # Error Rate SLA
+      - alert: SLAErrorRateBreach
+        expr: avg_over_time(sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))[1h:]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          team: sre
+          page: "true"
+        annotations:
+          summary: "SLA error rate breach (1% requirement)"
+          description: "Hourly average error rate is {{ $value | printf \"%.2f%%\" }} (target: 1%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/sla-error"
+
+  # =============================================================================
+  # BUSINESS METRICS ALERTS
+  # =============================================================================
+  - name: business-alerts
+    interval: 1m
+    rules:
+      # User Activity
+      - alert: UserActivityDecline
+        expr: rate(user_activities_total[1h]) < 0.5 * scalar(avg_over_time(rate(user_activities_total[1h])[7d]))
+        for: 30m
+        labels:
+          severity: warning
+          team: engagement
+        annotations:
+          summary: "Significant user activity decline"
+          description: "User activity has declined by more than 50% compared to weekly average"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/user-activity"
+
+      # Churn Risk
+      - alert: HighChurnRisk
+        expr: churn_prediction_high_risk_gauge > 10
+        for: 5m
+        labels:
+          severity: critical
+          team: retention
+        annotations:
+          summary: "High churn risk spike"
+          description: "{{ $value }} users currently at high churn risk"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/churn-risk"
+
+      # Achievement System
+      - alert: AchievementSystemErrors
+        expr: rate(achievements_errors_total[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: critical
+          team: engagement
+        annotations:
+          summary: "Achievement system errors"
+          description: "Achievement system error rate is {{ $value | printf \"%.2f\" }}/minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/achievement-errors"
+
+      # Challenge System
+      - alert: ChallengeCompletionDrop
+        expr: rate(challenges_completed_total[1h]) < rate(challenges_created_total[1h]) * 0.3
+        for: 30m
+        labels:
+          severity: warning
+          team: engagement
+        annotations:
+          summary: "Low challenge completion rate"
+          description: "Only {{ $value | printf \"%.1f\" }}% of challenges are being completed"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/challenge-completion"
+
+      # Community Activity
+      - alert: LowCommunityActivity
+        expr: rate(community_posts_total[1h]) < 2
+        for: 1h
+        labels:
+          severity: warning
+          team: community
+        annotations:
+          summary: "Low community activity"
+          description: "Only {{ $value | printf \"%.1f\" }} posts per hour in community"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/community-activity"
+
+      - alert: HighReportedContent
+        expr: rate(content_reports_total[30m]) > 5
+        for: 5m
+        labels:
+          severity: critical
+          team: moderation
+        annotations:
+          summary: "High content report rate"
+          description: "{{ $value | printf \"%.1f\" }} content reports in the last 30 minutes"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/content-moderation"
+
+  # =============================================================================
+  # AI SERVICE ALERTS
+  # =============================================================================
+  - name: ai-service-alerts
+    interval: 30s
+    rules:
+      # AI Latency
+      - alert: AIServiceHighLatency
+        expr: histogram_quantile(0.95, rate(ai_request_duration_seconds_bucket[5m])) > 10
+        for: 2m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI service high latency"
+          description: "95th percentile AI request duration is {{ $value | printf \"%.2f\" }}s"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/ai-latency"
+
+      # AI Error Rate
+      - alert: AIServiceHighErrorRate
+        expr: sum(rate(ai_errors_total[5m])) / sum(rate(ai_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          team: ai
+        annotations:
+          summary: "AI service high error rate"
+          description: "AI service error rate is {{ $value | printf \"%.2f%%\" }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/ai-errors"
+
+      # AI Rate Limiting
+      - alert: AIServiceRateLimiting
+        expr: rate(ai_rate_limit_rejections_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI service rate limiting active"
+          description: "AI service is rejecting {{ $value | printf \"%.1f\" }} requests/minute due to rate limiting"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/ai-rate-limit"
+
+      # AI Token Usage
+      - alert: AIServiceTokenQuotaWarning
+        expr: ai_tokens_used_total / ai_tokens_quota_total > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI service token quota warning"
+          description: "Token usage is {{ $value | printf \"%.1f%%\" }} of monthly quota"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/ai-token-quota"
+
+  # =============================================================================
+  # CACHE ALERTS
+  # =============================================================================
+  - name: cache-alerts
+    interval: 30s
+    rules:
+      # Cache Hit Ratio
+      - alert: LowCacheHitRatio
+        expr: avg_over_time(sum(rate(cache_hits_total[5m])) / (sum(rate(cache_hits_total[5m])) + sum(rate(cache_misses_total[5m]))) [10m:]) < 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Low cache hit ratio"
+          description: "Cache hit ratio is {{ $value | printf \"%.2f%%\" }} (threshold: 80%)"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/cache-hit-ratio"
+
+      # Cache Miss Rate
+      - alert: HighCacheMissRate
+        expr: sum(rate(cache_misses_total[5m])) > 100
+        for: 2m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High cache miss rate"
+          description: "Cache is missing {{ $value | printf \"%.1f\" }} requests per minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/cache-miss-rate"
+
+      # Cache Memory
+      - alert: CacheMemoryHigh
+        expr: cache_memory_used_bytes / cache_memory_max_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Cache memory usage high"
+          description: "Cache memory utilization is {{ $value | printf \"%.1f%%\" }}"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/cache-memory"
+
+  # =============================================================================
+  # SECURITY ALERTS
+  # =============================================================================
+  - name: security-alerts
+    interval: 30s
+    rules:
+      # Authentication Failures
+      - alert: HighAuthFailureRate
+        expr: sum(rate(auth_failures_total[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "High authentication failure rate"
+          description: "{{ $value | printf \"%.1f\" }} authentication failures per minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/auth-failures"
+
+      # Potential Brute Force
+      - alert: PotentialBruteForce
+        expr: sum(rate(auth_failures_total{by_ip="true"}[5m])) by (ip) > 20
+        for: 2m
+        labels:
+          severity: critical
+          team: security
+          page: "true"
+        annotations:
+          summary: "Potential brute force attack detected"
+          description: "IP {{ $labels.ip }} has {{ $value | printf \"%.0f\" }} failed auth attempts"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/brute-force"
+
+      # Rate Limiting Triggered
+      - alert: RateLimitingTriggered
+        expr: sum(rate(rate_limit_hits_total[5m])) > 100
+        for: 5m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "High rate limiting activity"
+          description: "{{ $value | printf \"%.0f\" }} rate limit hits per minute"
+          runbook_url: "https://wiki.spartan-hub.com/runbooks/rate-limiting"
