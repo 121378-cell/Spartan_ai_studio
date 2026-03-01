@@ -101,8 +101,19 @@ export class SocketManager {
         return next(new Error('No authentication token provided'));
       }
 
-      const decoded = jwt.verify(token, getJwtSecret()) as { userId: string };
-      socket.data.userId = decoded.userId;
+      const jwtSecret = getJwtSecret();
+      if (!jwtSecret) {
+        logger.error('JWT_SECRET not configured', { context: 'socket-manager' });
+        return next(new Error('Server configuration error'));
+      }
+
+      const decoded = jwt.verify(token, jwtSecret);
+      if (typeof decoded !== 'object' || decoded === null || !('userId' in decoded)) {
+        logger.warn('Invalid JWT payload structure', { context: 'socket-manager' });
+        return next(new Error('Invalid token payload'));
+      }
+      
+      socket.data.userId = (decoded as { userId: string }).userId;
       next();
     } catch (error) {
       logger.warn('Socket authentication failed', {

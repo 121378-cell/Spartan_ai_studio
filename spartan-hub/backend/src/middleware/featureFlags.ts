@@ -318,21 +318,22 @@ export function getAllFeatureFlags(environment?: 'staging' | 'production'): Reco
 
 /**
  * API endpoint handler to expose feature flags to authenticated admins
- * 
+ *
  * @param req - Express request
  * @param res - Express response
  */
-export function featureFlagsHandler(req: Request, res: Response) {
+export function featureFlagsHandler(req: Request, res: Response): void {
   const environment = (process.env.NODE_ENV as 'staging' | 'production') || 'production';
 
   // Only expose to admins (check your auth middleware)
   const user = req.user as { role?: string } | undefined;
   if (!user || user.role !== 'ADMIN') {
-    return res.status(403).json({
+    res.status(403).json({
       success: false,
       error: 'FORBIDDEN',
       message: 'Only administrators can view feature flag configuration',
     });
+    return;
   }
 
   res.json({

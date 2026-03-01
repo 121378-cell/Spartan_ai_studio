@@ -31,11 +31,12 @@ router.post(
   '/trigger-cycle',
   verifyJWT,
   heavyApiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.userId;
       if (!userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
+        res.status(401).json({ success: false, message: 'Unauthorized' });
+        return;
       }
 
       logger.info('Triggering manual daily brain cycle', {
@@ -76,7 +77,7 @@ router.get(
   '/daily-report/:date',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.userId;
       const { date } = req.params;
@@ -140,7 +141,7 @@ router.get(
   '/decision-history',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.userId;
       const { limit = 30 } = req.query;
@@ -192,7 +193,7 @@ router.get(
   '/next-plan-adjustments',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.userId;
 
@@ -242,7 +243,7 @@ router.post(
   '/feedback/:decisionId',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.userId;
       const { decisionId } = req.params;
@@ -312,7 +313,7 @@ router.post(
   '/approve-adjustments',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.userId;
       const { adjustmentIds, approved } = req.body;

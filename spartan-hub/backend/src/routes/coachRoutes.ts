@@ -10,14 +10,17 @@ const router = Router();
  * GET /api/coach/status
  * Get current bio-feedback status and advice from Coach Vitalis
  */
-router.get('/status', verifyJWT, async (req: any, res) => {
+router.get('/status', verifyJWT, async (req: any, res): Promise<void> => {
   try {
     const userId = req.user?.userId;
-    if (!userId) return res.status(401).json({ error: 'User ID missing in token' });
+    if (!userId) {
+      res.status(401).json({ error: 'User ID missing in token' });
+      return;
+    }
 
     const coachService = getCoachVitalisService();
     const advice = await coachService.generateCoachingAdvice(userId);
-    
+
     res.status(200).json({
       success: true,
       data: advice

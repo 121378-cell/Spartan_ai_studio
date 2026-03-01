@@ -31,14 +31,14 @@ interface WebhookRequest extends Request {
 /**
  * POST /api/webhooks/terra
  * Main webhook endpoint for Terra events
- * 
+ *
  * Signature verification:
  * - Header: x-terra-signature
  * - HMAC-SHA256 of request body
  */
 router.post(
   '/',
-  async (req: WebhookRequest, res: Response) => {
+  async (req: WebhookRequest, res: Response): Promise<void> => {
     try {
       const signature = req.headers['x-terra-signature'];
       const timestamp = req.headers['x-terra-timestamp'];
@@ -54,8 +54,8 @@ router.post(
       }
 
       // In dev environment with express.json() already active, req.body might be an object
-      const parsed = typeof req.body === 'string' 
-        ? JSON.parse(req.body) 
+      const parsed = typeof req.body === 'string'
+        ? JSON.parse(req.body)
         : (req.body instanceof Buffer ? JSON.parse(req.body.toString('utf-8')) : req.body);
 
       logger.info('Received Terra webhook (JSON)', {
