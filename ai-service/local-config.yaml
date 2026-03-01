@@ -1,0 +1,401 @@
+# =============================================================================
+# Spartan Hub 2.0 - Local AI Service Configuration
+# =============================================================================
+# Configuration for local AI microservice with:
+# - Ollama (Local LLM)
+# - Qdrant (Vector Database for RAG)
+# - Real-time coaching
+# - Knowledge base
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# SERVICE CONFIGURATION
+# -----------------------------------------------------------------------------
+
+service:
+  name: spartan-ai-service
+  version: 1.0.0
+  environment: local-test
+  port: 8000
+  host: 0.0.0.0
+  debug: true
+  log_level: debug
+
+# -----------------------------------------------------------------------------
+# OLLAMA CONFIGURATION (Local LLM)
+# -----------------------------------------------------------------------------
+
+ollama:
+  enabled: true
+  host: http://localhost
+  port: 11434
+  base_url: http://localhost:11434
+  
+  # Primary model for coaching conversations
+  model:
+    name: gemma2:2b
+    # Alternative models (download with: ollama pull <model>)
+    alternatives:
+      - llama3.2:3b      # Good balance of speed/quality
+      - mistral:7b       # Better reasoning
+      - phi3:mini        # Fast, lightweight
+      - gemma2:9b        # Better quality, more resources
+    
+    # Model parameters
+    parameters:
+      temperature: 0.7       # Creativity vs determinism (0-1)
+      top_p: 0.9            # Nucleus sampling
+      top_k: 40             # Top-k sampling
+      repeat_penalty: 1.1   # Prevent repetition
+      num_predict: 512      # Max tokens in response
+    
+    # Context window
+    context_length: 4096
+    
+    # System prompt for coaching persona
+    system_prompt: |
+      You are Coach Vitalis, an expert fitness and wellness AI coach for Spartan Hub.
+      
+      Your role:
+      - Provide personalized, evidence-based fitness guidance
+      - Analyze biometric data to optimize training
+      - Motivate users with empathy and understanding
+      - Adapt recommendations to individual fitness levels
+      - Prioritize safety and injury prevention
+      
+      Communication style:
+      - Supportive and encouraging
+      - Clear and actionable advice
+      - Scientifically grounded but accessible
+      - Respectful of user autonomy and preferences
+      
+      Always consider:
+      - User's fitness level and experience
+      - Current recovery status (HRV, sleep, stress)
+      - Stated goals and preferences
+      - Any injuries or limitations
+      
+      When uncertain, acknowledge limitations and suggest consulting healthcare professionals.
+
+# -----------------------------------------------------------------------------
+# QDRANT VECTOR DATABASE (RAG Knowledge Base)
+# -----------------------------------------------------------------------------
+
+qdrant:
+  enabled: true
+  host: localhost
+  port: 6333
+  grpc_port: 6334
+  base_url: http://localhost:6333
+  
+  # Collection configuration
+  collections:
+    # Scientific knowledge base
+    knowledge_base:
+      name: spartan_knowledge
+      vector_size: 384  # Matches all-MiniLM-L6-v2 embeddings
+      distance: Cosine
+      
+      # Indexing parameters
+      indexing:
+        hnsw_m: 16
+        hnsw_ef_construct: 100
+        on_disk_payload: true
+      
+      # Quantization for efficiency
+      quantization:
+        enabled: false
+        type: int8
+    
+    # Conversation history
+    conversations:
+      name: spartan_conversations
+      vector_size: 384
+      distance: Cosine
+    
+    # Exercise database embeddings
+    exercises:
+      name: spartan_exercises
+      vector_size: 384
+      distance: Cosine
+    
+    # Workout templates
+    workouts:
+      name: spartan_workouts
+      vector_size: 384
+      distance: Cosine
+
+  # Embedding model configuration
+  embeddings:
+    # Local embedding generation (via Ollama or sentence-transformers)
+    provider: local
+    model: all-MiniLM-L6-v2
+    batch_size: 32
+    max_length: 512
+
+# -----------------------------------------------------------------------------
+# RAG (Retrieval-Augmented Generation) CONFIGURATION
+# -----------------------------------------------------------------------------
+
+rag:
+  enabled: true
+  
+  # Retrieval configuration
+  retrieval:
+    top_k: 5              # Number of documents to retrieve
+    score_threshold: 0.5  # Minimum similarity score
+    rerank: true          # Re-rank results for better relevance
+  
+  # Knowledge sources
+  knowledge_sources:
+    # Scientific literature
+    scientific_papers:
+      enabled: true
+      path: ./knowledge/scientific_papers
+      file_types: [.pdf, .txt, .md]
+    
+    # Training programs
+    training_programs:
+      enabled: true
+      path: ./knowledge/training_programs
+      file_types: [.json, .yaml, .md]
+    
+    # Nutrition guides
+    nutrition_guides:
+      enabled: true
+      path: ./knowledge/nutrition
+      file_types: [.json, .yaml, .md]
+    
+    # Injury prevention
+    injury_prevention:
+      enabled: true
+      path: ./knowledge/injury_prevention
+      file_types: [.pdf, .txt, .md]
+    
+    # FAQ and common questions
+    faq:
+      enabled: true
+      path: ./knowledge/faq
+      file_types: [.json, .yaml, .md]
+
+  # Generation configuration
+  generation:
+    # How to incorporate retrieved context
+    context_integration: append
+    # Maximum context tokens
+    max_context_tokens: 2048
+    # Include citations
+    citations: true
+    # Confidence threshold for using retrieved info
+    confidence_threshold: 0.6
+
+# -----------------------------------------------------------------------------
+# REAL-TIME COACHING CONFIGURATION
+# -----------------------------------------------------------------------------
+
+realtime_coaching:
+  enabled: true
+  
+  # WebSocket configuration
+  websocket:
+    enabled: true
+    path: /ws/coach
+    ping_interval: 30
+    ping_timeout: 10
+  
+  # Coaching modes
+  modes:
+    # Live workout coaching
+    workout:
+      enabled: true
+      update_interval: 5000  # ms
+      metrics:
+        - heart_rate
+        - reps_completed
+        - form_feedback
+        - rest_timer
+    
+    # Recovery monitoring
+    recovery:
+      enabled: true
+      check_interval: 3600000  # 1 hour in ms
+      metrics:
+        - hrv
+        - resting_heart_rate
+        - sleep_quality
+        - stress_level
+    
+    # Nutrition timing
+    nutrition:
+      enabled: true
+      meal_reminders: true
+      pre_workout_window: 60    # minutes before
+      post_workout_window: 120   # minutes after
+    
+    # Adaptive planning
+    adaptive:
+      enabled: true
+      adjustment_triggers:
+        - low_hrv
+        - poor_sleep
+        - high_stress
+        - missed_workouts
+      response_types:
+        - reduce_intensity
+        - add_rest_day
+        - modify_exercises
+        - adjust_volume
+
+  # Alert thresholds
+  alerts:
+    hrv_low_threshold: 30       # Alert if HRV drops below this
+    rhr_high_threshold: 80      # Alert if RHR exceeds this
+    sleep_low_hours: 5          # Alert if sleep < this many hours
+    stress_high_threshold: 75   # Alert if stress exceeds this
+    consecutive_rest_days: 5    # Alert after this many rest days
+
+# -----------------------------------------------------------------------------
+# CONVERSATION MANAGEMENT
+# -----------------------------------------------------------------------------
+
+conversation:
+  # Memory configuration
+  memory:
+    # Short-term context window
+    short_term_turns: 10
+    # Long-term summary storage
+    long_term_enabled: true
+    # User preference persistence
+    persist_preferences: true
+  
+  # Conversation starters
+  prompts:
+    workout_check_in:
+      - "How did your workout feel today?"
+      - "Ready to crush your training session?"
+      - "How's your energy level for today's workout?"
+    
+    recovery_check_in:
+      - "How are you feeling today? Any soreness or fatigue?"
+      - "How was your sleep last night?"
+      - "On a scale of 1-10, what's your energy level?"
+    
+    motivation:
+      - "Remember why you started. You've got this!"
+      - "Every workout is a step closer to your goals."
+      - "Progress over perfection. Keep showing up!"
+
+# -----------------------------------------------------------------------------
+# LOCAL DEVELOPMENT SETTINGS
+# -----------------------------------------------------------------------------
+
+development:
+  # Mock mode for testing without Ollama
+  mock_mode: false
+  
+  # Mock responses for testing
+  mock_responses:
+    enabled: false
+    latency_ms: 500
+  
+  # Hot reload configuration
+  hot_reload:
+    enabled: true
+    watch_paths:
+      - ./local-config.yaml
+      - ./knowledge/
+  
+  # Debug settings
+  debug:
+    log_prompts: true
+    log_responses: true
+    log_retrieval: true
+    save_conversations: true
+    conversation_log_path: ./logs/conversations/
+
+# -----------------------------------------------------------------------------
+# CACHING CONFIGURATION
+# -----------------------------------------------------------------------------
+
+cache:
+  enabled: true
+  
+  # Redis configuration (shared with main app)
+  redis:
+    host: localhost
+    port: 6379
+    key_prefix: spartan:ai:
+  
+  # Cache durations
+  ttl:
+    embeddings: 86400        # 24 hours
+    retrieval_results: 3600  # 1 hour
+    model_response: 300      # 5 minutes
+    knowledge_index: 7200    # 2 hours
+
+# -----------------------------------------------------------------------------
+# RATE LIMITING
+# -----------------------------------------------------------------------------
+
+rate_limiting:
+  enabled: true
+  
+  limits:
+    requests_per_minute: 30
+    requests_per_hour: 500
+    requests_per_day: 5000
+  
+  # Per-endpoint limits
+  endpoints:
+    /chat:
+      requests_per_minute: 10
+    /embeddings:
+      requests_per_minute: 60
+    /retrieve:
+      requests_per_minute: 30
+
+# -----------------------------------------------------------------------------
+# MONITORING & METRICS
+# -----------------------------------------------------------------------------
+
+monitoring:
+  enabled: true
+  
+  # Metrics to track
+  metrics:
+    - request_count
+    - response_time
+    - token_usage
+    - cache_hit_rate
+    - retrieval_accuracy
+    - user_satisfaction
+  
+  # Prometheus endpoint
+  prometheus:
+    enabled: true
+    path: /metrics
+    port: 9090
+
+# -----------------------------------------------------------------------------
+# SECURITY
+# -----------------------------------------------------------------------------
+
+security:
+  # API authentication
+  auth:
+    enabled: false  # Disabled for local testing
+    jwt_validation: false
+  
+  # Input sanitization
+  input_sanitization:
+    enabled: true
+    max_input_length: 4096
+    allowed_content_types:
+      - text/plain
+      - application/json
+  
+  # Output filtering
+  output_filtering:
+    enabled: true
+    filter_pii: true
+    filter_sensitive: true

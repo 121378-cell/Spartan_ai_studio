@@ -1,0 +1,370 @@
+version: '3.8'
+
+# =============================================================================
+# Spartan Hub 2.0 - Local Multi-User Test Environment
+# =============================================================================
+# Complete local environment for 2 test users with all features:
+# - PostgreSQL database (local)
+# - Redis cache (local)
+# - Backend API (Node.js)
+# - Frontend (React)
+# - AI microservice (Python FastAPI)
+# - Ollama (local LLM)
+# - Qdrant (Vector DB for RAG)
+# - Mock Terra service
+# =============================================================================
+
+x-logging: &default-logging
+  options:
+    max-size: "10m"
+    max-file: "5"
+  driver: json-file
+
+services:
+  # ===========================================================================
+  # DATABASE LAYER
+  # ===========================================================================
+
+  # PostgreSQL - Primary Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: spartan_local_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: spartan_db
+    volumes:
+      - postgres_local_data:/var/lib/postgresql/data
+      - ./scripts/db-init-local.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d spartan_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Redis - Cache and Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: spartan_local_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_local_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # Qdrant - Vector Database for RAG
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: spartan_local_qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_local_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ===========================================================================
+  # AI SERVICES
+  # ===========================================================================
+
+  # Ollama - Local LLM Runtime
+  ollama:
+    image: ollama/ollama:latest
+    container_name: spartan_local_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_local_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+  # AI Microservice - Python FastAPI
+  ai-service:
+    build:
+      context: ./spartan-hub/backend/ai-microservice
+      dockerfile: Dockerfile
+    container_name: spartan_local_ai_service
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=gemma2:2b
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./ai-service:/app/local-config
+    depends_on:
+      ollama:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ===========================================================================
+  # BACKEND SERVICES
+  # ===========================================================================
+
+  # Backend API - Node.js
+  backend:
+    build:
+      context: ./spartan-hub/backend
+      dockerfile: Dockerfile
+    container_name: spartan_local_backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_TYPE=postgres
+      - POSTGRES_PRIMARY_HOST=postgres
+      - POSTGRES_PRIMARY_PORT=5432
+      - POSTGRES_DB=spartan_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AI_SERVICE_URL=http://ai-service:8000
+      - AI_PROVIDER=microservice
+      - AI_MICROSERVICE_TIMEOUT_MS=30000
+      - JWT_SECRET=local_test_jwt_secret_min_32_chars_for_security
+      - SESSION_SECRET=local_test_session_secret_min_32_chars
+      - CORS_ORIGIN=http://localhost:5173
+      - ENABLE_READ_REPLICAS=false
+      - LOG_LEVEL=debug
+      - TERRA_MOCK_ENABLED=true
+      - TERRA_MOCK_URL=http://mock-terra:8080
+    volumes:
+      - ./spartan-hub/backend/src:/app/src
+      - ./spartan-hub/backend/data:/app/data
+      - ./scripts/mock-terra-service.ts:/app/mock-terra-service.ts
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1.5G
+        reservations:
+          cpus: '0.75'
+          memory: 768M
+
+  # Mock Terra Service - Simulates Terra Webhooks
+  mock-terra:
+    build:
+      context: ./spartan-hub/backend
+      dockerfile: Dockerfile
+    container_name: spartan_local_mock_terra
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+      - MOCK_MODE=true
+      - BACKEND_URL=http://backend:3001
+    command: ["node", "dist/mock-terra-service.js"]
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ===========================================================================
+  # FRONTEND
+  # ===========================================================================
+
+  # Frontend - React/Vite
+  frontend:
+    build:
+      context: ./spartan-hub
+      dockerfile: Dockerfile
+    container_name: spartan_local_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3001
+      - VITE_WS_URL=ws://localhost:3001
+    volumes:
+      - ./spartan-hub/src:/app/src
+      - ./spartan-hub/public:/app/public
+      - ./spartan-hub/package.json:/app/package.json
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ===========================================================================
+  # MEDIAPIPE POSE DETECTION (Optional)
+  # ===========================================================================
+
+  # MediaPipe Service - Form Analysis
+  mediapipe:
+    image: python:3.11-slim
+    container_name: spartan_local_mediapipe
+    ports:
+      - "8001:8001"
+    working_dir: /app
+    volumes:
+      - ./spartan-hub/mediapipe-service:/app
+    command: >
+      bash -c "
+      pip install --no-cache-dir fastapi uvicorn mediapipe opencv-python-headless numpy &&
+      python -m uvicorn main:app --host 0.0.0.0 --port 8001
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - spartan_local_net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    profiles:
+      - with-mediapipe
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+
+volumes:
+  postgres_local_data:
+    driver: local
+  redis_local_data:
+    driver: local
+  qdrant_local_data:
+    driver: local
+  ollama_local_data:
+    driver: local
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+
+networks:
+  spartan_local_net:
+    driver: bridge
+    name: spartan_local_network
