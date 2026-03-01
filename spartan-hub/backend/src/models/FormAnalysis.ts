@@ -1,200 +1,66 @@
-import { getDatabase } from '../database/databaseManager';
-import { v4 as uuidv4 } from 'uuid';
-import { logger } from '../utils/logger';
+/**
+ * Form Analysis Model
+ * 
+ * Represents video form analysis results for exercise technique evaluation.
+ * Used in Phase A: Video Form Analysis MVP
+ */
 
-export type ExerciseType = 'squat' | 'deadlift' | 'push_up' | 'overhead_press' | 'bench_press' | 'row' | 'pull_up' | 'lunge' | 'plank' | 'custom';
-
-export type ExercisePattern = 'squat' | 'hinge' | 'push' | 'pull' | 'lunge' | 'core';
-
-export interface PushUpMetrics {
-  depth: number;
-  backStraightness: number;
-  elbowAngle: number;
-  armExtension: number;
+export interface FormAnalysis {
+  id: string;
+  userId: string;
+  exerciseType: ExerciseType;
+  formScore: number; // 0-100
+  metrics: FormMetrics;
+  warnings: string[];
+  recommendations: string[];
+  createdAt: number; // Unix timestamp in milliseconds
 }
 
-export interface PlankMetrics {
-  bodyAlignment: number;
-  coreEngagement: number;
-  hipPosition: number;
-  shoulderStability: number;
-  durationQuality: number;
+export type ExerciseType = 'squat' | 'deadlift' | 'bench_press' | 'overhead_press';
+
+export interface FormMetrics {
+  // General metrics
+  repsCompleted: number;
+  durationSeconds: number;
+  
+  // Squat-specific metrics
+  kneeValgusAngle?: number; // Degrees
+  squatDepth?: 'parallel' | 'above_parallel' | 'below_parallel';
+  torsoAngle?: number; // Degrees from vertical
+  
+  // Deadlift-specific metrics
+  backRounding?: 'neutral' | 'slight' | 'excessive';
+  barPathDeviation?: number; // cm from ideal path
+  hipHeight?: 'optimal' | 'too_high' | 'too_low';
+  
+  // Injury risk indicators
+  injuryRiskScore?: number; // 0-100
+  riskLevel?: 'low' | 'medium' | 'high' | 'critical';
 }
 
-export interface RowMetrics {
-  elbowRetraction: number;
-  backStraightness: number;
-  shoulderBladeMovement: number;
-  torsoAngle: number;
-  gripWidth: number;
-}
-
-export interface SquatMetrics {
-  depth: number;
-  kneeTracking: number;
-  torsoAngle: number;
-  backStraightness: number;
-  weightDistribution: number;
-}
-
-export interface DeadliftMetrics {
-  backStraightness: number;
-  hipHinge: number;
-  barPath: number;
-  lockout: number;
-}
-
-export interface OverheadPressMetrics {
-  elbowPath: number;
-  torsoStability: number;
-  barPath: number;
-  lockout: number;
-}
-
-export interface BenchPressMetrics {
-  barPath: number;
-  chestTouch: number;
-  elbowAngle: number;
-  lockout: number;
-  shoulderStability: number;
-}
-
-export interface PullUpMetrics {
-  chinOverBar: number;
-  bodySwing: number;
-  armExtension: number;
-  scapularRetraction: number;
-}
-
-export interface LungeMetrics {
-  kneeTracking: number;
-  torsoAngle: number;
-  stepLength: number;
-  depth: number;
-}
-
-export type ExerciseMetrics =
-  | PushUpMetrics
-  | PlankMetrics
-  | RowMetrics
-  | SquatMetrics
-  | DeadliftMetrics
-  | OverheadPressMetrics
-  | BenchPressMetrics
-  | PullUpMetrics
-  | LungeMetrics
-  | Record<string, number | boolean | string>;
-
-export interface FormAnalysisData {
-  id?: string;
+export interface CreateFormAnalysisDTO {
   userId: string;
   exerciseType: ExerciseType;
   formScore: number;
-  pattern?: ExercisePattern;
-  metrics: ExerciseMetrics;
-  angles?: Record<string, number>;
+  metrics: FormMetrics;
   warnings: string[];
   recommendations: string[];
-  repCount?: number;
-  createdAt?: number;
 }
 
-export class FormAnalysis {
-  /**
-     * Create a new form analysis entry
-     */
-  static create(data: FormAnalysisData): FormAnalysisData {
-    const db = getDatabase();
-    const id = data.id || uuidv4();
-    const createdAt = data.createdAt || Date.now();
-
-    const stmt = db.prepare(`
-      INSERT INTO form_analyses (
-        id, userId, exerciseType, formScore, metrics, warnings, recommendations, createdAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    stmt.run(
-      id,
-      data.userId,
-      data.exerciseType,
-      data.formScore,
-      JSON.stringify(data.metrics),
-      JSON.stringify(data.warnings),
-      JSON.stringify(data.recommendations),
-      createdAt
-    );
-
-    return { ...data, id, createdAt };
-  }
-
-  /**
-     * Find analysis by ID
-     */
-  static findById(id: string): FormAnalysisData | null {
-    const db = getDatabase();
-    const stmt = db.prepare('SELECT * FROM form_analyses WHERE id = ?');
-    const row = stmt.get(id) as any;
-
-    if (!row) return null;
-
-    return {
-      ...row,
-      metrics: JSON.parse(row.metrics),
-      warnings: JSON.parse(row.warnings),
-      recommendations: JSON.parse(row.recommendations)
-    };
-  }
-
-  /**
-     * Find latest analysis for user and exercise
-     */
-  static findLatest(userId: string, exerciseType?: string): FormAnalysisData | null {
-    const db = getDatabase();
-    let query = 'SELECT * FROM form_analyses WHERE userId = ?';
-    const params: any[] = [userId];
-
-    if (exerciseType) {
-      query += ' AND exerciseType = ?';
-      params.push(exerciseType);
-    }
-
-    query += ' ORDER BY createdAt DESC LIMIT 1';
-
-    const stmt = db.prepare(query);
-    const row = stmt.get(...params) as any;
-
-    if (!row) return null;
-
-    return {
-      ...row,
-      metrics: JSON.parse(row.metrics),
-      warnings: JSON.parse(row.warnings),
-      recommendations: JSON.parse(row.recommendations)
-    };
-  }
-
-  /**
-     * Get user analysis history
-     */
-  static findByUser(userId: string, limit: number = 20): FormAnalysisData[] {
-    const db = getDatabase();
-    const stmt = db.prepare(`
-      SELECT * FROM form_analyses 
-      WHERE userId = ? 
-      ORDER BY createdAt DESC 
-      LIMIT ?
-    `);
-
-    const rows = stmt.all(userId, limit) as any[];
-
-    return rows.map(row => ({
-      ...row,
-      metrics: JSON.parse(row.metrics),
-      warnings: JSON.parse(row.warnings),
-      recommendations: JSON.parse(row.recommendations)
-    }));
-  }
+export interface UpdateFormAnalysisDTO {
+  formScore?: number;
+  metrics?: Partial<FormMetrics>;
+  warnings?: string[];
+  recommendations?: string[];
 }
 
-export default FormAnalysis;
+export interface FormAnalysisFilters {
+  userId?: string;
+  exerciseType?: ExerciseType;
+  minScore?: number;
+  maxScore?: number;
+  startDate?: number;
+  endDate?: number;
+  limit?: number;
+  offset?: number;
+}
