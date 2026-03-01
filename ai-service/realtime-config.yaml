@@ -1,0 +1,313 @@
+# AI Service - Real-Time Configuration for Home Use
+# Spartan Hub 2.0 - 2 Real Users with Biometric Data
+
+# =============================================================================
+# REAL-TIME BIOMETRIC ANALYSIS
+# =============================================================================
+
+realtime_analysis:
+  enabled: true
+  
+  # Analyze data every 5 minutes
+  analysis_interval: 300
+  
+  # Data sources to analyze
+  data_sources:
+    - hrv
+    - heart_rate
+    - sleep
+    - steps
+    - stress
+    - spo2
+  
+  # Minimum data points for analysis
+  min_data_points: 10
+
+# =============================================================================
+# READINESS SCORE CALCULATION
+# =============================================================================
+
+readiness_score:
+  enabled: true
+  
+  # Weights for each factor (must sum to 100)
+  weights:
+    hrv: 30
+    sleep_quality: 25
+    resting_heart_rate: 20
+    stress_level: 15
+    sleep_duration: 10
+  
+  # Thresholds
+  thresholds:
+    excellent: 80
+    good: 60
+    fair: 40
+    poor: 0
+  
+  # Update frequency (seconds)
+  update_interval: 300
+
+# =============================================================================
+# INJURY RISK PREDICTION
+# =============================================================================
+
+injury_risk:
+  enabled: true
+  
+  # Factors to consider
+  factors:
+    - sudden_load_increase
+    - chronic_fatigue
+    - poor_sleep
+    - high_stress
+    - low_hrv
+    - consecutive_training_days
+  
+  # Thresholds
+  thresholds:
+    high: 60
+    medium: 40
+    low: 20
+  
+  # Alert if risk > threshold
+  alert_enabled: true
+
+# =============================================================================
+# AUTOMATIC WORKOUT ADAPTATION
+# =============================================================================
+
+workout_adaptation:
+  enabled: true
+  
+  # Auto-reschedule if readiness very low
+  auto_reschedule:
+    enabled: true
+    readiness_threshold: 30
+    reschedule_days: 1
+  
+  # Reduce intensity if readiness medium
+  reduce_intensity:
+    enabled: true
+    readiness_threshold: 50
+    intensity_reduction: 0.7  # 70% of original intensity
+  
+  # Suggest active recovery
+  active_recovery:
+    enabled: true
+    stress_threshold: 70
+    suggested_activities:
+      - yoga
+      - walking
+      - stretching
+      - meditation
+  
+  # Suggest rest day
+  rest_day:
+    enabled: true
+    sleep_threshold: 5  # hours
+    hrv_threshold: -20  # % below baseline
+
+# =============================================================================
+# SLEEP ANALYSIS
+# =============================================================================
+
+sleep_analysis:
+  enabled: true
+  
+  # Analyze sleep stages
+  analyze_stages: true
+  
+  # Minimum sleep for good recovery
+  minimum_hours: 6
+  optimal_hours: 8
+  
+  # Deep sleep target (% of total sleep)
+  deep_sleep_target: 20
+  
+  # REM sleep target (% of total sleep)
+  rem_sleep_target: 25
+  
+  # Alert if poor sleep
+  alert_enabled: true
+  alert_threshold_hours: 5
+
+# =============================================================================
+# STRESS TRACKING
+# =============================================================================
+
+stress_tracking:
+  enabled: true
+  
+  # HRV-based stress calculation
+  use_hrv: true
+  
+  # Thresholds
+  thresholds:
+    high: 80
+    medium: 60
+    low: 40
+  
+  # Alert if chronic stress
+  chronic_stress_days: 3  # consecutive days
+  alert_enabled: true
+
+# =============================================================================
+# NOTIFICATIONS
+# =============================================================================
+
+notifications:
+  enabled: true
+  
+  # Daily summary (8 AM)
+  daily_summary:
+    enabled: true
+    time: "08:00"
+    include:
+      - readiness_score
+      - workout_recommendation
+      - sleep_summary
+      - stress_level
+  
+  # Real-time alerts
+  alerts:
+    low_readiness:
+      enabled: true
+      threshold: 40
+      channels:
+        - email
+        # - telegram
+    
+    high_stress:
+      enabled: true
+      threshold: 80
+      channels:
+        - email
+        # - telegram
+    
+    poor_sleep:
+      enabled: true
+      threshold_hours: 5
+      channels:
+        - email
+        # - telegram
+    
+    workout_adapted:
+      enabled: true
+      channels:
+        - email
+        # - telegram
+    
+    injury_risk:
+      enabled: true
+      threshold: 60
+      channels:
+        - email
+        # - telegram
+
+# =============================================================================
+# AI COACH - REAL-TIME RESPONSES
+# =============================================================================
+
+ai_coach:
+  enabled: true
+  
+  # Context-aware responses
+  use_context: true
+  
+  # Context includes:
+  context:
+    - current_readiness
+    - recent_workouts
+    - sleep_quality
+    - stress_level
+    - user_goals
+    - injury_history
+  
+  # Response personalization
+  personalize: true
+  
+  # Tone
+  tone: supportive
+  
+  # Max response length (tokens)
+  max_tokens: 500
+  
+  # Include citations
+  include_citations: true
+
+# =============================================================================
+# RAG KNOWLEDGE BASE
+# =============================================================================
+
+rag:
+  enabled: true
+  
+  # Knowledge sources
+  sources:
+    - exercise_science
+    - nutrition
+    - recovery
+    - injury_prevention
+    - sleep_science
+  
+  # Update frequency
+  update_interval: 86400  # 24 hours
+  
+  # Vector database
+  vector_db:
+    type: qdrant
+    host: localhost
+    port: 6333
+    collection: spartan_knowledge
+
+# =============================================================================
+# CACHING
+# =============================================================================
+
+cache:
+  enabled: true
+  
+  # Cache analysis results
+  analysis_results:
+    ttl: 300  # 5 minutes
+  
+  # Cache readiness score
+  readiness_score:
+    ttl: 300  # 5 minutes
+  
+  # Cache AI responses
+  ai_responses:
+    ttl: 3600  # 1 hour
+
+# =============================================================================
+# RATE LIMITING
+# =============================================================================
+
+rate_limiting:
+  enabled: true
+  
+  # AI requests per minute per user
+  ai_requests_per_minute: 10
+  
+  # Analysis requests per hour
+  analysis_requests_per_hour: 12
+
+# =============================================================================
+# LOGGING
+# =============================================================================
+
+logging:
+  enabled: true
+  
+  # Log level
+  level: info
+  
+  # Log AI decisions
+  log_ai_decisions: true
+  
+  # Log workout adaptations
+  log_workout_adaptations: true
+  
+  # Log alerts sent
+  log_alerts: true
