@@ -239,15 +239,15 @@ export function checkFeatureFlag(featureName: string) {
         });
       }
     }
-    
+
     // Feature is enabled, proceed to next middleware
-    next();
+    return next();
   };
 }
 
 /**
  * Check if a feature is enabled (non-middleware version)
- * 
+ *
  * @param featureName - The name of the feature
  * @param environment - The environment to check (defaults to NODE_ENV)
  * @returns boolean - Whether the feature is enabled
@@ -258,13 +258,13 @@ export function isFeatureEnabled(
 ): boolean {
   const env = environment || (process.env.NODE_ENV as 'staging' | 'production') || 'production';
   const flag = FeatureFlags[featureName];
-  
+
   if (!flag || !flag.enabled) return false;
   if (flag.environments && !flag.environments.includes(env)) return false;
   if (flag.rolloutPercentage !== undefined && flag.rolloutPercentage < 100) {
     return Math.random() * 100 < flag.rolloutPercentage;
   }
-  
+
   return true;
 }
 

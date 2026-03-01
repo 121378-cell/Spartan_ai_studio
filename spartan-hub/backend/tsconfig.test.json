@@ -1,11 +1,20 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2017"
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "noImplicitReturns": false,
+    "types": ["jest", "node"]
   },
   "include": [
-    "src/**/*",
-    "__tests__/**/*"
+    "src/__tests__/**/*",
+    "src/__mocks__/**/*",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

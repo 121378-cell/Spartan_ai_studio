@@ -25,6 +25,8 @@
     "test:postgres": "set DATABASE_TYPE=postgres&& set POSTGRES_HOST=localhost&& set POSTGRES_PORT=5434&& set POSTGRES_DB=spartan_db&& set POSTGRES_USER=postgres&& set POSTGRES_PASSWORD=postgres_password&& set REDIS_HOST=localhost&& set REDIS_PORT=6380&& jest --testPathPatterns='postgresConnection'",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
+    "type-check": "tsc --noEmit --project tsconfig.json",
+    "type-check:all": "tsc --noEmit --project tsconfig.json && tsc --noEmit --project tsconfig.test.json",
     "db:init": "ts-node src/scripts/initDatabase.ts",
     "db:backup": "ts-node src/scripts/backupDatabase.ts",
     "db:restore": "ts-node src/scripts/restoreDatabase.ts",

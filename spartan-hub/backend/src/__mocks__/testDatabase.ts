@@ -73,8 +73,8 @@ export function seedTestData(db: Database): void {
     VALUES (?, ?, ?, ?)
   `);
 
-  stmt.run('test@example.com', 'hashedpassword', 'Test User', 'user');
-  stmt.run('admin@example.com', 'hashedpassword', 'Admin User', 'admin');
+  stmt?.run('test@example.com', 'hashedpassword', 'Test User', 'user');
+  stmt?.run('admin@example.com', 'hashedpassword', 'Admin User', 'admin');
 }
 
 /**

@@ -100,7 +100,8 @@ export const hasRoleOrHigher = (userRole: string, requiredRole: string): boolean
 
 // Get all permissions for a role
 export const getPermissionsForRole = (role: string): string[] => {
-  return ROLE_PERMISSIONS[role as Role] || [];
+  const permissions = ROLE_PERMISSIONS[role as Role] || [];
+  return permissions;
 };
 
 // Check if user has admin privileges

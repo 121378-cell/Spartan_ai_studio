@@ -26,10 +26,6 @@ class MockUserDb {
     const id = `user-${userIdCounter++}`;
     const user: User = {
       id,
-      name: userData.name,
-      email: userData.email,
-      password: userData.password,
-      role: userData.role,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       ...userData

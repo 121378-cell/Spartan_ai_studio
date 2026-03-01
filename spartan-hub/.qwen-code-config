@@ -1,0 +1,86 @@
+# Qwen Code - Configuration and Safety Settings
+# This file stores project-specific preferences for Qwen Code CLI
+
+# =============================================================================
+# SAFETY SETTINGS
+# =============================================================================
+
+# Never allow commands that kill all Node.js processes
+# This prevents Qwen CLI from accidentally killing itself
+SAFE_PROCESS_KILL=true
+
+# Allowed kill methods (by PID or port only, never by image name)
+SAFE_KILL_METHODS=pid,port
+
+# Blocked command patterns (will trigger warning)
+BLOCKED_PATTERNS=taskkill /IM node,taskkill /IM node.exe,Get-Process node | Stop,killall node
+
+# =============================================================================
+# PROJECT CONFIGURATION
+# =============================================================================
+
+# Project root directory
+PROJECT_ROOT=spartan-hub
+
+# Backend directory
+BACKEND_DIR=spartan-hub/backend
+
+# Key ports used by this project
+PROJECT_PORTS=3001,5173,8000,3000
+
+# Safe scripts for process management
+SAFE_KILL_SCRIPT=scripts/safe-kill-node.bat
+STOP_ALL_SCRIPT=scripts/stop-all.bat
+STOP_BACKEND_SCRIPT=scripts/stop-backend.bat
+
+# =============================================================================
+# npm SCRIPTS (Safe to use)
+# =============================================================================
+
+# Development
+DEV_COMMAND=npm run dev
+
+# Safe stop commands
+STOP_ALL=npm run stop:all
+STOP_BACKEND=npm run stop:backend
+STOP_SAFE=npm run stop:safe
+
+# =============================================================================
+# WARNINGS
+# =============================================================================
+
+# Display warning before running any process kill command
+SHOW_KILL_WARNING=true
+
+# Warning message template
+KILL_WARNING_TEMPLATE=⚠️  WARNING: This command may affect Qwen CLI. Use safe alternatives instead.
+
+# =============================================================================
+# SESSION MANAGEMENT
+# =============================================================================
+
+# Auto-save session state
+AUTO_SAVE_SESSION=true
+
+# Session backup interval (seconds)
+SESSION_BACKUP_INTERVAL=300
+
+# Clear session on critical error
+CLEAR_ON_CRITICAL=false
+
+# =============================================================================
+# ERROR PREVENTION
+# =============================================================================
+
+# Detect death loop pattern (Qwen CLI restart + same command)
+DEATH_LOOP_DETECTION=true
+
+# Max restarts before warning
+MAX_RESTARTS_BEFORE_WARNING=3
+
+# Suggest /clear after death loop detected
+SUGGEST_CLEAR_AFTER_LOOP=true
+
+# =============================================================================
+# END OF CONFIGURATION
+# =============================================================================
