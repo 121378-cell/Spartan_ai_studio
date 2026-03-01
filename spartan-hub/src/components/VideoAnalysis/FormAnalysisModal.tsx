@@ -276,7 +276,6 @@ export const FormAnalysisModal: React.FC<FormAnalysisModalProps> = ({
               )}
             </div>
           ) : (
-            /* Capture View */}
             <div className="space-y-4">
               <VideoCapture
                 exerciseType={exerciseType}
