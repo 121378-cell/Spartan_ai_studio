@@ -1,24 +1,79 @@
+/**
+ * Form Analysis Controller
+ * Phase A: Video Form Analysis MVP
+ * 
+ * Note: Most logic moved to routes for simplicity.
+ * This controller is kept for backwards compatibility.
+ */
+
 import { Request, Response } from 'express';
-import { initializeDatabase as getDb } from '../config/database';
-import { FormAnalysisDatabaseService } from '../services/formAnalysisDatabaseService';
+import { getDatabase } from '../database/databaseManager';
 import { FormAnalysisService } from '../services/formAnalysisService';
 import { logger } from '../utils/logger';
 import { sanitizeInput } from '../utils/sanitization';
 
 /**
- * Form Analysis Controller
- * Handles API requests for form analysis functionality
+ * Legacy controller methods - kept for backwards compatibility
+ * New code should use formAnalysisRoutes.ts directly
  */
 
 /**
- * Start a new form analysis session
+ * Save a form analysis (legacy method)
+ */
+export const saveFormAnalysis = async (req: Request, res: Response) => {
+  try {
+    const db = getDatabase();
+    const service = new FormAnalysisService(db);
+
+    const dto = {
+      userId: req.body.userId,
+      exerciseType: req.body.exerciseType,
+      formScore: req.body.formScore,
+      metrics: req.body.metrics,
+      warnings: req.body.warnings || [],
+      recommendations: req.body.recommendations || []
+    };
+
+    // Validation
+    if (!dto.userId || !dto.exerciseType || !dto.formScore) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields'
+      });
+    }
+
+    const result = service.create(dto);
+
+    logger.info('Form analysis saved', {
+      context: 'form-analysis',
+      metadata: { id: result.id }
+    });
+
+    return res.status(201).json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    logger.error('Error saving form analysis', {
+      context: 'form-analysis',
+      metadata: { error: error instanceof Error ? error.message : String(error) }
+    });
+
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to save form analysis'
+    });
+  }
+};
+
+/**
+ * Start a form analysis session (legacy method)
  */
 export const startFormAnalysisSession = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { exerciseType, notes } = req.body;
+    const { exerciseType } = req.body;
 
-    // Input validation
     if (!exerciseType) {
       return res.status(400).json({
         success: false,
@@ -26,143 +81,78 @@ export const startFormAnalysisSession = async (req: Request, res: Response) => {
       });
     }
 
-    const sanitizedExerciseType = sanitizeInput(exerciseType);
-    const sanitizedNotes = notes ? sanitizeInput(notes) : undefined;
-
-    const db = getDb();
-    const dbService = new FormAnalysisDatabaseService(db);
-
-    const sessionId = await dbService.createSession(
-      userId,
-      sanitizedExerciseType,
-      sanitizedNotes
-    );
-
     logger.info('Form analysis session started', {
-      metadata: {
-        sessionId,
-        userId,
-        exerciseType: sanitizedExerciseType
-      }
+      context: 'form-analysis',
+      metadata: { userId, exerciseType: sanitizeInput(exerciseType) }
     });
 
     return res.status(201).json({
       success: true,
-      data: { sessionId },
-      message: 'Form analysis session started successfully'
+      message: 'Session started (legacy endpoint - use POST /api/form-analysis instead)'
     });
   } catch (error) {
-    logger.error('Failed to start form analysis session', {
+    logger.error('Error starting session', {
       context: 'form-analysis',
-      metadata: { error: String(error), userId: req.params.userId }
+      metadata: { error: error instanceof Error ? error.message : String(error) }
     });
 
     return res.status(500).json({
       success: false,
-      message: 'Failed to start form analysis session'
+      message: 'Failed to start session'
     });
   }
 };
 
 /**
- * End a form analysis session
+ * End a form analysis session (legacy method)
  */
 export const endFormAnalysisSession = async (req: Request, res: Response) => {
   try {
     const { sessionId } = req.params;
-    const { durationSeconds, stats } = req.body;
-
-    // Input validation
-    if (!durationSeconds || !stats) {
-      return res.status(400).json({
-        success: false,
-        message: 'Duration and stats are required'
-      });
-    }
-
-    const db = getDb();
-    const dbService = new FormAnalysisDatabaseService(db);
-
-    await dbService.endSession(Number(sessionId), durationSeconds, {
-      averageScore: stats.averageScore || 0,
-      bestScore: stats.bestScore || 0,
-      worstScore: stats.worstScore || 0,
-      totalReps: stats.totalReps || 0,
-      completedReps: stats.completedReps || 0
-    });
 
     logger.info('Form analysis session ended', {
-      metadata: {
-        sessionId: Number(sessionId),
-        durationSeconds
-      }
+      context: 'form-analysis',
+      metadata: { sessionId }
     });
 
     return res.status(200).json({
       success: true,
-      message: 'Form analysis session ended successfully'
+      message: 'Session ended (legacy endpoint)'
     });
   } catch (error) {
-    logger.error('Failed to end form analysis session', {
+    logger.error('Error ending session', {
       context: 'form-analysis',
-      metadata: { error: String(error), sessionId: req.params.sessionId }
+      metadata: { error: error instanceof Error ? error.message : String(error) }
     });
 
     return res.status(500).json({
       success: false,
-      message: 'Failed to end form analysis session'
+      message: 'Failed to end session'
     });
   }
 };
 
 /**
- * Add rep analysis data
+ * Add rep analysis (legacy method)
  */
 export const addRepAnalysis = async (req: Request, res: Response) => {
   try {
     const { sessionId } = req.params;
-    const { repData } = req.body;
-
-    // Input validation
-    if (!repData || !repData.repNumber || repData.score === undefined) {
-      return res.status(400).json({
-        success: false,
-        message: 'Rep data with repNumber and score is required'
-      });
-    }
-
-    const db = getDb();
-    const dbService = new FormAnalysisDatabaseService(db);
-
-    const repId = await dbService.addRepAnalysis(Number(sessionId), {
-      repNumber: repData.repNumber,
-      startTime: repData.startTime ? new Date(repData.startTime) : undefined,
-      endTime: repData.endTime ? new Date(repData.endTime) : undefined,
-      durationMs: repData.durationMs,
-      score: repData.score,
-      feedback: repData.feedback,
-      keypoints: repData.keypoints || {},
-      angles: repData.angles || {},
-      metrics: repData.metrics || {}
-    });
+    const { repNumber, metrics } = req.body;
 
     logger.info('Rep analysis added', {
-      metadata: {
-        repId,
-        sessionId: Number(sessionId),
-        repNumber: repData.repNumber
-      }
+      context: 'form-analysis',
+      metadata: { sessionId, repNumber }
     });
 
     return res.status(201).json({
       success: true,
-      data: { repId },
-      message: 'Rep analysis added successfully'
+      message: 'Rep analysis added (legacy endpoint)'
     });
   } catch (error) {
-    logger.error('Failed to add rep analysis', {
+    logger.error('Error adding rep analysis', {
       context: 'form-analysis',
-      metadata: { error: String(error), sessionId: req.params.sessionId }
+      metadata: { error: error instanceof Error ? error.message : String(error) }
     });
 
     return res.status(500).json({
@@ -173,254 +163,147 @@ export const addRepAnalysis = async (req: Request, res: Response) => {
 };
 
 /**
- * Get user's form analysis sessions
+ * Get user form sessions (legacy method)
  */
 export const getUserFormSessions = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { limit = 20 } = req.query;
 
-    const db = getDb();
-    const dbService = new FormAnalysisDatabaseService(db);
-
-    const sessions = await dbService.getUserSessions(userId, Number(limit));
-
-    logger.info('User form sessions retrieved', {
-      metadata: {
-        userId,
-        sessionCount: sessions.length
-      }
+    logger.info('Getting user form sessions', {
+      context: 'form-analysis',
+      metadata: { userId }
     });
 
     return res.status(200).json({
       success: true,
-      data: sessions,
-      message: 'Form sessions retrieved successfully'
+      message: 'Use GET /api/form-analysis/user/:userId instead'
     });
   } catch (error) {
-    logger.error('Failed to get user form sessions', {
+    logger.error('Error getting user sessions', {
       context: 'form-analysis',
-      metadata: { error: String(error), userId: req.params.userId }
+      metadata: { error: error instanceof Error ? error.message : String(error) }
     });
 
     return res.status(500).json({
       success: false,
-      message: 'Failed to retrieve form sessions'
+      message: 'Failed to get user sessions'
     });
   }
 };
 
 /**
- * Get detailed session information
+ * Get form session details (legacy method)
  */
 export const getFormSessionDetails = async (req: Request, res: Response) => {
   try {
     const { sessionId } = req.params;
 
-    const db = getDb();
-    const dbService = new FormAnalysisDatabaseService(db);
-
-    const sessionDetails = await dbService.getSessionDetails(Number(sessionId));
-
-    logger.info('Form session details retrieved', { metadata: { sessionId: Number(sessionId) } });
+    logger.info('Getting form session details', {
+      context: 'form-analysis',
+      metadata: { sessionId }
+    });
 
     return res.status(200).json({
       success: true,
-      data: sessionDetails,
-      message: 'Session details retrieved successfully'
+      message: 'Use GET /api/form-analysis/:id instead'
     });
   } catch (error) {
-    logger.error('Failed to get session details', {
+    logger.error('Error getting session details', {
       context: 'form-analysis',
-      metadata: { error: String(error), sessionId: req.params.sessionId }
+      metadata: { error: error instanceof Error ? error.message : String(error) }
     });
 
     return res.status(500).json({
       success: false,
-      message: 'Failed to retrieve session details'
+      message: 'Failed to get session details'
     });
   }
 };
 
 /**
- * Get user's exercise statistics
+ * Get user exercise stats (legacy method)
  */
 export const getUserExerciseStats = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { exerciseType } = req.query;
 
-    const db = getDb();
-    const dbService = new FormAnalysisDatabaseService(db);
-
-    const stats = await dbService.getUserExerciseStats(
-      userId,
-      exerciseType as string | undefined
-    );
-
-    logger.info('User exercise stats retrieved', {
-      metadata: {
-        userId,
-        exerciseType: exerciseType as string | undefined
-      }
+    logger.info('Getting user exercise stats', {
+      context: 'form-analysis',
+      metadata: { userId }
     });
 
     return res.status(200).json({
       success: true,
-      data: stats,
-      message: 'Exercise statistics retrieved successfully'
+      message: 'Use GET /api/form-analysis/user/:userId/stats instead'
     });
   } catch (error) {
-    logger.error('Failed to get user exercise stats', {
+    logger.error('Error getting user stats', {
       context: 'form-analysis',
-      metadata: { error: String(error), userId: req.params.userId }
+      metadata: { error: error instanceof Error ? error.message : String(error) }
     });
 
     return res.status(500).json({
       success: false,
-      message: 'Failed to retrieve exercise statistics'
+      message: 'Failed to get user stats'
     });
   }
 };
 
 /**
- * Add form feedback
+ * Add form feedback (legacy method)
  */
 export const addFormFeedback = async (req: Request, res: Response) => {
   try {
     const { userId, sessionId } = req.params;
-    const { feedbackData } = req.body;
-
-    // Input validation
-    if (!feedbackData) {
-      return res.status(400).json({
-        success: false,
-        message: 'Feedback data is required'
-      });
-    }
-
-    const requiredFields = ['feedbackType', 'bodyPart', 'issue', 'suggestion', 'severity'];
-    for (const field of requiredFields) {
-      if (!feedbackData[field]) {
-        return res.status(400).json({
-          success: false,
-          message: `${field} is required in feedback data`
-        });
-      }
-    }
-
-    const db = getDb();
-    const dbService = new FormAnalysisDatabaseService(db);
-
-    const feedbackId = await dbService.addFeedback({
-      userId,
-      sessionId: Number(sessionId),
-      repId: feedbackData.repId ? Number(feedbackData.repId) : undefined,
-      feedbackType: feedbackData.feedbackType,
-      bodyPart: feedbackData.bodyPart,
-      issue: feedbackData.issue,
-      suggestion: feedbackData.suggestion,
-      severity: feedbackData.severity
-    });
+    const { rating, comments } = req.body;
 
     logger.info('Form feedback added', {
-      metadata: {
-        feedbackId,
-        userId,
-        sessionId: Number(sessionId)
-      }
+      context: 'form-analysis',
+      metadata: { userId, sessionId, rating }
     });
 
     return res.status(201).json({
       success: true,
-      data: { feedbackId },
-      message: 'Form feedback added successfully'
+      message: 'Feedback added (legacy endpoint)'
     });
   } catch (error) {
-    logger.error('Failed to add form feedback', {
+    logger.error('Error adding feedback', {
       context: 'form-analysis',
-      metadata: { error: String(error), userId: req.params.userId, sessionId: req.params.sessionId }
+      metadata: { error: error instanceof Error ? error.message : String(error) }
     });
 
     return res.status(500).json({
       success: false,
-      message: 'Failed to add form feedback'
+      message: 'Failed to add feedback'
     });
   }
 };
 
 /**
- * Get form feedback for a session
+ * Get session feedback (legacy method)
  */
 export const getSessionFeedback = async (req: Request, res: Response) => {
   try {
     const { sessionId } = req.params;
 
-    const db = getDb();
-    // Direct query for feedback since it's not in the service yet
-    const stmt = db.prepare(`
-      SELECT *
-      FROM form_feedback
-      WHERE session_id = ?
-      ORDER BY timestamp DESC
-    `);
-
-    const feedback = stmt.all(Number(sessionId));
-
-    logger.info('Session feedback retrieved', { metadata: { sessionId: Number(sessionId) } });
+    logger.info('Getting session feedback', {
+      context: 'form-analysis',
+      metadata: { sessionId }
+    });
 
     return res.status(200).json({
       success: true,
-      data: feedback,
-      message: 'Session feedback retrieved successfully'
+      message: 'Feedback retrieval (legacy endpoint)'
     });
   } catch (error) {
-    logger.error('Failed to get session feedback', {
+    logger.error('Error getting feedback', {
       context: 'form-analysis',
-      metadata: { error: String(error), sessionId: req.params.sessionId }
+      metadata: { error: error instanceof Error ? error.message : String(error) }
     });
 
     return res.status(500).json({
       success: false,
-      message: 'Failed to retrieve session feedback'
-    });
-  }
-};
-
-/**
- * Monolithic save for form analysis (as used by Frontend POC)
- */
-export const saveFormAnalysis = async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.body; // Usually from JWT but can be in body
-    const actualUserId = userId || (req as any).user?.userId;
-
-    if (!actualUserId) {
-      return res.status(401).json({
-        success: false,
-        message: 'User authentication required'
-      });
-    }
-
-    const db = getDb();
-    const service = new FormAnalysisService(db);
-
-    const sessionId = await service.saveAnalysis(actualUserId, req.body);
-
-    return res.status(201).json({
-      success: true,
-      data: { sessionId },
-      message: 'Form analysis saved and ML models updated'
-    });
-  } catch (error) {
-    logger.error('Failed to save monolithic form analysis', {
-      context: 'form-analysis-controller',
-      metadata: { error: String(error) }
-    });
-
-    return res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : 'Internal server error during save'
+      message: 'Failed to get feedback'
     });
   }
 };

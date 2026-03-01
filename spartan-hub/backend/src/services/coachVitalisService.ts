@@ -21,7 +21,7 @@ import { getBiometricPersistenceService } from './biometricPersistenceService';
 import { eventBus } from './eventBus';
 import { notificationService } from './notificationService';
 import { feedbackLearningService } from './feedbackLearningService';
-import FormAnalysis from '../models/FormAnalysis';
+import { FormAnalysis } from '../models/FormAnalysis';
 
 type DatabaseType = any;
 
@@ -770,8 +770,9 @@ export class CoachVitalisService {
     // Get latest form score
     let latestFormScore: number | undefined;
     try {
-      const formResult = FormAnalysis.findLatest(userId);
-      latestFormScore = formResult?.formScore;
+      // TODO: Integrate with FormAnalysisService
+      // const formResult = FormAnalysis.findLatest(userId);
+      // latestFormScore = formResult?.formScore;
     } catch (e) {
       // Fallback if model not fully integrated
     }
