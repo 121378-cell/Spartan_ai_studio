@@ -449,7 +449,7 @@ export class TeamChallengesService {
       teamId: participant.teamId,
       teamName: participant.teamId ? this.teams.get(participant.teamId)?.name : undefined,
       displayName: `User ${  participant.userId}`, // In production, fetch from user service
-      avatar: undefined, // In production, fetch from user service
+      avatar: undefined as undefined, // In production, fetch from user service
       progress: participant.progress,
       currentValue: participant.currentValue,
       trend: this.calculateTrend(participant),

@@ -129,23 +129,23 @@ const createMockDatabase = () => {
         context: 'database-fallback',
         metadata: { sql }
       });
-      
+
       return {
-        get: (...params: any[]) => {
+        get: (...params: any[]): any => {
           logger.debug('Mock get called', {
             context: 'database-fallback',
             metadata: { params }
           });
           return null;
         },
-        all: (...params: any[]) => {
+        all: (...params: any[]): any[] => {
           logger.debug('Mock all called', {
             context: 'database-fallback',
             metadata: { params }
           });
           return [];
         },
-        run: (...params: any[]) => {
+        run: (...params: any[]): { changes: number } => {
           logger.debug('Mock run called', {
             context: 'database-fallback',
             metadata: { params }

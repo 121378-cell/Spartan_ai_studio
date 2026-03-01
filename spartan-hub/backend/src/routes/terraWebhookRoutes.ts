@@ -38,7 +38,7 @@ interface WebhookRequest extends Request {
  */
 router.post(
   '/',
-  async (req: WebhookRequest, res: Response): Promise<void> => {
+  async (req: Request, res: Response): Promise<Response> => {
     try {
       const signature = req.headers['x-terra-signature'];
       const timestamp = req.headers['x-terra-timestamp'];

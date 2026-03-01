@@ -332,7 +332,7 @@ class DatabaseOptimizer {
     return indexes.map(idx => ({
       name: idx.name,
       table: idx.table_name,
-      columns: [], // Would need to parse index definition
+      columns: [] as string[], // Would need to parse index definition
       isUsed: false // Would require monitoring data
     }));
   }

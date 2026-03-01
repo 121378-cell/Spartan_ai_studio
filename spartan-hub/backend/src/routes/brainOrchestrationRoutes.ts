@@ -31,7 +31,7 @@ router.post(
   '/trigger-cycle',
   verifyJWT,
   heavyApiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> => {
     try {
       const userId = req.user?.userId;
       if (!userId) {
@@ -77,7 +77,7 @@ router.get(
   '/daily-report/:date',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> => {
     try {
       const userId = req.user?.userId;
       const { date } = req.params;
@@ -103,7 +103,7 @@ router.get(
         });
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: {
           date: report.date,
@@ -129,6 +129,7 @@ router.get(
         }
       });
       next(error);
+      return res.status(500).json({ success: false, message: 'Internal server error' });
     }
   }
 );
@@ -141,7 +142,7 @@ router.get(
   '/decision-history',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> => {
     try {
       const userId = req.user?.userId;
       const { limit = 30 } = req.query;
@@ -193,7 +194,7 @@ router.get(
   '/next-plan-adjustments',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> => {
     try {
       const userId = req.user?.userId;
 
@@ -243,7 +244,7 @@ router.post(
   '/feedback/:decisionId',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> => {
     try {
       const userId = req.user?.userId;
       const { decisionId } = req.params;
@@ -313,7 +314,7 @@ router.post(
   '/approve-adjustments',
   verifyJWT,
   apiRateLimit,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> => {
     try {
       const userId = req.user?.userId;
       const { adjustmentIds, approved } = req.body;

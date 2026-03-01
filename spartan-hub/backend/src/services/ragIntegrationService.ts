@@ -256,7 +256,7 @@ export class RAGIntegrationService {
             category: 'general',
             content: aggResult.content,
             relevanceScore: aggResult.relevanceScore,
-            keyTerms: [],
+            keyTerms: [] as string[],
             vectorId: 'aggregated'
           })).slice(0, 15);
         } else {
@@ -274,12 +274,12 @@ export class RAGIntegrationService {
             chunkId: source.chunkId,
             content: source.content,
             score: source.relevanceScore,
-            createdAt: undefined,
-            updatedAt: undefined,
-            viewCount: undefined,
-            citationCount: undefined,
-            isAuthoritative: undefined,
-            complexity: undefined
+            createdAt: undefined as undefined,
+            updatedAt: undefined as undefined,
+            viewCount: undefined as undefined,
+            citationCount: undefined as undefined,
+            isAuthoritative: undefined as undefined,
+            complexity: undefined as undefined
           }));
 
           const ranked = await this.rerankingService.rerankResults(searchResultsForReranking, query, {
@@ -305,7 +305,7 @@ export class RAGIntegrationService {
             category: 'general',
             content: rankedResult.content,
             relevanceScore: rankedResult.finalScore,
-            keyTerms: [],
+            keyTerms: [] as string[],
             vectorId: 'reranked'
           }));
         }
@@ -794,9 +794,9 @@ export class RAGIntegrationService {
       }
 
       // 4. Execute searches in parallel
-      const searchPromises = subQueries.map(sq =>
+      const searchPromises = subQueries.map((sq): Promise<SearchResult[]> =>
         this.searchService.hybridSearch(sq.query, opts.topK || 10, 0.4)
-          .catch(err => {
+          .catch((err: unknown): SearchResult[] => {
             logger.warn('Sub-query search failed', {
               context: 'rag-advanced',
               metadata: { query: sq.query, error: err instanceof Error ? err.message : String(err) }
@@ -831,12 +831,12 @@ export class RAGIntegrationService {
         chunkId: source.chunkId,
         content: source.content,
         score: source.relevanceScore,
-        createdAt: undefined,
-        updatedAt: undefined,
-        viewCount: undefined,
-        citationCount: undefined,
-        isAuthoritative: undefined,
-        complexity: undefined
+        createdAt: undefined as undefined,
+        updatedAt: undefined as undefined,
+        viewCount: undefined as undefined,
+        citationCount: undefined as undefined,
+        isAuthoritative: undefined as undefined,
+        complexity: undefined as undefined
       }));
 
       const rankedResults = await this.rerankingService.rerankResults(
@@ -858,7 +858,7 @@ export class RAGIntegrationService {
         category: 'general',
         content: rankedResult.content,
         relevanceScore: rankedResult.finalScore,
-        keyTerms: [],
+        keyTerms: [] as string[],
         vectorId: 'reranked'
       }));
 

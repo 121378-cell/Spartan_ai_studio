@@ -121,7 +121,7 @@ router.post('/register', validate(registerSchema), sanitizeInputFields, async (r
         joinDate: new Date().toISOString()
       },
       onboardingCompleted: false,
-      keystoneHabits: [],
+      keystoneHabits: [] as string[],
       masterRegulationSettings: {
         targetBedtime: '22:00'
       },
