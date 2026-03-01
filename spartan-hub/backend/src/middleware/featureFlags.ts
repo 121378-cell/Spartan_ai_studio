@@ -324,16 +324,17 @@ export function getAllFeatureFlags(environment?: 'staging' | 'production'): Reco
  */
 export function featureFlagsHandler(req: Request, res: Response) {
   const environment = (process.env.NODE_ENV as 'staging' | 'production') || 'production';
-  
+
   // Only expose to admins (check your auth middleware)
-  if (!req.user?.isAdmin) {
+  const user = req.user as { role?: string } | undefined;
+  if (!user || user.role !== 'ADMIN') {
     return res.status(403).json({
       success: false,
       error: 'FORBIDDEN',
       message: 'Only administrators can view feature flag configuration',
     });
   }
-  
+
   res.json({
     success: true,
     environment,
