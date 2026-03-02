@@ -297,6 +297,16 @@ export class TeamChallengesService {
 
     challenge.participants.push(userId);
 
+    // Initialize leaderboard entry
+    challenge.leaderboard.push({
+      rank: 0,
+      userId,
+      name: `User ${userId}`,
+      value: 0,
+      progress: 0,
+      percentage: 0
+    });
+
     logger.info('User joined challenge', {
       context: 'team-challenges',
       metadata: { challengeId, userId }
