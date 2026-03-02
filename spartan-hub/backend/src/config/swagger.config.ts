@@ -1,5 +1,12 @@
 import swaggerJsdoc from 'swagger-jsdoc';
-import { ROLES } from '../middleware/auth';
+
+// Define roles enum safely for swagger (avoid import issues in tests)
+const SWAGGER_ROLES = {
+  USER: 'user',
+  ADMIN: 'admin',
+  REVIEWER: 'reviewer',
+  MODERATOR: 'moderator'
+};
 
 const swaggerOptions: swaggerJsdoc.Options = {
   definition: {
@@ -70,9 +77,9 @@ const swaggerOptions: swaggerJsdoc.Options = {
             },
             role: {
               type: 'string',
-              enum: ROLES ? Object.values(ROLES) : ['user', 'admin', 'reviewer', 'moderator'],
+              enum: Object.values(SWAGGER_ROLES),
               description: 'User role for authorization',
-              example: 'user'
+              example: SWAGGER_ROLES.USER
             }
           }
         },
