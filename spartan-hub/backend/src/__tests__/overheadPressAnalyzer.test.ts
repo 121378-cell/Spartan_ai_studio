@@ -3,7 +3,7 @@
  * Phase B: Additional Exercises
  */
 
-import { OverheadPressFormAnalyzer } from '../OverheadPressFormAnalyzer';
+import { OverheadPressFormAnalyzer } from '../services/OverheadPressFormAnalyzer';
 
 describe('OverheadPressFormAnalyzer', () => {
   let analyzer: OverheadPressFormAnalyzer;

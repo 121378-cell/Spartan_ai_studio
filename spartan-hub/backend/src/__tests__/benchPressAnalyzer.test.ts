@@ -3,7 +3,7 @@
  * Phase B: Additional Exercises
  */
 
-import { BenchPressFormAnalyzer } from '../BenchPressFormAnalyzer';
+import { BenchPressFormAnalyzer } from '../services/BenchPressFormAnalyzer';
 
 describe('BenchPressFormAnalyzer', () => {
   let analyzer: BenchPressFormAnalyzer;

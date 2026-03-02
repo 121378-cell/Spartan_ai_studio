@@ -139,7 +139,7 @@ describe('Social Features - Integration Tests', () => {
 
       expect(content.type).toBe('workout');
       expect(content.title).toContain('squat');
-      expect(content.formScore).toBe(95);
+      expect((content.metadata as any)?.formScore).toBe(95);
 
       // Share to Twitter
       const twitterUrl = sharingService.generateShareUrl('twitter', content);

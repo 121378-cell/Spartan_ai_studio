@@ -5,10 +5,10 @@
  * Tests for all ML models implemented in Week 5
  */
 
-import { FeatureEngineering, EnhancedModelPredictor } from '../mlModelImprovements';
-import { UserHistoryAnalyzer, PersonalizedRecommendationsEngine } from '../userHistoryAnalyzer';
-import { PredictiveInjuryModel, EarlyWarningSystem, PreventionPlanGenerator } from '../predictiveInjuryModel';
-import { MLPipelineOptimizer, ModelCompressor, PerformanceBenchmarker } from '../mlPipelineOptimization';
+import { FeatureEngineering, EnhancedModelPredictor } from '../ml/mlModelImprovements';
+import { UserHistoryAnalyzer, PersonalizedRecommendationsEngine } from '../ml/personalizedRecommendations';
+import { PredictiveInjuryModel, EarlyWarningSystem, PreventionPlanGenerator } from '../ml/predictiveInjuryModel';
+import { MLPipelineOptimizer, ModelCompressor, PerformanceBenchmarker } from '../ml/mlPipelineOptimization';
 
 describe('Week 5 ML Models - Comprehensive Tests', () => {
   describe('FeatureEngineering', () => {

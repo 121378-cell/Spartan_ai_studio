@@ -70,9 +70,9 @@ const swaggerOptions: swaggerJsdoc.Options = {
             },
             role: {
               type: 'string',
-              enum: Object.values(ROLES),
+              enum: ROLES ? Object.values(ROLES) : ['user', 'admin', 'reviewer', 'moderator'],
               description: 'User role for authorization',
-              example: ROLES.USER
+              example: 'user'
             }
           }
         },
