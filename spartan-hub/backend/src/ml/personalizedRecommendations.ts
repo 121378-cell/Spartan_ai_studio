@@ -24,6 +24,7 @@ export interface RecommendationConfig {
   prioritizeWeaknesses: boolean;
   includeProgression: boolean;
   adaptationRate: 'slow' | 'normal' | 'fast';
+  [key: string]: any;
 }
 
 /**
@@ -240,14 +241,14 @@ export class PersonalizedRecommendationsEngine {
         type: 'recovery',
         priority: 'low',
         title: 'Maintain Your Streak',
-        description: `You're on a ${progress.streakDays}-day streak!`,
+        description: 'You\'re on a ' + progress.streakDays + '-day streak!',
         actionItems: [
           'Keep up the great work',
           'Ensure adequate recovery',
           'Listen to your body',
-          'Don't sacrifice form for streak'
+          'Don\'t sacrifice form for streak'
         ],
-        basedOn: [`${progress.streakDays} day streak`],
+        basedOn: [progress.streakDays + ' day streak'],
         expectedImprovement: 'Habit formation and consistency'
       });
     }

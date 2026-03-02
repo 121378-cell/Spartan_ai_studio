@@ -16,6 +16,7 @@ export interface PipelineConfig {
   cacheTTL: number; // seconds
   enableCompression: boolean;
   maxWorkers: number;
+  [key: string]: any;
 }
 
 export interface BatchResult<T> {
@@ -31,6 +32,7 @@ export interface CacheStats {
   size: number;
   hitRate: number;
   evictions: number;
+  [key: string]: any;
 }
 
 /**
@@ -389,6 +391,7 @@ export interface BenchmarkResult {
   p95Time: number;
   p99Time: number;
   throughput: number; // operations per second
+  [key: string]: any;
 }
 
 export class PerformanceBenchmarker {

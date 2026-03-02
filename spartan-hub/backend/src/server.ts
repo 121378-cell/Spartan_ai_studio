@@ -50,7 +50,7 @@ import voiceCoachingRoutes from './routes/voiceCoachingRoutes';
 import geneticProfileRoutes from './routes/geneticProfileRoutes';
 import largeActionModelRoutes from './routes/largeActionModelRoutes';
 import marketplaceRoutes from './routes/marketplaceRoutes';
-import challengesRoutes from './routes/challengesRoutes';
+// import challengesRoutes from './routes/challengesRoutes'; // Temporarily disabled - legacy code
 import brainOrchestrationRoutes from './routes/brainOrchestrationRoutes';
 import coachRoutes from './routes/coachRoutes';
 import terraWebhookRoutes from './routes/terraWebhookRoutes';
@@ -533,7 +533,8 @@ app.use('/api/challenges', (req, res, next) => {
   } else {
     return writeRateLimit(req, res, next);
   }
-}, challengesRoutes);
+}); // challengesRoutes temporarily disabled
+// }, challengesRoutes);
 
 // Fase C: Enterprise Coach Dashboard Routes
 app.use('/api/coach', (req, res, next) => {

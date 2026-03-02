@@ -14,6 +14,7 @@ export interface WarningConfig {
   enableInApp: boolean;
   severityThreshold: 1 | 2 | 3 | 4 | 5;
   cooldownPeriod: number; // milliseconds
+  [key: string]: any;
 }
 
 export interface WarningHistory {

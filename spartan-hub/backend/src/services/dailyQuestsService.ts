@@ -388,7 +388,7 @@ export class DailyQuestsService {
       throw new Error('Quest not completed');
     }
 
-    if (quest.claimed) {
+    if (quest.claimedAt) {
       throw new Error('Reward already claimed');
     }
 
@@ -398,7 +398,7 @@ export class DailyQuestsService {
     const rewards = {
       points: 0,
       xp: 0,
-      badges: []
+      badges: [] as string[]
     };
 
     quest.rewards.forEach(reward => {
@@ -499,7 +499,7 @@ export class DailyQuestsService {
     const oldQuests = this.userQuests.get(userId) || [];
     
     // Check for unclaimed completed quests (lose them)
-    const unclaimed = oldQuests.filter(q => q.status === 'completed' && !q.claimed);
+    const unclaimed = oldQuests.filter(q => q.status === 'completed' && !q.claimedAt);
     
     if (unclaimed.length > 0) {
       logger.warn('User lost unclaimed quest rewards', {
