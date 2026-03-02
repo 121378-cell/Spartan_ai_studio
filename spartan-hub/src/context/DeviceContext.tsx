@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useDevice, useDeviceInfo, getDeviceContext, getDeviceInfo, DeviceInfo, PerformanceLevel } from '../utils/deviceContext';
+import { useDevice as useDeviceUtil, useDeviceInfo, getDeviceContext, getDeviceInfo, DeviceInfo, PerformanceLevel } from '../utils/deviceContext';
 import { DeviceType } from '../types';
 
 // --- CONTEXT TYPE DEFINITION ---

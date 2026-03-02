@@ -1,0 +1,4 @@
+node_modules/
+**/dist/
+spartan-hubules/web-streams-polyfill/dist/polyfill.es6.mjs.map
+spartan-hub/y18n/build/lib/index.js

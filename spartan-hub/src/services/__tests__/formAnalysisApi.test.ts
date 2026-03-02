@@ -33,16 +33,21 @@ describe('FormAnalysisApiService', () => {
     it('should save form analysis successfully', async () => {
       const mockData: CreateFormAnalysisDTO = {
         userId: 'user-123',
-        exerciseType: 'squat',
+        exerciseType: 'squat' as const,
         formScore: 85,
-        metrics: { repsCompleted: 10 },
+        metrics: { repsCompleted: 10, durationSeconds: 45 },
         warnings: [],
         recommendations: []
       };
 
       const mockResponse: FormAnalysis = {
         id: 'analysis-1',
-        ...mockData,
+        userId: 'user-123',
+        exerciseType: 'squat',
+        formScore: 85,
+        metrics: { repsCompleted: 10, durationSeconds: 45 },
+        warnings: [],
+        recommendations: [],
         createdAt: Date.now()
       };
 
@@ -77,9 +82,9 @@ describe('FormAnalysisApiService', () => {
       const mockResponse: FormAnalysis = {
         id: 'analysis-1',
         userId: 'user-123',
-        exerciseType: 'squat',
+        exerciseType: 'squat' as const,
         formScore: 85,
-        metrics: {},
+        metrics: { repsCompleted: 10, durationSeconds: 45 },
         warnings: [],
         recommendations: [],
         createdAt: Date.now()
@@ -102,9 +107,9 @@ describe('FormAnalysisApiService', () => {
         {
           id: 'analysis-1',
           userId: 'user-123',
-          exerciseType: 'squat',
+          exerciseType: 'squat' as const,
           formScore: 85,
-          metrics: {},
+          metrics: { repsCompleted: 10, durationSeconds: 45 },
           warnings: [],
           recommendations: [],
           createdAt: Date.now()

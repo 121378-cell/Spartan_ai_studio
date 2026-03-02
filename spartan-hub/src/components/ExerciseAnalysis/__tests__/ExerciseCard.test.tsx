@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ExerciseCard } from '../ExerciseAnalysis/ExerciseCard';
-import { ExerciseDefinition } from '../../types/exercises';
+import { ExerciseCard } from '../ExerciseCard';
+import { ExerciseDefinition } from '../../../types/exercises';
 
 const mockExercise: ExerciseDefinition = {
   id: 'bench_press',

@@ -7,7 +7,7 @@
  * @module workers/poseDetection.worker
  */
 
-import type { PoseFrame, Landmark } from '../../types/pose';
+import type { PoseFrame, Landmark } from '../types/pose';
 
 // MediaPipe types (imported dynamically in worker)
 let PoseLandmarker: any = null;

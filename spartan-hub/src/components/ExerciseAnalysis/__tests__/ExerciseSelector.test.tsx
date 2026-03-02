@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ExerciseSelector } from '../ExerciseAnalysis/ExerciseSelector';
-import { EXERCISE_DATABASE } from '../../types/exercises';
+import { ExerciseSelector } from '../ExerciseSelector';
+import { EXERCISE_DATABASE } from '../../../types/exercises';
 
 describe('ExerciseSelector', () => {
   it('should render all exercises by default', () => {
