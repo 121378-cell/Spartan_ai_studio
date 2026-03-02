@@ -1,598 +1,431 @@
 /**
  * Team Challenges Service
+ * Phase B: Social Features - Week 6 Day 1
  * 
- * Enables group competitions between friends, teams, and corporations.
- * Challenges track metrics like steps, consistency, workout completion.
- * Creates network effects through social accountability.
- * 
- * Part of Fase 6: Network Effects from strategic roadmap.
+ * Manages team creation, challenges, and leaderboards
  */
 
 import { logger } from '../utils/logger';
-import { ValidationError } from '../utils/errorHandler';
-
-export interface Challenge {
-  id: string;
-  creatorId: string;
-  type: 'steps' | 'workouts' | 'consistency' | 'distance' | 'calories' | 'custom';
-  title: string;
-  description: string;
-  goal: {
-    metric: string;
-    target: number;
-    unit: string;
-  };
-  timeframe: {
-    startDate: Date;
-    endDate: Date;
-    timezone: string;
-  };
-  visibility: 'public' | 'private' | 'invite_only';
-  maxParticipants?: number;
-  minParticipants: number;
-  reward?: {
-    type: 'badge' | 'points' | 'prize' | 'recognition';
-    description: string;
-    value?: number;
-  };
-  rules: string[];
-  status: 'draft' | 'active' | 'completed' | 'cancelled';
-  stats: {
-    totalParticipants: number;
-    completionRate: number;
-    averageProgress: number;
-  };
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface ChallengeParticipant {
-  id: string;
-  challengeId: string;
-  userId: string;
-  teamId?: string;
-  status: 'invited' | 'joined' | 'active' | 'completed' | 'dropped';
-  progress: number;
-  currentValue: number;
-  rank?: number;
-  joinedAt: Date;
-  completedAt?: Date;
-  streakDays: number;
-  lastActivity: Date;
-}
 
 export interface Team {
   id: string;
-  challengeId: string;
   name: string;
-  avatar?: string;
-  captainId: string;
-  members: string[]; // user IDs
-  stats: {
-    totalProgress: number;
-    averageProgress: number;
-    rank?: number;
-  };
-  createdAt: Date;
+  description: string;
+  createdAt: number;
+  ownerId: string;
+  members: TeamMember[];
+  maxMembers: number;
+  isPrivate: boolean;
+  totalPoints: number;
+  rank: number;
+}
+
+export interface TeamMember {
+  userId: string;
+  joinedAt: number;
+  role: 'owner' | 'admin' | 'member';
+  points: number;
+  challengesCompleted: number;
+}
+
+export interface Challenge {
+  id: string;
+  name: string;
+  description: string;
+  type: 'individual' | 'team' | 'global';
+  startDate: number;
+  endDate: number;
+  participants: string[]; // userIds
+  teams: string[]; // teamIds
+  goal: ChallengeGoal;
+  rewards: ChallengeReward[];
+  leaderboard: LeaderboardEntry[];
+  status: 'upcoming' | 'active' | 'completed';
+}
+
+export interface ChallengeGoal {
+  type: 'workouts' | 'form_score' | 'streak' | 'points';
+  target: number;
+  unit: string;
+}
+
+export interface ChallengeReward {
+  type: 'points' | 'badge' | 'title' | 'premium';
+  value: number | string;
+  description: string;
 }
 
 export interface LeaderboardEntry {
   rank: number;
-  participantId: string;
-  userId: string;
+  userId?: string;
   teamId?: string;
-  teamName?: string;
-  displayName: string;
-  avatar?: string;
+  name: string;
+  value: number;
   progress: number;
-  currentValue: number;
-  trend: 'up' | 'down' | 'stable';
-  lastActivity: Date;
-  streakDays: number;
+  percentage: number;
 }
 
-export interface CorporateChallenge extends Challenge {
-  organizationId: string;
-  departmentFilter?: string[];
-  participationIncentive: {
-    type: 'health_credit' | 'pto' | 'wellness_points' | 'gift_card';
-    value: number;
-    description: string;
-  };
-  reporting: {
-    dashboardEnabled: boolean;
-    anonymized: boolean;
-    metrics: string[];
-  };
-}
-
+/**
+ * Team Challenges Service
+ */
 export class TeamChallengesService {
-  private challenges: Map<string, Challenge> = new Map();
-  private participants: Map<string, ChallengeParticipant> = new Map();
   private teams: Map<string, Team> = new Map();
+  private challenges: Map<string, Challenge> = new Map();
+  private userTeams: Map<string, string[]> = new Map(); // userId -> teamIds
 
-  /**
-   * Create new challenge
-   */
-  async createChallenge(
-    creatorId: string,
-    type: Challenge['type'],
-    title: string,
-    description: string,
-    goal: Challenge['goal'],
-    timeframe: Challenge['timeframe'],
-    options?: {
-      visibility?: Challenge['visibility'];
-      maxParticipants?: number;
-      reward?: Challenge['reward'];
-      rules?: string[];
-    }
-  ): Promise<Challenge> {
-    try {
-      logger.info('Creating challenge', {
-        context: 'team-challenges',
-        metadata: { creatorId, type, title }
-      });
-
-      const challenge: Challenge = {
-        id: this.generateChallengeId(),
-        creatorId,
-        type,
-        title,
-        description,
-        goal,
-        timeframe,
-        visibility: options?.visibility || 'private',
-        maxParticipants: options?.maxParticipants,
-        minParticipants: 2,
-        reward: options?.reward,
-        rules: options?.rules || [],
-        status: 'draft',
-        stats: {
-          totalParticipants: 0,
-          completionRate: 0,
-          averageProgress: 0
-        },
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-
-      this.challenges.set(challenge.id, challenge);
-
-      logger.info('Challenge created', {
-        context: 'team-challenges',
-        metadata: { challengeId: challenge.id, creatorId }
-      });
-
-      return challenge;
-    } catch (error) {
-      logger.error('Failed to create challenge', {
-        context: 'team-challenges',
-        metadata: { creatorId, error }
-      });
-      throw error;
-    }
+  constructor() {
+    logger.info('TeamChallengesService initialized', {
+      context: 'team-challenges'
+    });
   }
 
   /**
-   * Start challenge
+   * Create a new team
    */
-  async startChallenge(challengeId: string): Promise<Challenge> {
-    const challenge = this.challenges.get(challengeId);
-    if (!challenge) {
-      throw new ValidationError('Challenge not found');
-    }
+  createTeam(ownerId: string, name: string, description: string, isPrivate: boolean = false): Team {
+    const team: Team = {
+      id: `team-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name,
+      description,
+      createdAt: Date.now(),
+      ownerId,
+      members: [{
+        userId: ownerId,
+        joinedAt: Date.now(),
+        role: 'owner',
+        points: 0,
+        challengesCompleted: 0
+      }],
+      maxMembers: 10,
+      isPrivate,
+      totalPoints: 0,
+      rank: 0
+    };
 
-    const participants = this.getChallengeParticipants(challengeId);
-    if (participants.length < challenge.minParticipants) {
-      throw new ValidationError(
-        `Need at least ${challenge.minParticipants} participants to start`
-      );
-    }
+    this.teams.set(team.id, team);
+    this.userTeams.set(ownerId, [...(this.userTeams.get(ownerId) || []), team.id]);
 
-    challenge.status = 'active';
-    challenge.timeframe.startDate = new Date();
-    challenge.updatedAt = new Date();
-
-    logger.info('Challenge started', {
+    logger.info('Team created', {
       context: 'team-challenges',
-      metadata: { challengeId, participants: participants.length }
+      metadata: {
+        teamId: team.id,
+        teamName: team.name,
+        ownerId,
+        isPrivate
+      }
+    });
+
+    return team;
+  }
+
+  /**
+   * Join a team
+   */
+  joinTeam(teamId: string, userId: string): boolean {
+    const team = this.teams.get(teamId);
+    if (!team) {
+      logger.warn('Team not found', {
+        context: 'team-challenges',
+        metadata: { teamId }
+      });
+      return false;
+    }
+
+    if (team.members.length >= team.maxMembers) {
+      logger.warn('Team is full', {
+        context: 'team-challenges',
+        metadata: { teamId, maxMembers: team.maxMembers }
+      });
+      return false;
+    }
+
+    if (team.isPrivate) {
+      logger.warn('Cannot join private team without invite', {
+        context: 'team-challenges',
+        metadata: { teamId }
+      });
+      return false;
+    }
+
+    // Check if already a member
+    if (team.members.some(m => m.userId === userId)) {
+      logger.warn('User already in team', {
+        context: 'team-challenges',
+        metadata: { teamId, userId }
+      });
+      return false;
+    }
+
+    // Add member
+    team.members.push({
+      userId,
+      joinedAt: Date.now(),
+      role: 'member',
+      points: 0,
+      challengesCompleted: 0
+    });
+
+    this.userTeams.set(userId, [...(this.userTeams.get(userId) || []), teamId]);
+
+    logger.info('User joined team', {
+      context: 'team-challenges',
+      metadata: {
+        teamId,
+        userId,
+        memberCount: team.members.length
+      }
+    });
+
+    return true;
+  }
+
+  /**
+   * Leave a team
+   */
+  leaveTeam(teamId: string, userId: string): boolean {
+    const team = this.teams.get(teamId);
+    if (!team) {
+      return false;
+    }
+
+    // Owner cannot leave without transferring ownership
+    if (team.ownerId === userId) {
+      logger.warn('Owner cannot leave without transferring ownership', {
+        context: 'team-challenges',
+        metadata: { teamId, userId }
+      });
+      return false;
+    }
+
+    // Remove member
+    team.members = team.members.filter(m => m.userId !== userId);
+    
+    // Update user teams
+    const userTeamList = this.userTeams.get(userId) || [];
+    this.userTeams.set(userId, userTeamList.filter(id => id !== teamId));
+
+    logger.info('User left team', {
+      context: 'team-challenges',
+      metadata: { teamId, userId }
+    });
+
+    return true;
+  }
+
+  /**
+   * Get team by ID
+   */
+  getTeam(teamId: string): Team | null {
+    return this.teams.get(teamId) || null;
+  }
+
+  /**
+   * Get user's teams
+   */
+  getUserTeams(userId: string): Team[] {
+    const teamIds = this.userTeams.get(userId) || [];
+    return teamIds.map(id => this.teams.get(id)).filter((t): t is Team => !!t);
+  }
+
+  /**
+   * Create a challenge
+   */
+  createChallenge(
+    name: string,
+    description: string,
+    type: Challenge['type'],
+    startDate: number,
+    endDate: number,
+    goal: ChallengeGoal,
+    rewards: ChallengeReward[]
+  ): Challenge {
+    const challenge: Challenge = {
+      id: `challenge-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name,
+      description,
+      type,
+      startDate,
+      endDate,
+      participants: [],
+      teams: [],
+      goal,
+      rewards,
+      leaderboard: [],
+      status: 'upcoming'
+    };
+
+    this.challenges.set(challenge.id, challenge);
+
+    logger.info('Challenge created', {
+      context: 'team-challenges',
+      metadata: {
+        challengeId: challenge.id,
+        challengeName: challenge.name,
+        type: challenge.type,
+        startDate,
+        endDate
+      }
     });
 
     return challenge;
   }
 
   /**
-   * Join challenge
+   * Join a challenge
    */
-  async joinChallenge(
-    challengeId: string,
-    userId: string,
-    teamId?: string
-  ): Promise<ChallengeParticipant> {
-    try {
-      const challenge = this.challenges.get(challengeId);
-      if (!challenge) {
-        throw new ValidationError('Challenge not found');
-      }
+  joinChallenge(challengeId: string, userId: string): boolean {
+    const challenge = this.challenges.get(challengeId);
+    if (!challenge) {
+      return false;
+    }
 
-      if (challenge.status !== 'active' && challenge.status !== 'draft') {
-        throw new ValidationError('Challenge is not accepting new participants');
-      }
-
-      if (challenge.maxParticipants) {
-        const currentParticipants = this.getChallengeParticipants(challengeId).length;
-        if (currentParticipants >= challenge.maxParticipants) {
-          throw new ValidationError('Challenge is full');
-        }
-      }
-
-      // Check if already joined
-      const existing = Array.from(this.participants.values()).find(
-        p => p.challengeId === challengeId && p.userId === userId
-      );
-      if (existing) {
-        throw new ValidationError('Already joined this challenge');
-      }
-
-      const participant: ChallengeParticipant = {
-        id: this.generateParticipantId(),
-        challengeId,
-        userId,
-        teamId,
-        status: 'joined',
-        progress: 0,
-        currentValue: 0,
-        joinedAt: new Date(),
-        streakDays: 0,
-        lastActivity: new Date()
-      };
-
-      this.participants.set(participant.id, participant);
-      challenge.stats.totalParticipants++;
-
-      logger.info('User joined challenge', {
+    if (challenge.status !== 'upcoming' && challenge.status !== 'active') {
+      logger.warn('Cannot join challenge - not active', {
         context: 'team-challenges',
-        metadata: { challengeId, userId, participantId: participant.id }
+        metadata: { challengeId, status: challenge.status }
       });
+      return false;
+    }
 
-      return participant;
-    } catch (error) {
-      logger.error('Failed to join challenge', {
+    if (challenge.participants.includes(userId)) {
+      logger.warn('User already in challenge', {
         context: 'team-challenges',
-        metadata: { challengeId, userId, error }
+        metadata: { challengeId, userId }
       });
-      throw error;
-    }
-  }
-
-  /**
-   * Create team within challenge
-   */
-  async createTeam(
-    challengeId: string,
-    captainId: string,
-    name: string,
-    avatar?: string
-  ): Promise<Team> {
-    try {
-      const challenge = this.challenges.get(challengeId);
-      if (!challenge) {
-        throw new ValidationError('Challenge not found');
-      }
-
-      // Verify captain is participant
-      const captainParticipant = Array.from(this.participants.values()).find(
-        p => p.challengeId === challengeId && p.userId === captainId
-      );
-      if (!captainParticipant) {
-        throw new ValidationError('Must join challenge before creating team');
-      }
-
-      const team: Team = {
-        id: this.generateTeamId(),
-        challengeId,
-        name,
-        avatar,
-        captainId,
-        members: [captainId],
-        stats: {
-          totalProgress: 0,
-          averageProgress: 0
-        },
-        createdAt: new Date()
-      };
-
-      this.teams.set(team.id, team);
-      captainParticipant.teamId = team.id;
-
-      logger.info('Team created', {
-        context: 'team-challenges',
-        metadata: { teamId: team.id, challengeId, captainId }
-      });
-
-      return team;
-    } catch (error) {
-      logger.error('Failed to create team', {
-        context: 'team-challenges',
-        metadata: { challengeId, captainId, error }
-      });
-      throw error;
-    }
-  }
-
-  /**
-   * Join team
-   */
-  async joinTeam(teamId: string, userId: string): Promise<void> {
-    const team = this.teams.get(teamId);
-    if (!team) {
-      throw new ValidationError('Team not found');
+      return false;
     }
 
-    const participant = Array.from(this.participants.values()).find(
-      p => p.challengeId === team.challengeId && p.userId === userId
-    );
-    if (!participant) {
-      throw new ValidationError('Must join challenge before joining team');
-    }
+    challenge.participants.push(userId);
 
-    if (participant.teamId) {
-      throw new ValidationError('Already in a team');
-    }
-
-    team.members.push(userId);
-    participant.teamId = teamId;
-
-    logger.info('User joined team', {
+    logger.info('User joined challenge', {
       context: 'team-challenges',
-      metadata: { teamId, userId }
+      metadata: { challengeId, userId }
     });
+
+    return true;
   }
 
   /**
-   * Update participant progress
+   * Submit challenge progress
    */
-  async updateProgress(
+  submitChallengeProgress(
     challengeId: string,
     userId: string,
     value: number
-  ): Promise<ChallengeParticipant> {
-    try {
-      const participant = Array.from(this.participants.values()).find(
-        p => p.challengeId === challengeId && p.userId === userId
-      );
-      if (!participant) {
-        throw new ValidationError('Participant not found');
-      }
-
-      const challenge = this.challenges.get(challengeId)!;
-
-      // Update progress
-      participant.currentValue = value;
-      participant.progress = Math.min(100, (value / challenge.goal.target) * 100);
-      participant.lastActivity = new Date();
-
-      // Update streak
-      const lastActivity = new Date(participant.lastActivity);
-      const today = new Date();
-      const diffDays = Math.floor((today.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
-      
-      if (diffDays <= 1) {
-        participant.streakDays++;
-      } else {
-        participant.streakDays = 1;
-      }
-
-      // Check if completed
-      if (participant.progress >= 100 && participant.status !== 'completed') {
-        participant.status = 'completed';
-        participant.completedAt = new Date();
-        participant.rank = this.calculateRank(challengeId, participant.id);
-      } else {
-        participant.status = 'active';
-      }
-
-      // Update team stats if applicable
-      if (participant.teamId) {
-        this.updateTeamStats(participant.teamId);
-      }
-
-      // Update challenge stats
-      this.updateChallengeStats(challengeId);
-
-      logger.info('Progress updated', {
-        context: 'team-challenges',
-        metadata: {
-          challengeId,
-          userId,
-          progress: participant.progress,
-          streak: participant.streakDays
-        }
-      });
-
-      return participant;
-    } catch (error) {
-      logger.error('Failed to update progress', {
-        context: 'team-challenges',
-        metadata: { challengeId, userId, error }
-      });
-      throw error;
-    }
-  }
-
-  /**
-   * Get leaderboard
-   */
-  async getLeaderboard(
-    challengeId: string,
-    type: 'individual' | 'team' = 'individual'
-  ): Promise<LeaderboardEntry[]> {
+  ): boolean {
     const challenge = this.challenges.get(challengeId);
     if (!challenge) {
-      throw new ValidationError('Challenge not found');
+      return false;
     }
 
-    if (type === 'team') {
-      return this.getTeamLeaderboard(challengeId);
+    if (challenge.status !== 'active') {
+      logger.warn('Challenge not active', {
+        context: 'team-challenges',
+        metadata: { challengeId, status: challenge.status }
+      });
+      return false;
     }
 
-    const participants = this.getChallengeParticipants(challengeId);
-    const sorted = participants
-      .filter(p => p.status !== 'dropped')
-      .sort((a, b) => b.progress - a.progress);
-
-    return sorted.map((participant, index) => ({
-      rank: index + 1,
-      participantId: participant.id,
-      userId: participant.userId,
-      teamId: participant.teamId,
-      teamName: participant.teamId ? this.teams.get(participant.teamId)?.name : undefined,
-      displayName: `User ${  participant.userId}`, // In production, fetch from user service
-      avatar: undefined as undefined, // In production, fetch from user service
-      progress: participant.progress,
-      currentValue: participant.currentValue,
-      trend: this.calculateTrend(participant),
-      lastActivity: participant.lastActivity,
-      streakDays: participant.streakDays
-    }));
-  }
-
-  /**
-   * Get active challenges for user
-   */
-  async getUserActiveChallenges(userId: string): Promise<Challenge[]> {
-    const participantIds = Array.from(this.participants.values())
-      .filter(p => p.userId === userId && (p.status === 'joined' || p.status === 'active'))
-      .map(p => p.challengeId);
-
-    return Array.from(this.challenges.values())
-      .filter(c => participantIds.includes(c.id) && c.status === 'active')
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-  }
-
-  /**
-   * Get available challenges
-   */
-  async getAvailableChallenges(
-    filters?: {
-      type?: Challenge['type'];
-      visibility?: Challenge['visibility'];
-    },
-    limit: number = 20,
-    offset: number = 0
-  ): Promise<{ challenges: Challenge[]; total: number }> {
-    let challengeList = Array.from(this.challenges.values())
-      .filter(c => c.status === 'active' && c.visibility === 'public');
-
-    if (filters?.type) {
-      challengeList = challengeList.filter(c => c.type === filters.type);
+    // Update leaderboard
+    const existingEntry = challenge.leaderboard.find(e => e.userId === userId);
+    if (existingEntry) {
+      existingEntry.value += value;
+      existingEntry.progress = existingEntry.value;
+      existingEntry.percentage = Math.min(100, (existingEntry.progress / challenge.goal.target) * 100);
+    } else {
+      challenge.leaderboard.push({
+        rank: 0,
+        userId,
+        name: `User ${userId}`,
+        value,
+        progress: value,
+        percentage: Math.min(100, (value / challenge.goal.target) * 100)
+      });
     }
 
-    // Sort by recency and popularity
-    challengeList.sort((a, b) => {
-      const scoreA = a.stats.totalParticipants * 0.6 + a.createdAt.getTime() * 0.00000001;
-      const scoreB = b.stats.totalParticipants * 0.6 + b.createdAt.getTime() * 0.00000001;
-      return scoreB - scoreA;
+    // Sort and update ranks
+    challenge.leaderboard.sort((a, b) => b.value - a.value);
+    challenge.leaderboard.forEach((entry, index) => {
+      entry.rank = index + 1;
     });
 
-    const total = challengeList.length;
-    return {
-      challenges: challengeList.slice(offset, offset + limit),
-      total
-    };
+    logger.info('Challenge progress submitted', {
+      context: 'team-challenges',
+      metadata: {
+        challengeId,
+        userId,
+        value,
+        rank: challenge.leaderboard.find(e => e.userId === userId)?.rank
+      }
+    });
+
+    return true;
   }
 
-  // Private helper methods
-
-  private getChallengeParticipants(challengeId: string): ChallengeParticipant[] {
-    return Array.from(this.participants.values())
-      .filter(p => p.challengeId === challengeId);
-  }
-
-  private getTeamLeaderboard(challengeId: string): LeaderboardEntry[] {
-    const teams = Array.from(this.teams.values())
-      .filter(t => t.challengeId === challengeId)
-      .sort((a, b) => b.stats.averageProgress - a.stats.averageProgress);
-
-    return teams.map((team, index) => ({
-      rank: index + 1,
-      participantId: team.id,
-      userId: team.captainId,
-      teamId: team.id,
-      teamName: team.name,
-      displayName: team.name,
-      avatar: team.avatar,
-      progress: team.stats.averageProgress,
-      currentValue: team.stats.totalProgress,
-      trend: 'stable',
-      lastActivity: new Date(),
-      streakDays: 0
-    }));
-  }
-
-  private updateTeamStats(teamId: string): void {
-    const team = this.teams.get(teamId);
-    if (!team) return;
-
-    const members = this.getChallengeParticipants(team.challengeId)
-      .filter(p => p.teamId === teamId);
-
-    const totalProgress = members.reduce((sum, m) => sum + m.progress, 0);
-    team.stats = {
-      totalProgress,
-      averageProgress: totalProgress / members.length,
-      rank: team.stats.rank
-    };
-  }
-
-  private updateChallengeStats(challengeId: string): void {
+  /**
+   * Get challenge leaderboard
+   */
+  getLeaderboard(challengeId: string, limit: number = 10): LeaderboardEntry[] {
     const challenge = this.challenges.get(challengeId);
-    if (!challenge) return;
+    if (!challenge) {
+      return [];
+    }
 
-    const participants = this.getChallengeParticipants(challengeId);
-    const active = participants.filter(p => p.status === 'active');
-    const completed = participants.filter(p => p.status === 'completed');
-
-    challenge.stats = {
-      totalParticipants: participants.length,
-      completionRate: participants.length > 0 
-        ? (completed.length / participants.length) * 100 
-        : 0,
-      averageProgress: active.length > 0
-        ? active.reduce((sum, p) => sum + p.progress, 0) / active.length
-        : 0
-    };
+    return challenge.leaderboard.slice(0, limit);
   }
 
-  private calculateRank(challengeId: string, participantId: string): number {
-    const participants = this.getChallengeParticipants(challengeId)
-      .filter(p => p.status === 'completed')
-      .sort((a, b) => (a.completedAt?.getTime() || 0) - (b.completedAt?.getTime() || 0));
+  /**
+   * Get team leaderboard
+   */
+  getTeamLeaderboard(limit: number = 10): Team[] {
+    const sortedTeams = Array.from(this.teams.values())
+      .sort((a, b) => b.totalPoints - a.totalPoints)
+      .slice(0, limit);
 
-    const index = participants.findIndex(p => p.id === participantId);
-    return index !== -1 ? index + 1 : participants.length + 1;
+    // Update ranks
+    sortedTeams.forEach((team, index) => {
+      team.rank = index + 1;
+    });
+
+    return sortedTeams;
   }
 
-  private calculateTrend(participant: ChallengeParticipant): 'up' | 'down' | 'stable' {
-    // Simplified trend calculation
-    if (participant.streakDays > 3) return 'up';
-    if (participant.streakDays === 0) return 'down';
-    return 'stable';
+  /**
+   * Get active challenges
+   */
+  getActiveChallenges(): Challenge[] {
+    const now = Date.now();
+    return Array.from(this.challenges.values())
+      .filter(c => c.status === 'active' || (c.status === 'upcoming' && c.startDate <= now));
   }
 
-  private generateChallengeId(): string {
-    return `challenge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
+  /**
+   * Update challenge status
+   */
+  updateChallengeStatus(challengeId: string): void {
+    const challenge = this.challenges.get(challengeId);
+    if (!challenge) {
+      return;
+    }
 
-  private generateParticipantId(): string {
-    return `participant_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
+    const now = Date.now();
+    
+    if (now < challenge.startDate) {
+      challenge.status = 'upcoming';
+    } else if (now >= challenge.startDate && now <= challenge.endDate) {
+      challenge.status = 'active';
+    } else {
+      challenge.status = 'completed';
+    }
 
-  private generateTeamId(): string {
-    return `team_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    logger.debug('Challenge status updated', {
+      context: 'team-challenges',
+      metadata: {
+        challengeId,
+        status: challenge.status
+      }
+    });
   }
 }
 
-// Singleton instance
-export const teamChallengesService = new TeamChallengesService();
+export default TeamChallengesService;
