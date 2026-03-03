@@ -17,7 +17,10 @@ module.exports = {
   transformIgnorePatterns: [
     '/node_modules/(?!(uuid)/)'
   ],
-  testMatch: ['**/__tests__/**/*.(test|spec).(tsx|jsx)'],
+  testMatch: [
+    '**/hooks/__tests__/**/*.(test|spec).ts',
+    '**/__tests__/**/*.(test|spec).(tsx|jsx)'
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^\\.{2}/\\.{2}/services/coachVitalisClient$': '<rootDir>/src/__mocks__/coachVitalisClient.ts',

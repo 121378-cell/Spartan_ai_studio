@@ -43,6 +43,7 @@ import { getCitationService } from './services/citationService';
 import ragRoutes from './routes/ragRoutes';
 import knowledgeBaseRoutes from './routes/knowledgeBaseRoutes';
 import formAnalysisRoutes from './routes/formAnalysisRoutes';
+import biometricRoutes from './routes/biometricRoutes';
 import dailyBriefingRoutes from './routes/dailyBriefingRoutes';
 import nutritionPhotoRoutes from './routes/nutritionPhotoRoutes';
 import accountabilityRoutes from './routes/accountabilityRoutes';
@@ -462,6 +463,10 @@ app.use('/api/form-analysis', (req, res, next) => {
     return writeRateLimit(req, res, next);
   }
 }, formAnalysisRoutes);
+
+app.use('/api/biometrics', biometricRoutes);
+// Legacy alias to preserve compatibility with singular path clients/tests.
+app.use('/api/biometric', biometricRoutes);
 
 // Fase 2: Daily Briefing AI Routes
 app.use('/api/briefings', (req, res, next) => {

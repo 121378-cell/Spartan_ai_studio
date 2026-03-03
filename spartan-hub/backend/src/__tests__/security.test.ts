@@ -245,8 +245,10 @@ describe('Security Tests (OWASP)', () => {
   describe('Security Headers Tests', () => {
     test('should include security headers in responses', async () => {
       const response = await request(app)
-        .get('/health')
-        .expect(200);
+        .get('/health');
+
+      // Comprehensive health endpoint may return 503 if a dependency is unhealthy.
+      expect([200, 503]).toContain(response.status);
 
       // Check for security headers
       expect(response.headers['x-content-type-options']).toBe('nosniff');

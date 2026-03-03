@@ -4,8 +4,8 @@
  */
 
 import Database from 'better-sqlite3';
-import { FormAnalysisService } from '../../services/formAnalysisService';
-import { FormAnalysis, ExerciseType } from '../../models/FormAnalysis';
+import { FormAnalysisService } from '../services/formAnalysisService';
+import { FormAnalysis, ExerciseType } from '../models/FormAnalysis';
 
 describe('FormAnalysisService', () => {
   let db: Database;
@@ -14,6 +14,7 @@ describe('FormAnalysisService', () => {
   beforeAll(() => {
     // Create in-memory test database
     db = new Database(':memory:');
+    db.pragma('foreign_keys = OFF');
     
     // Create table
     db.exec(`

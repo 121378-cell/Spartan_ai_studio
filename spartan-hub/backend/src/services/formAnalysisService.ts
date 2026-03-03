@@ -190,7 +190,6 @@ export class FormAnalysisService {
       return existing;
     }
 
-    updates.push('id = ?');
     updateParams.push(id);
 
     const stmt = this.db.prepare(`

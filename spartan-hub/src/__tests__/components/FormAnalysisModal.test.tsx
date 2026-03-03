@@ -7,6 +7,13 @@ import { FormAnalysisResult } from '../../types/pose';
 // Note: @mediapipe/tasks-vision is mocked globally via jest.config.components.js
 // The mock is located at src/__mocks__/@mediapipe/tasks-vision.ts
 
+jest.mock('../../context/DeviceContext', () => ({
+  useDevice: () => ({
+    isMobile: false,
+    isTablet: false
+  })
+}));
+
 // Mock poseDetection service
 jest.mock('../../services/poseDetection', () => ({
   getPoseDetectionService: jest.fn().mockReturnValue({
@@ -224,11 +231,11 @@ describe('FormAnalysisModal', () => {
     fireEvent.click(completeButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Analizar Nuevamente')).toBeInTheDocument();
+      expect(screen.getByText(/Analizar Nuevamente/)).toBeInTheDocument();
     });
 
     // Click analyze again
-    const analyzeAgainButton = screen.getByText('Analizar Nuevamente');
+    const analyzeAgainButton = screen.getByText(/Analizar Nuevamente/);
     fireEvent.click(analyzeAgainButton);
 
     await waitFor(() => {
@@ -296,10 +303,10 @@ describe('FormAnalysisModal', () => {
     fireEvent.click(completeButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Cerrar')).toBeInTheDocument();
+      expect(screen.getByText(/Cerrar/)).toBeInTheDocument();
     });
 
-    const closeButton = screen.getByText('Cerrar');
+    const closeButton = screen.getByText(/Cerrar/);
     fireEvent.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalled();

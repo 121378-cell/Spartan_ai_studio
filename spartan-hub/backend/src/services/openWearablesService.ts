@@ -87,6 +87,11 @@ interface OpenWearablesBodyMetrics {
   water_percentage?: number;
 }
 
+interface OpenWearablesConnectResponse {
+  auth_url: string;
+  connection_id: string;
+}
+
 export class OpenWearablesService {
   private static instance: OpenWearablesService;
   private api: AxiosInstance;
@@ -164,7 +169,7 @@ export class OpenWearablesService {
     }
 
     try {
-      const response = await this.api.post('/oauth/connect', {
+      const response = await this.api.post<OpenWearablesConnectResponse>('/oauth/connect', {
         user_id: userId,
         provider: provider,
         redirect_uri: `${this.config.apiUrl}/callback`
@@ -215,7 +220,7 @@ export class OpenWearablesService {
    */
   public async getUserInfo(userId: string): Promise<OpenWearablesUser | null> {
     try {
-      const response = await this.api.get(`/users/${userId}`);
+      const response = await this.api.get<OpenWearablesUser>(`/users/${userId}`);
       return response.data;
     } catch (error) {
       logger.error('Failed to get user info', {
@@ -240,7 +245,7 @@ export class OpenWearablesService {
       if (options?.endDate) params.append('end_date', options.endDate);
       if (options?.limit) params.append('limit', options.limit.toString());
 
-      const response = await this.api.get(`/users/${userId}/activities`, { params });
+      const response = await this.api.get<OpenWearablesActivity[]>(`/users/${userId}/activities`, { params });
       
       logger.info('Activities synced', {
         context: 'open-wearables',
@@ -269,7 +274,7 @@ export class OpenWearablesService {
       const params = new URLSearchParams();
       if (date) params.append('date', date);
 
-      const response = await this.api.get(`/users/${userId}/heart-rate`, { params });
+      const response = await this.api.get<OpenWearablesHeartRate>(`/users/${userId}/heart-rate`, { params });
       
       logger.info('Heart rate synced', {
         context: 'open-wearables',
@@ -294,7 +299,7 @@ export class OpenWearablesService {
       const params = new URLSearchParams();
       if (date) params.append('date', date);
 
-      const response = await this.api.get(`/users/${userId}/sleep`, { params });
+      const response = await this.api.get<OpenWearablesSleep>(`/users/${userId}/sleep`, { params });
       
       logger.info('Sleep data synced', {
         context: 'open-wearables',
@@ -319,7 +324,7 @@ export class OpenWearablesService {
       const params = new URLSearchParams();
       if (date) params.append('date', date);
 
-      const response = await this.api.get(`/users/${userId}/body-metrics`, { params });
+      const response = await this.api.get<OpenWearablesBodyMetrics>(`/users/${userId}/body-metrics`, { params });
       
       logger.info('Body metrics synced', {
         context: 'open-wearables',
@@ -342,7 +347,7 @@ export class OpenWearablesService {
   public async getUserActivities(userId: string, options?: {
     limit?: number;
     includeMetrics?: boolean;
-  }): Promise<any[]> {
+  }): Promise<OpenWearablesActivity[]> {
     return this.syncActivities(userId, {
       limit: options?.limit || 10
     });
@@ -361,11 +366,12 @@ export class OpenWearablesService {
     dataPoints.push({
       id: `activity_${activity.id}`,
       userId,
-      type: 'activity' as BiometricDataType,
+      dataType: BiometricDataType.ACTIVITY,
       timestamp: activity.start_time,
       value: activity.duration_seconds,
       unit: 'seconds',
-      metadata: {
+      device: activity.source_device || 'open-wearables',
+      metadata: JSON.stringify({
         activityType: activity.activity_type,
         calories: activity.calories,
         distance: activity.distance_meters,
@@ -373,9 +379,10 @@ export class OpenWearablesService {
         avgHeartRate: activity.avg_heart_rate,
         maxHeartRate: activity.max_heart_rate,
         sourceDevice: activity.source_device
-      },
-      source: 'open_wearables',
-      createdAt: Date.now()
+      }),
+      source: 'other',
+      rawData: activity,
+      confidence: 0.9
     });
 
     // Create heart rate data point if available
@@ -383,16 +390,18 @@ export class OpenWearablesService {
       dataPoints.push({
         id: `hr_${activity.id}`,
         userId,
-        type: 'heart_rate' as BiometricDataType,
+        dataType: BiometricDataType.HEART_RATE,
         timestamp: activity.start_time,
         value: activity.avg_heart_rate,
         unit: 'bpm',
-        metadata: {
+        device: activity.source_device || 'open-wearables',
+        metadata: JSON.stringify({
           activityId: activity.id,
           activityType: activity.activity_type
-        },
-        source: 'open_wearables',
-        createdAt: Date.now()
+        }),
+        source: 'other',
+        rawData: activity,
+        confidence: 0.9
       });
     }
 

@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { AuthenticatedRequest } from '../types/index';
 import jwt from 'jsonwebtoken';
 import { userDb } from '../services/databaseServiceFactory';
-import { ROLES } from '../middleware/auth';
+import { ROLES, verifyJWT } from '../middleware/auth';
 import { hashPassword, comparePasswords, validatePasswordStrength } from '../utils/passwordUtils';
 import { v4 as uuidv4 } from 'uuid';
 import { createSession, destroySession, destroyAllUserSessions } from '../middleware/sessionMiddleware';
@@ -268,7 +268,7 @@ router.post('/login', validate(loginSchema), async (req: Request, res: Response)
  *         $ref: '#/components/responses/ServerError'
  */
 // Logout endpoint - clears the cookie and destroys session
-router.post('/logout', validate(basicValidationSchema), async (req: Request, res: Response) => {
+router.post('/logout', verifyJWT, validate(basicValidationSchema), async (req: Request, res: Response) => {
   await destroySession(req, res);
   return res.status(200).json({
     success: true,
@@ -277,7 +277,7 @@ router.post('/logout', validate(basicValidationSchema), async (req: Request, res
 });
 
 // Logout all sessions endpoint - destroys all user sessions
-router.post('/logout-all', validate(basicValidationSchema), async (req: AuthenticatedRequest, res: Response) => {
+router.post('/logout-all', verifyJWT, validate(basicValidationSchema), async (req: AuthenticatedRequest, res: Response) => {
   const {user} = req;
   if (user && user.userId) {
     await destroyAllUserSessions(user.userId);
@@ -317,7 +317,7 @@ router.post('/logout-all', validate(basicValidationSchema), async (req: Authenti
  *         $ref: '#/components/responses/UnauthorizedError'
  */
 // Get current user info
-router.get('/me', validate(basicValidationSchema), (req: AuthenticatedRequest, res: Response) => {
+router.get('/me', verifyJWT, validate(basicValidationSchema), (req: AuthenticatedRequest, res: Response) => {
   // This will use auth middleware to get user from cookie
   const { user } = req;
   if (!user) {
@@ -364,7 +364,7 @@ router.get('/me', validate(basicValidationSchema), (req: AuthenticatedRequest, r
  *         $ref: '#/components/responses/ServerError'
  */
 // Get active sessions
-router.get('/sessions', validate(basicValidationSchema), async (req: AuthenticatedRequest, res: Response) => {
+router.get('/sessions', verifyJWT, validate(basicValidationSchema), async (req: AuthenticatedRequest, res: Response) => {
   const { user } = req;
   if (!user) {
     return res.status(401).json({
@@ -470,7 +470,7 @@ router.get('/sessions', validate(basicValidationSchema), async (req: Authenticat
  *         $ref: '#/components/responses/ServerError'
  */
 // Update user role (admin only)
-router.put('/users/:userId/role', validate(updateRoleSchema), async (req: AuthenticatedRequest, res: Response) => {
+router.put('/users/:userId/role', verifyJWT, validate(updateRoleSchema), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { userId } = req.params;
     const { role } = req.body;
@@ -565,7 +565,7 @@ router.put('/users/:userId/role', validate(updateRoleSchema), async (req: Authen
  *         $ref: '#/components/responses/ServerError'
  */
 // Get all users (admin only)
-router.get('/users', validate(basicValidationSchema), async (req: AuthenticatedRequest, res: Response) => {
+router.get('/users', verifyJWT, validate(basicValidationSchema), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const requestingUser = req.user;
 

@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 /**
  * useRealTimeFeedback Hook Tests
  * Phase A: Video Form Analysis MVP
@@ -22,6 +23,8 @@ jest.mock('../../services/realTimeFeedbackService', () => ({
 describe('useRealTimeFeedback', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (realTimeFeedbackService.connect as jest.Mock).mockResolvedValue(undefined);
+    (realTimeFeedbackService.subscribe as jest.Mock).mockReturnValue(() => {});
   });
 
   describe('initial state', () => {
@@ -58,8 +61,12 @@ describe('useRealTimeFeedback', () => {
 
       const { result } = renderHook(() => useRealTimeFeedback());
 
-      await expect(result.current.connect('test-session-123')).rejects.toThrow();
-      expect(result.current.error).toBe('Connection failed');
+      await act(async () => {
+        await expect(result.current.connect('test-session-123')).rejects.toThrow();
+      });
+      await waitFor(() => {
+        expect(result.current.error).toBe('Connection failed');
+      });
     });
 
     it('should skip connection if enableRealTime is false', async () => {
@@ -74,11 +81,15 @@ describe('useRealTimeFeedback', () => {
   });
 
   describe('disconnect', () => {
-    it('should disconnect from WebSocket', () => {
+    it('should disconnect from WebSocket', async () => {
       const unsubscribeMock = jest.fn();
       (realTimeFeedbackService.subscribe as jest.Mock).mockReturnValueOnce(unsubscribeMock);
 
       const { result } = renderHook(() => useRealTimeFeedback());
+
+      await act(async () => {
+        await result.current.connect('test-session-123');
+      });
 
       act(() => {
         result.current.disconnect();
@@ -91,11 +102,13 @@ describe('useRealTimeFeedback', () => {
   });
 
   describe('sendLandmarks', () => {
-    it('should send landmarks when connected', () => {
+    it('should send landmarks when connected', async () => {
       const { result } = renderHook(() => useRealTimeFeedback());
+      (realTimeFeedbackService.subscribe as jest.Mock).mockReturnValueOnce(() => {});
 
-      // Mock connected state
-      result.current.isConnected = true;
+      await act(async () => {
+        await result.current.connect('test-session-123');
+      });
 
       const landmarks = Array(33).fill({ x: 0.5, y: 0.5, z: 0, visibility: 0.9 });
 
@@ -125,17 +138,15 @@ describe('useRealTimeFeedback', () => {
 
   describe('feedback handling', () => {
     it('should update lastFeedback and history on feedback', async () => {
-      let feedbackHandler: any;
-      (realTimeFeedbackService.subscribe as jest.Mock).mockImplementationOnce((handler) => {
-        feedbackHandler = handler;
-        return () => {};
-      });
+      (realTimeFeedbackService.subscribe as jest.Mock).mockReturnValueOnce(() => {});
 
       const { result } = renderHook(() => useRealTimeFeedback({ maxHistorySize: 10 }));
 
       await act(async () => {
         await result.current.connect('test-session');
       });
+
+      const feedbackHandler = (realTimeFeedbackService.subscribe as jest.Mock).mock.calls[0][0];
 
       const mockFeedback = {
         timestamp: Date.now(),
@@ -158,17 +169,15 @@ describe('useRealTimeFeedback', () => {
     });
 
     it('should respect maxHistorySize', async () => {
-      let feedbackHandler: any;
-      (realTimeFeedbackService.subscribe as jest.Mock).mockImplementationOnce((handler) => {
-        feedbackHandler = handler;
-        return () => {};
-      });
+      (realTimeFeedbackService.subscribe as jest.Mock).mockReturnValueOnce(() => {});
 
       const { result } = renderHook(() => useRealTimeFeedback({ maxHistorySize: 5 }));
 
       await act(async () => {
         await result.current.connect('test-session');
       });
+
+      const feedbackHandler = (realTimeFeedbackService.subscribe as jest.Mock).mock.calls[0][0];
 
       // Send 10 feedback items
       act(() => {
@@ -193,17 +202,15 @@ describe('useRealTimeFeedback', () => {
   describe('callbacks', () => {
     it('should call onFeedback callback', async () => {
       const onFeedbackMock = jest.fn();
-      let feedbackHandler: any;
-      (realTimeFeedbackService.subscribe as jest.Mock).mockImplementationOnce((handler) => {
-        feedbackHandler = handler;
-        return () => {};
-      });
+      (realTimeFeedbackService.subscribe as jest.Mock).mockReturnValueOnce(() => {});
 
       const { result } = renderHook(() => useRealTimeFeedback({ onFeedback: onFeedbackMock }));
 
       await act(async () => {
         await result.current.connect('test-session');
       });
+
+      const feedbackHandler = (realTimeFeedbackService.subscribe as jest.Mock).mock.calls[0][0];
 
       const mockFeedback = {
         timestamp: Date.now(),
@@ -225,17 +232,15 @@ describe('useRealTimeFeedback', () => {
 
     it('should call onWarning callback when warnings present', async () => {
       const onWarningMock = jest.fn();
-      let feedbackHandler: any;
-      (realTimeFeedbackService.subscribe as jest.Mock).mockImplementationOnce((handler) => {
-        feedbackHandler = handler;
-        return () => {};
-      });
+      (realTimeFeedbackService.subscribe as jest.Mock).mockReturnValueOnce(() => {});
 
       const { result } = renderHook(() => useRealTimeFeedback({ onWarning: onWarningMock }));
 
       await act(async () => {
         await result.current.connect('test-session');
       });
+
+      const feedbackHandler = (realTimeFeedbackService.subscribe as jest.Mock).mock.calls[0][0];
 
       const mockFeedback = {
         timestamp: Date.now(),
@@ -257,11 +262,7 @@ describe('useRealTimeFeedback', () => {
 
     it('should call onCriticalAlert on critical risk', async () => {
       const onCriticalAlertMock = jest.fn();
-      let feedbackHandler: any;
-      (realTimeFeedbackService.subscribe as jest.Mock).mockImplementationOnce((handler) => {
-        feedbackHandler = handler;
-        return () => {};
-      });
+      (realTimeFeedbackService.subscribe as jest.Mock).mockReturnValueOnce(() => {});
 
       const { result } = renderHook(() =>
         useRealTimeFeedback({ onCriticalAlert: onCriticalAlertMock })
@@ -270,6 +271,8 @@ describe('useRealTimeFeedback', () => {
       await act(async () => {
         await result.current.connect('test-session');
       });
+
+      const feedbackHandler = (realTimeFeedbackService.subscribe as jest.Mock).mock.calls[0][0];
 
       const mockFeedback = {
         timestamp: Date.now(),

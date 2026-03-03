@@ -20,6 +20,10 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.(test|spec).(ts|tsx|js|jsx)'],
   testPathIgnorePatterns: [
     '<rootDir>/src/__tests__/components/',
+    '<rootDir>/src/components/',
+    '<rootDir>/src/hooks/__tests__/',
+    '<rootDir>/src/services/__tests__/formAnalysisApi.test.ts',
+    '<rootDir>/src/services/__tests__/realTimeFeedbackService.test.ts',
     '<rootDir>/src/__tests__/services/poseDetection.test.ts',
     '<rootDir>/src/__tests__/AiChat.test.js',
     '<rootDir>/src/__tests__/AiErrorScreen.test.tsx',

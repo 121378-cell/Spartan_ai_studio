@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
 // Load .env.test from backend root
 dotenv.config({ path: path.resolve(__dirname, '../../.env.test') });
@@ -26,8 +27,19 @@ process.env.DISABLE_EXTERNAL_APIS = 'true';
 process.env.MOCK_ML_SERVICES = 'true';
 
 // Database configuration for tests - use isolated test databases
-process.env.DB_PATH = process.env.DB_PATH || ':memory:';
-process.env.SQLITE_DB_PATH = process.env.SQLITE_DB_PATH || ':memory:';
+const testDataDir = path.resolve(__dirname, '../../data');
+if (!fs.existsSync(testDataDir)) {
+  fs.mkdirSync(testDataDir, { recursive: true });
+}
+
+const runtimeDbPath = path.join(
+  testDataDir,
+  `test_spartan_runtime_${process.pid}_${Date.now()}_${Math.floor(Math.random() * 10000)}.db`
+);
+
+process.env.DB_PATH = runtimeDbPath;
+process.env.SQLITE_DB_PATH = runtimeDbPath;
+process.env.TEST_DB_PATH = runtimeDbPath;
 
 // ============================================================================
 // JEST MOCK MODULE REGISTRATION

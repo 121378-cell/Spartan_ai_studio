@@ -83,7 +83,9 @@ describe('useFormAnalysisApi', () => {
 
       const { result } = renderHook(() => useFormAnalysisApi());
 
-      await expect(result.current.saveAnalysis(mockData)).rejects.toThrow('Save failed');
+      await act(async () => {
+        await expect(result.current.saveAnalysis(mockData)).rejects.toThrow('Save failed');
+      });
 
       await waitFor(() => {
         expect(result.current.isSaving).toBe(false);
@@ -174,6 +176,18 @@ describe('useFormAnalysisApi', () => {
     });
 
     it('should clear lastSaved if deleted ID matches', async () => {
+      const mockSavedAnalysis = {
+        id: 'analysis-1',
+        userId: 'user-123',
+        exerciseType: 'squat',
+        formScore: 85,
+        metrics: {},
+        warnings: [],
+        recommendations: [],
+        createdAt: Date.now()
+      };
+
+      (formAnalysisApi.saveAnalysis as jest.Mock).mockResolvedValueOnce(mockSavedAnalysis);
       (formAnalysisApi.deleteAnalysis as jest.Mock).mockResolvedValueOnce(undefined);
 
       const { result } = renderHook(() => useFormAnalysisApi());
@@ -192,7 +206,7 @@ describe('useFormAnalysisApi', () => {
 
       // Delete the same analysis
       await act(async () => {
-        await result.current.deleteAnalysis((result.current.lastSaved as any).id);
+        await result.current.deleteAnalysis(mockSavedAnalysis.id);
       });
 
       expect(result.current.lastSaved).toBeNull();
@@ -200,11 +214,21 @@ describe('useFormAnalysisApi', () => {
   });
 
   describe('clearError', () => {
-    it('should clear error state', () => {
+    it('should clear error state', async () => {
       const { result } = renderHook(() => useFormAnalysisApi());
 
-      // Set error
-      (result.current as any).setError('Test error');
+      (formAnalysisApi.saveAnalysis as jest.Mock).mockRejectedValueOnce(new Error('Test error'));
+
+      await act(async () => {
+        await expect(result.current.saveAnalysis({
+          userId: 'user-123',
+          exerciseType: 'squat',
+          formScore: 85,
+          metrics: {},
+          warnings: [],
+          recommendations: []
+        })).rejects.toThrow('Test error');
+      });
 
       act(() => {
         result.current.clearError();
