@@ -16,7 +16,7 @@ export interface FormAnalysis {
   createdAt: number; // Unix timestamp in milliseconds
 }
 
-export type ExerciseType = 'squat' | 'deadlift' | 'bench_press' | 'overhead_press';
+export type ExerciseType = 'squat' | 'deadlift' | 'bench_press' | 'overhead_press' | 'push_up' | 'plank' | 'row';
 
 export interface FormMetrics {
   // General metrics
@@ -32,6 +32,22 @@ export interface FormMetrics {
   backRounding?: 'neutral' | 'slight' | 'excessive';
   barPathDeviation?: number; // cm from ideal path
   hipHeight?: 'optimal' | 'too_high' | 'too_low';
+
+  // PushUp-specific metrics
+  elbowAngle?: number;
+  backAlignment?: 'neutral' | 'sagging' | 'piked'; // Shared with Plank
+  depth?: 'full' | 'partial' | 'shallow';
+  handPosition?: 'optimal' | 'too_wide' | 'too_narrow';
+
+  // Plank-specific metrics
+  headPosition?: 'neutral' | 'dropped' | 'lifted';
+  stabilityScore?: number;
+
+  // Row-specific metrics
+  backAngle?: number;
+  spineNeutrality?: 'neutral' | 'rounded' | 'extended';
+  elbowTravel?: 'full' | 'partial';
+  momentum?: 'low' | 'high';
   
   // Injury risk indicators
   injuryRiskScore?: number; // 0-100

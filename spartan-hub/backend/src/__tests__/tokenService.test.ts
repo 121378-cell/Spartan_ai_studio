@@ -5,6 +5,7 @@ import { RefreshTokenModel } from '../models/RefreshToken';
 import jwt from 'jsonwebtoken';
 import config from '../config/configService';
 import { ROLES } from '../middleware/auth';
+import { userDb } from '../services/databaseServiceFactory';
 
 // Mock response factory for tests
 export function createMockRes() {
@@ -35,13 +36,34 @@ describe('TokenService Tests', () => {
   const testSessionId = 'test-session-123';
 
   beforeEach(async () => {
-    // Clear in-memory token storage and sessions
+    // Clear in-memory stores and create a baseline user required by SessionModel.
+    userDb.clear();
     await SessionModel.clear();
     RefreshTokenModel.clearAll();
+    userDb.create({
+      id: testUserId,
+      name: 'Token Test User',
+      email: 'token-test@example.com',
+      password: 'hashedPassword123',
+      role: testRole,
+      quest: 'Token test',
+      stats: {},
+      onboardingCompleted: true,
+      keystoneHabits: [],
+      masterRegulationSettings: {},
+      nutritionSettings: {},
+      isInAutonomyPhase: false,
+      weightKg: 70,
+      trainingCycle: {},
+      lastWeeklyPlanDate: new Date().toISOString(),
+      detailedProfile: {},
+      preferences: {}
+    });
   });
 
   afterEach(async () => {
     // Cleanup
+    userDb.clear();
     await SessionModel.clear();
     RefreshTokenModel.clearAll();
   });
@@ -73,7 +95,7 @@ describe('TokenService Tests', () => {
     });
 
     it('should generate valid refresh token with database persistence', async () => {
-      const refreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const refreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       expect(refreshToken).toBeDefined();
       expect(typeof refreshToken).toBe('string');
@@ -93,7 +115,7 @@ describe('TokenService Tests', () => {
     });
 
     it('should generate refresh token that expires in 7 days', async () => {
-      const refreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const refreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
       const decoded = jwt.verify(refreshToken, JWT_SECRET, { algorithms: [JWT_ALGO as jwt.Algorithm] }) as { userId: string; sessionId: string; tokenType: string; exp: number; iat: number; jti: string; };
 
       const expirationTime = decoded.exp - decoded.iat;
@@ -170,7 +192,7 @@ describe('TokenService Tests', () => {
     });
 
     it('should reject refresh token when verifying access token (type mismatch)', async () => {
-      const refreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const refreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       await expect(tokenService.verifyAccessToken(refreshToken)).rejects.toThrow('Invalid access token');
     });
@@ -201,7 +223,7 @@ describe('TokenService Tests', () => {
 
   describe('Refresh Token Verification', () => {
     it('should verify valid refresh token', async () => {
-      const refreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const refreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       const payload = await tokenService.verifyRefreshToken(refreshToken);
       expect(payload.userId).toBe(testUserId);
@@ -216,7 +238,7 @@ describe('TokenService Tests', () => {
     });
 
     it('should reject inactive refresh token', async () => {
-      const refreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const refreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       // Deactivate the refresh token
       await RefreshTokenModel.deactivateByToken(refreshToken);
@@ -273,7 +295,7 @@ describe('TokenService Tests', () => {
 
   describe('Token Rotation', () => {
     it('should successfully rotate refresh token', async () => {
-      const oldRefreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const oldRefreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       const newTokenPair = await tokenService.rotateRefreshToken(oldRefreshToken);
 
@@ -290,7 +312,7 @@ describe('TokenService Tests', () => {
     });
 
     it('should deactivate old refresh token after rotation', async () => {
-      const oldRefreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const oldRefreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       await tokenService.rotateRefreshToken(oldRefreshToken);
 
@@ -306,7 +328,7 @@ describe('TokenService Tests', () => {
     });
 
     it('should reject rotation with already used refresh token', async () => {
-      const refreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const refreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       // First rotation succeeds
       await tokenService.rotateRefreshToken(refreshToken);
@@ -318,7 +340,7 @@ describe('TokenService Tests', () => {
 
   describe('Token Revocation', () => {
     it('should revoke specific refresh token', async () => {
-      const refreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const refreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       await tokenService.revokeRefreshToken(refreshToken);
 
@@ -327,9 +349,9 @@ describe('TokenService Tests', () => {
     });
 
     it('should revoke all user tokens', async () => {
-      const token1 = await tokenService.generateRefreshToken(testUserId, 'session-1', testRole);
-      const token2 = await tokenService.generateRefreshToken(testUserId, 'session-2', testRole);
-      const token3 = await tokenService.generateRefreshToken(testUserId, 'session-3', testRole);
+      const token1 = await tokenService.generateRefreshToken(testUserId, testRole, 'session-1');
+      const token2 = await tokenService.generateRefreshToken(testUserId, testRole, 'session-2');
+      const token3 = await tokenService.generateRefreshToken(testUserId, testRole, 'session-3');
 
       await tokenService.revokeAllUserTokens(testUserId);
 
@@ -343,7 +365,7 @@ describe('TokenService Tests', () => {
     });
 
     it('should verify revoked tokens cannot be used', async () => {
-      const refreshToken = await tokenService.generateRefreshToken(testUserId, testSessionId, testRole);
+      const refreshToken = await tokenService.generateRefreshToken(testUserId, testRole, testSessionId);
 
       await tokenService.revokeRefreshToken(refreshToken);
 
@@ -351,8 +373,47 @@ describe('TokenService Tests', () => {
     });
 
     it('should not affect other users tokens when revoking', async () => {
-      const user1Token = await tokenService.generateRefreshToken('user-1', 'session-1', testRole);
-      const user2Token = await tokenService.generateRefreshToken('user-2', 'session-2', testRole);
+      userDb.create({
+        id: 'user-1',
+        name: 'User One',
+        email: 'user-one@example.com',
+        password: 'hashedPassword123',
+        role: testRole,
+        quest: 'Token test',
+        stats: {},
+        onboardingCompleted: true,
+        keystoneHabits: [],
+        masterRegulationSettings: {},
+        nutritionSettings: {},
+        isInAutonomyPhase: false,
+        weightKg: 70,
+        trainingCycle: {},
+        lastWeeklyPlanDate: new Date().toISOString(),
+        detailedProfile: {},
+        preferences: {}
+      });
+      userDb.create({
+        id: 'user-2',
+        name: 'User Two',
+        email: 'user-two@example.com',
+        password: 'hashedPassword123',
+        role: testRole,
+        quest: 'Token test',
+        stats: {},
+        onboardingCompleted: true,
+        keystoneHabits: [],
+        masterRegulationSettings: {},
+        nutritionSettings: {},
+        isInAutonomyPhase: false,
+        weightKg: 70,
+        trainingCycle: {},
+        lastWeeklyPlanDate: new Date().toISOString(),
+        detailedProfile: {},
+        preferences: {}
+      });
+
+      const user1Token = await tokenService.generateRefreshToken('user-1', testRole, 'session-1');
+      const user2Token = await tokenService.generateRefreshToken('user-2', testRole, 'session-2');
 
       await tokenService.revokeAllUserTokens('user-1');
 
@@ -367,6 +428,7 @@ describe('TokenService Tests', () => {
   describe('Cookie Management', () => {
     it('should set secure cookies with correct flags', () => {
       const mockRes = createMockRes();
+      const expectedSecureFlag = process.env.NODE_ENV === 'production';
 
       const accessToken = 'test-access-token';
       const refreshToken = 'test-refresh-token';
@@ -378,7 +440,7 @@ describe('TokenService Tests', () => {
       // Verify access token cookie
       expect(mockRes.cookie).toHaveBeenCalledWith('access_token', accessToken, {
         httpOnly: true,
-        secure: true,
+        secure: expectedSecureFlag,
         sameSite: 'strict',
         maxAge: 15 * 60 * 1000,
         path: '/'
@@ -387,7 +449,7 @@ describe('TokenService Tests', () => {
       // Verify refresh token cookie
       expect(mockRes.cookie).toHaveBeenCalledWith('refresh_token', refreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: expectedSecureFlag,
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: '/'
@@ -396,6 +458,7 @@ describe('TokenService Tests', () => {
 
     it('should clear cookies properly', () => {
       const mockRes = createMockRes();
+      const expectedSecureFlag = process.env.NODE_ENV === 'production';
 
       tokenService.clearSecureCookies(mockRes);
 
@@ -403,14 +466,14 @@ describe('TokenService Tests', () => {
 
       expect(mockRes.clearCookie).toHaveBeenCalledWith('access_token', {
         httpOnly: true,
-        secure: true,
+        secure: expectedSecureFlag,
         sameSite: 'strict',
         path: '/'
       });
 
       expect(mockRes.clearCookie).toHaveBeenCalledWith('refresh_token', {
         httpOnly: true,
-        secure: true,
+        secure: expectedSecureFlag,
         sameSite: 'strict',
         path: '/'
       });

@@ -14,7 +14,7 @@
     "migrate-preferences": "ts-node src/scripts/migratePreferences.ts",
     "test": "node --max-old-space-size=4096 ./node_modules/jest/bin/jest.js --runInBand",
     "test:ml-routes": "node --max-old-space-size=4096 ./node_modules/jest/bin/jest.js --runInBand src/routes/mlInjuryPredictionRoutes.test.ts",
-    "test:fast": "jest --testPathIgnorePatterns=\"(e2e|performance|timeout-optimization)\"",
+    "test:fast": "set SKIP_HEAVY_TESTS=true&& jest --testPathIgnorePatterns=\"(e2e|end-to-end|performance|timeout-optimization|load\\.test\\.ts|mlInjuryPredictionRoutes\\.test\\.ts|googleFitE2E\\.test\\.ts|formAnalysis\\.monolithic\\.test\\.ts|penetration-testing\\.test\\.ts)\"",
     "test:coverage": "jest --coverage",
     "test:security": "jest --testPathPattern='(auth|token)' --collectCoverageFrom='src/**/*.{ts,tsx}' --coverageReporters='text' --coverageReporters='lcov' --coverageDirectory='coverage'",
     "test:coverage:security": "jest --coverage --testPathPattern='(auth|token)' --collectCoverageFrom='src/routes/authRoutes.ts' --collectCoverageFrom='src/routes/tokenRoutes.ts' --collectCoverageFrom='src/middleware/auth.ts' --collectCoverageFrom='src/services/tokenService.ts' --collectCoverageFrom='src/controllers/tokenController.ts'",

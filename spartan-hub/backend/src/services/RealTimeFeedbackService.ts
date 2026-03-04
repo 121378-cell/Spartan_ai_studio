@@ -7,13 +7,19 @@
 
 import { SquatFormAnalyzer, SquatAnalysis } from './SquatFormAnalyzer';
 import { DeadliftFormAnalyzer, DeadliftAnalysis } from './DeadliftFormAnalyzer';
+import { BenchPressFormAnalyzer, BenchPressAnalysis } from './BenchPressFormAnalyzer';
+import { OverheadPressFormAnalyzer, OverheadPressAnalysis } from './OverheadPressFormAnalyzer';
+import { PushUpFormAnalyzer, PushUpAnalysis } from './PushUpFormAnalyzer';
+import { PlankFormAnalyzer, PlankAnalysis } from './PlankFormAnalyzer';
+import { RowFormAnalyzer, RowAnalysis } from './RowFormAnalyzer';
 import { PoseLandmarks, PoseValidator } from './PoseValidator';
 import { InjuryRiskCalculator, InjuryRiskFactors } from './InjuryRiskCalculator';
 import { logger } from '../utils/logger';
+import { ExerciseType } from '../models/FormAnalysis';
 
 export interface RealTimeFeedback {
   timestamp: number;
-  exerciseType: 'squat' | 'deadlift';
+  exerciseType: ExerciseType;
   currentRep: number;
   formScore: number;
   feedback: string[];
@@ -32,6 +38,11 @@ export interface FeedbackConfig {
 export class RealTimeFeedbackService {
   private squatAnalyzer: SquatFormAnalyzer;
   private deadliftAnalyzer: DeadliftFormAnalyzer;
+  private benchPressAnalyzer: BenchPressFormAnalyzer;
+  private overheadPressAnalyzer: OverheadPressFormAnalyzer;
+  private pushUpAnalyzer: PushUpFormAnalyzer;
+  private plankAnalyzer: PlankFormAnalyzer;
+  private rowAnalyzer: RowFormAnalyzer;
   private validator: PoseValidator;
   private injuryCalculator: InjuryRiskCalculator;
   
@@ -42,6 +53,11 @@ export class RealTimeFeedbackService {
   constructor(config?: Partial<FeedbackConfig>) {
     this.squatAnalyzer = new SquatFormAnalyzer();
     this.deadliftAnalyzer = new DeadliftFormAnalyzer();
+    this.benchPressAnalyzer = new BenchPressFormAnalyzer();
+    this.overheadPressAnalyzer = new OverheadPressFormAnalyzer();
+    this.pushUpAnalyzer = new PushUpFormAnalyzer();
+    this.plankAnalyzer = new PlankFormAnalyzer();
+    this.rowAnalyzer = new RowFormAnalyzer();
     this.validator = new PoseValidator();
     this.injuryCalculator = new InjuryRiskCalculator();
     
@@ -59,7 +75,7 @@ export class RealTimeFeedbackService {
    */
   processFrame(
     sessionId: string,
-    exerciseType: 'squat' | 'deadlift',
+    exerciseType: ExerciseType,
     landmarks: PoseLandmarks,
     repData?: any
   ): RealTimeFeedback {
@@ -83,11 +99,39 @@ export class RealTimeFeedbackService {
     const normalized = validation.normalized;
 
     // Analyze form based on exercise type
-    let analysis: SquatAnalysis | DeadliftAnalysis;
-    if (exerciseType === 'squat') {
-      analysis = this.squatAnalyzer.analyze(normalized, repData);
-    } else {
-      analysis = this.deadliftAnalyzer.analyze(normalized, repData);
+    let analysis: SquatAnalysis | DeadliftAnalysis | BenchPressAnalysis | OverheadPressAnalysis | PushUpAnalysis | PlankAnalysis | RowAnalysis;
+    
+    switch (exerciseType) {
+      case 'squat':
+        analysis = this.squatAnalyzer.analyze(normalized, repData);
+        break;
+      case 'deadlift':
+        analysis = this.deadliftAnalyzer.analyze(normalized, repData);
+        break;
+      case 'bench_press':
+        analysis = this.benchPressAnalyzer.analyze(normalized, repData);
+        break;
+      case 'overhead_press':
+        analysis = this.overheadPressAnalyzer.analyze(normalized, repData);
+        break;
+      case 'push_up':
+        analysis = this.pushUpAnalyzer.analyze(normalized, repData);
+        break;
+      case 'plank':
+        analysis = this.plankAnalyzer.analyze(normalized, repData);
+        break;
+      case 'row':
+        analysis = this.rowAnalyzer.analyze(normalized, repData);
+        break;
+      default:
+         analysis = {
+          formScore: 0,
+          metrics: { repsCompleted: 0, durationSeconds: 0 } as any,
+          warnings: ['Exercise type not yet supported'],
+          recommendations: [],
+          injuryRiskScore: 0
+        };
+        break;
     }
 
     // Calculate injury risk
@@ -139,7 +183,7 @@ export class RealTimeFeedbackService {
    * Generate actionable feedback
    */
   private generateFeedback(
-    analysis: SquatAnalysis | DeadliftAnalysis,
+    analysis: SquatAnalysis | DeadliftAnalysis | BenchPressAnalysis | OverheadPressAnalysis | PushUpAnalysis | PlankAnalysis | RowAnalysis,
     injuryRiskLevel: string
   ): string[] {
     const feedback: string[] = [];
@@ -167,7 +211,7 @@ export class RealTimeFeedbackService {
    * Generate warnings
    */
   private generateWarnings(
-    analysis: SquatAnalysis | DeadliftAnalysis,
+    analysis: SquatAnalysis | DeadliftAnalysis | BenchPressAnalysis | OverheadPressAnalysis | PushUpAnalysis | PlankAnalysis | RowAnalysis,
     injuryRiskLevel: string
   ): string[] {
     const warnings: string[] = [];
